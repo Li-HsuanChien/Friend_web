@@ -26,3 +26,5 @@ venv
 
 src\api\db
 src/api/db/index.ts
+
+front/node_modules
