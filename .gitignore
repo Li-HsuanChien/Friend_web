@@ -29,3 +29,6 @@ src/api/db/index.ts
 
 front/node_modules
 front\node_modules
+
+
+backend/backend/secret_settings.py

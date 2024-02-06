@@ -1,3 +1,6 @@
+from .secret_settings import DATABASENAME, DATABASEPASSWORD, DATABASEUSER
+import os
+
 """
 Django settings for backend project.
 
@@ -25,7 +28,7 @@ SECRET_KEY = 'django-insecure-4grv5tgo#x%hsj(j_9_b(+7poj%ecube@=9*grw@bz@u=no^xo
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -75,14 +78,19 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': DATABASENAME,
+        'USER': DATABASEUSER,
+        'PASSWORD': DATABASEPASSWORD,
+        'HOST': 'localhost',
+        'PORT': '',
     }
 }
 
-
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
+
+FRONTEND_ROOT = os.path.abspath(os.path.join(BASE_DIR, '..', 'front', 'build'))
 
 AUTH_PASSWORD_VALIDATORS = [
     {
