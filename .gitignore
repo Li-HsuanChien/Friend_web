@@ -32,3 +32,9 @@ front\node_modules
 
 
 backend/backend/secret_settings.py
+
+backend/friend_web/__pycache__/*
+
+__pycache__
+
+__pycache__/
