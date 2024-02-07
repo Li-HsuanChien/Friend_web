@@ -21,7 +21,7 @@ class User(models.Model):
     """
     username = models.CharField(max_length=64, )
     bio = models.TextField(max_length=150)
-    headshot = models.ImageField(upload_to='/img/headshots/')
+    headshot = models.ImageField(upload_to='img/headshots/')
     created_time = models.DateTimeField()
     
     gender = models.ForeignKey(GenderType, on_delete=models.CASCADE)
