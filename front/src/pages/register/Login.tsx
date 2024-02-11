@@ -3,9 +3,12 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 
 
 const Register = () => {
+
+  
+
   return (
     <>
-      <form>
+      <form method='post'>
         <div className="container">
           <label htmlFor="uname"><b>Username</b></label>
           <input type="text" placeholder="Enter Username" name="uname" required/>

@@ -1,28 +1,30 @@
 import React from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css';
+import './index.css'
 
 
 const Login = () => {
   return (
     <>
+      <div className="background">
+          <div className="shape"></div>
+          <div className="shape"></div>
+      </div>
+
+
       <form>
-        <div className="container">
-          <label htmlFor="uname"><b>Username</b></label>
-          <input type="text" placeholder="Enter Username" name="uname" required/>
+        <h3>Login</h3>
 
-          <label htmlFor="psw"><b>Password</b></label>
-          <input type="password" placeholder="Enter Password" name="psw" required/>
+        <label htmlFor="username">Username</label>
+        <input type="text" placeholder="Email or Phone" id="username"/>
 
-          <button type="submit">Login</button>
-          <label></label>
-          <input type="checkbox" name="remember"/>
-          
-        </div>
+        <label htmlFor="password">Password</label>
+        <input type="password" placeholder="Password" id="password"/>
 
-        <div className="container">
-          <button type="button" className="cancelbtn">Cancel</button>
-        </div>
-      </form> 
+        <button>Log In</button>
+
+
+        <a href='https://google.com'>Forgot password?</a>
+      </form>
     </>
     
   );
