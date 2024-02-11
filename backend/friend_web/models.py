@@ -18,7 +18,7 @@ class Userdata(models.Model):
             '2010-08-21',
             'true', 'https://www.instagram.com/p/CxPC67MS7nx/',
             'https://www.facebook.com/tuntundragon/',
-            'snapchat.com/add/u1',
+            'https://snapchat.com/add/u1',
             'http://localhost:8000/invite/U1',
             'root1234'
             )
@@ -39,6 +39,9 @@ class Userdata(models.Model):
     snapchat_link = models.URLField(blank=True)
     
     inviteurl = models.URLField(blank=True)
+    
+    def __str__(self):
+        return '%s' % (self.username)
 
 
     
@@ -50,14 +53,16 @@ class Connection(models.Model):
     inviter = models.ManyToManyField(Userdata, related_name='inviter_connections', through="Inviterchannel")
     invitee = models.ManyToManyField(Userdata, related_name='invitee_connections', through="Inviteechannel")
     date_established = models.DateTimeField()
-    usedurl = models.ForeignKey(Userdata, on_delete=models.CASCADE)
     closeness = models.CharField(max_length=20, choices=[
         ('friend', 'Friend'),
         ('closefriend', 'Close Friend'),
         ('bestfriend', 'Best Friend'),
     ])
-    nicknametoparent = models.CharField(max_length=64, null=True)
-    nicknametochild = models.CharField(max_length=64, null=True)
+    nicknamechildtoparent = models.CharField(max_length=64, null=True)
+    nicknameparenttochild = models.CharField(max_length=64, null=True)
+    
+    def __str__(self):
+        return f"{self.inviter} invited {self.invitee}"
 
 
 class Inviterchannel(models.Model):

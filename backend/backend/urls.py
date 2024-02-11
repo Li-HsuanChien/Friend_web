@@ -6,20 +6,23 @@ from django.urls import include, path
 from rest_framework import routers
 
 from friend_web import views
-#from friend_web.views import 
-
-router = routers.DefaultRouter()
-router.register(r'users', views.UserViewSet)
-router.register(r'data', views.UserdataViewSet)
-router.register(r'connection', views.ConnectionViewSet)
 import friend_web.views
+
+# router = routers.DefaultRouter()
+# router.register(r'users', views.UserViewSet)
+# router.register(r'data', views.UserdataViewSet)
+# router.register(r'connection', views.ConnectionViewSet)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     #re_path(r'^(?P<path>.*)$', serve, { 'document_root': settings.FRONTEND_ROOT}),
-    path('', include(router.urls)),
-    path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
-    path('api-auth/data/add', friend_web.views.UserCreate.as_view())
+    # path('', include(router.urls)),
+    #path('api/', include('rest_framework.urls', namespace='rest_framework')),
+    path('api/users/', friend_web.views.UserList.as_view()),
+    path('api/userdatas', friend_web.views.UserDataList.as_view()),
+    path('api/connections', friend_web.views.ConnectionViewSet.as_view()),
+    #path('api-auth/userdatas', friend_web.views.UserDataList.as_view()),
+    
 ]
 
-urlpatterns += router.urls
+#urlpatterns += router.urls
