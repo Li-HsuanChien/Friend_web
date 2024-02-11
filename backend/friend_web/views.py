@@ -24,6 +24,8 @@ class UserDataList(ListAPIView):
 class ConnectionViewSet(ListAPIView):
     queryset = Connection.objects.all()
     serializer_class = ConnectionSerializer
+    filter_backends = [DjangoFilterBackend, ]
+    filterset_fields = ('inviter', )
     
 class UserCreate(CreateAPIView):
     serializer_class = UserDataSerializer

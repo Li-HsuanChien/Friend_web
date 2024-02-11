@@ -19,19 +19,6 @@ class UserDataSerializer(serializers.HyperlinkedModelSerializer):
         "date_of_birth", "show_horoscope", "instagram_link", "facebook_link", "snapchat_link",\
             "inviteurl"]
         
-class InviterchannelSerializer(serializers.HyperlinkedModelSerializer):
-    inviter = UserDataSerializer()
-    class Meta:
-        model = Inviterchannel
-        fields = ["inviter"]
-        
-
-class InviteechannelSerializer(serializers.HyperlinkedModelSerializer):
-    invitee = UserDataSerializer()
-    class Meta:
-        model = Inviteechannel
-        fields = ["invitee"]
-
 class UserNameSerializer(serializers.ModelSerializer):
     username = serializers.StringRelatedField()
     class Meta:
