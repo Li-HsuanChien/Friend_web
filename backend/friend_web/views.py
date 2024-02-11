@@ -20,6 +20,7 @@ class UserDataList(ListAPIView):
     serializer_class = UserDataSerializer
     filter_backends = [DjangoFilterBackend, ]
     filterset_fields = ('username', )
+    
 class ConnectionViewSet(ListAPIView):
     queryset = Connection.objects.all()
     serializer_class = ConnectionSerializer
