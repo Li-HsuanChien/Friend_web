@@ -10,7 +10,9 @@ from friend_web.models import Userdata, Connection
 from friend_web.serializers import UserDataSerializer, UserSerializer, ConnectionSerializer
 from django_filters.rest_framework import DjangoFilterBackend
 from django.conf import settings
-
+from rest_framework.permissions import AllowAny
+from rest_framework_simplejwt.views import TokenObtainPairView
+from .serializers import TokenObtainPairSerializer
 
 class UserList(ListAPIView):
     queryset = User.objects.all().order_by('-date_joined')
@@ -33,7 +35,7 @@ class UserCreate(CreateAPIView):
     queryset=Userdata.objects.all()
     serializer_class = UserDataSerializer
     def create(self, request, *args, **kwargs):
-        username = request.data.get('username')
+        username = User.objects.get(username=request.user.username)
         bio = request.data.get('bio')
         headshot = request.data.get('headshot')
         gender = request.data.get('gender')
@@ -51,13 +53,9 @@ class UserRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView):
     serializer_class=UserDataSerializer
     
     
-#use default search method http://127.0.0.1:8000/api/connections?inviter=1
-# class ConnectionDataList(ListAPIView):
-#     serializer_class=ConnectionSerializer
-#     queryset = Connection.objects.all() 
-#     lookup_field = 'username'
-#     def get_queryset(self):
-#         user = self.request.data.get('username')
-#         queryset = Connection.objects.all()
-#         return queryset.filter(inviter=user)
     
+#registration
+
+class ObtainTokenPairView(TokenObtainPairView):
+    permission_classes = (AllowAny,)
+    serializer_class = TokenObtainPairSerializer
