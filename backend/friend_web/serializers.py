@@ -1,7 +1,9 @@
 from django.contrib.auth.models import User
-from friend_web.models import GenderType, Userdata, Connection, Inviterchannel, Inviteechannel
+from friend_web.models import Userdata, Connection
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from rest_framework.validators import UniqueValidator
+from django.contrib.auth.password_validation import validate_password
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
     
@@ -34,7 +36,8 @@ class ConnectionSerializer(serializers.HyperlinkedModelSerializer):
         model = Connection
         fields = ["inviter", "invitee", "date_established", "closeness", "nicknamechildtoparent", "nicknameparenttochild"]
         
-        
+
+#registration         
 class TokenObtainPairSerializer(TokenObtainPairSerializer):
 
     @classmethod
@@ -43,3 +46,28 @@ class TokenObtainPairSerializer(TokenObtainPairSerializer):
 
         token['username'] = user.username
         return token
+
+
+
+class RegisterSerializer(serializers.ModelSerializer):
+    
+    password = serializers.CharField(write_only=True, required=True, validators=[validate_password])
+    password2 = serializers.CharField(write_only=True, required=True)
+    class Meta:
+        model = User
+        fields = ('username', 'password', 'password2')
+
+    def validate(self, attrs):
+        if attrs['password'] != attrs['password2']:
+            raise serializers.ValidationError({"password": "Password fields didn't match."})
+        
+        return attrs
+
+    def create(self, validated_data):
+        user = User.objects.create(
+            username=validated_data['username'],
+        )
+        user.set_password(validated_data['password'])
+        user.save()
+
+        return user

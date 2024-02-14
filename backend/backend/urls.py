@@ -26,7 +26,8 @@ urlpatterns = [
     path('api/connections', friend_web.views.ConnectionViewSet.as_view()),
     path('api/login/', friend_web.views.ObtainTokenPairView.as_view(), name='token_obtain_pair'),
     path('api/login/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
-    #path('api/user/<str:username>/', friend_web.views.UserRetrieveUpdateDestroy.as_view())
+    path('api/register/', friend_web.views.RegisterView.as_view(), name='auth_register'),
+    
     #path('api/user/<str:username>/connections', friend_web.views.ConnectionDataList.as_view())
     #path('api-auth/userdatas', friend_web.views.UserDataList.as_view()),
     

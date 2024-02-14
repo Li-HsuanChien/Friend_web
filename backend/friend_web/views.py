@@ -1,4 +1,4 @@
-from rest_framework import permissions
+from rest_framework import permissions, generics
 from django_filters.rest_framework import DjangoFilterBackend
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.parsers import JSONParser
@@ -7,12 +7,14 @@ from django.shortcuts import get_object_or_404
 from rest_framework.response import Response
 from django.contrib.auth.models import User
 from friend_web.models import Userdata, Connection 
-from friend_web.serializers import UserDataSerializer, UserSerializer, ConnectionSerializer
+from .serializers import UserDataSerializer, UserSerializer, ConnectionSerializer, \
+    TokenObtainPairSerializer, RegisterSerializer
 from django_filters.rest_framework import DjangoFilterBackend
 from django.conf import settings
 from rest_framework.permissions import AllowAny
 from rest_framework_simplejwt.views import TokenObtainPairView
-from .serializers import TokenObtainPairSerializer
+
+
 
 class UserList(ListAPIView):
     queryset = User.objects.all().order_by('-date_joined')
@@ -59,3 +61,8 @@ class UserRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView):
 class ObtainTokenPairView(TokenObtainPairView):
     permission_classes = (AllowAny,)
     serializer_class = TokenObtainPairSerializer
+
+class RegisterView(generics.CreateAPIView):
+    queryset = User.objects.all()
+    permission_classes = (AllowAny,)
+    serializer_class = RegisterSerializer
