@@ -25,11 +25,10 @@ const Workspace = () => {
       if(e.target !== workspaceContainerRef.current) return;
       
       const move = (event:any) => {
-        setWorkspaceConfState((prevConf) => ({
-          ...prevConf,
-          movementX: prevConf.movementX + event.movementX,
-          movementY: prevConf.movementY + event.movementY,
-        }));
+        setWorkspaceConfState({
+          movementX: workspaceConfState.movementX + event.movementX,
+          movementY: workspaceConfState.movementY + event.movementY,
+        });
       };
   
       document.body.addEventListener('mousemove', move);
