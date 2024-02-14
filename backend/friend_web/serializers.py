@@ -23,7 +23,7 @@ class UserNameSerializer(serializers.ModelSerializer):
     username = serializers.StringRelatedField()
     class Meta:
         model = Userdata
-        fields = ('username',)
+        fields = ('username', 'username_id')
         
         
 class ConnectionSerializer(serializers.HyperlinkedModelSerializer):

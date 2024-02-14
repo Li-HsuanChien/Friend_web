@@ -30,6 +30,7 @@ class ConnectionViewSet(ListAPIView):
     filterset_fields = ('inviter', )
     
 class UserCreate(CreateAPIView):
+    queryset=Userdata.objects.all()
     serializer_class = UserDataSerializer
     def create(self, request, *args, **kwargs):
         username = request.data.get('username')
@@ -38,6 +39,7 @@ class UserCreate(CreateAPIView):
         gender = request.data.get('gender')
         show_horoscope = request.data.get('show_horoscope')
         instagram_link = request.data.get('instagram_link')
+        date_of_birth = request.data.get('date_of_birth')
         facebook_link = request.data.get('facebook_link')
         snapchat_link = request.data.get('snapchat_link')
         inviteurl = request.data.get('inviteurl')
