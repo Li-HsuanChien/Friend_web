@@ -18,7 +18,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.tokens import RefreshToken
 
-autentication_level = AllowAny
+autentication_level = IsAuthenticated
 
 class UserList(ListAPIView):
     queryset = User.objects.all().order_by('-date_joined')
@@ -46,17 +46,43 @@ class UserCreate(CreateAPIView):
     serializer_class = UserDataSerializer
     permission_classes = (AllowAny,)
     def create(self, request, *args, **kwargs):
-        username = User.objects.get(username=request.user.username)
+        # Get the current user's id
+        user_id = request.user.id
+        
+        # Assuming you have a ForeignKey field in Userdata model named 'user' 
+        # which relates to the User model's primary key
+        user_instance = User.objects.get(id=user_id)
+        
+        # Now you can create a Userdata instance with the user_instance and other data
         bio = request.data.get('bio')
         headshot = request.data.get('headshot')
-        gender_id = request.data.get('gender_id')
+        gender = request.data.get('gender')
         show_horoscope = request.data.get('show_horoscope')
         instagram_link = request.data.get('instagram_link')
         date_of_birth = request.data.get('date_of_birth')
         facebook_link = request.data.get('facebook_link')
         snapchat_link = request.data.get('snapchat_link')
         inviteurl = request.data.get('inviteurl')
-        return super().create(request, *args, **kwargs)
+        created_time = request.data.get('created_time')
+        
+        # Create Userdata instance with the current user
+        userdata_instance = Userdata.objects.create(
+            username=user_instance,
+            bio=bio,
+            headshot=headshot,
+            gender=gender,
+            show_horoscope=show_horoscope,
+            instagram_link=instagram_link,
+            date_of_birth=date_of_birth,
+            facebook_link=facebook_link,
+            snapchat_link=snapchat_link,
+            inviteurl=inviteurl,
+            created_time=created_time
+        )
+        
+        # Now you can return the response
+        serializer = UserDataSerializer(userdata_instance)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 class UserRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView):
     queryset=Userdata.objects.all()

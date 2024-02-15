@@ -13,11 +13,17 @@ class Userdata(models.Model):
             'root1234'
             )
     """
+    Gender_CHOICES = {
+        "M": "Cis Gender Male",
+        "F": "Cis Gender Female",
+        "N": "NonBinary",
+        "NA": "Prefer Not To Say"
+    }
     username = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete = models.CASCADE)
     bio = models.TextField(max_length=150)
     headshot = models.ImageField(upload_to='img/headshots/')
     created_time = models.DateTimeField()
-    
+    gender = models.CharField(choices=Gender_CHOICES)
     date_of_birth = models.DateField()
     show_horoscope = models.BooleanField(default=True)
     
@@ -31,15 +37,15 @@ class Userdata(models.Model):
     def __str__(self):
         return '%s' % (self.username)
 
-class GenderType(models.Model):
-    """
-    example(cismale)
-    """ 
-    label = models.CharField(max_length=45)
-    user = models.ForeignKey(Userdata, on_delete=models.CASCADE)
+# class GenderType(models.Model):
+#     """
+#     example(cismale)
+#     """ 
+#     label = models.CharField(max_length=45)
+#     user = models.ForeignKey(Userdata, on_delete=models.CASCADE)
     
-    def __str__(self):
-        return '%s' % (self.label)
+#     def __str__(self):
+#         return '%s' % (self.label)
     
     
 class Connection(models.Model):
