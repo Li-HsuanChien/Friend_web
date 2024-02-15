@@ -2,17 +2,19 @@ from rest_framework import permissions, generics
 from django_filters.rest_framework import DjangoFilterBackend
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.parsers import JSONParser
-from rest_framework.generics import CreateAPIView, RetrieveUpdateDestroyAPIView, ListAPIView
+from rest_framework.generics import CreateAPIView, RetrieveUpdateDestroyAPIView, \
+    ListAPIView, UpdateAPIView
 from django.shortcuts import get_object_or_404
 from rest_framework.response import Response
 from django.contrib.auth.models import User
 from friend_web.models import Userdata, Connection 
 from .serializers import UserDataSerializer, UserSerializer, ConnectionSerializer, \
-    TokenObtainPairSerializer, RegisterSerializer
+    TokenObtainPairSerializer, RegisterSerializer, ChangePasswordSerializer
 from django_filters.rest_framework import DjangoFilterBackend
 from django.conf import settings
 from rest_framework.permissions import AllowAny
 from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework.permissions import IsAuthenticated
 
 
 
@@ -20,22 +22,26 @@ class UserList(ListAPIView):
     queryset = User.objects.all().order_by('-date_joined')
     serializer_class = UserSerializer
     permission_classes = [permissions.IsAuthenticated]
+    permission_classes = (IsAuthenticated,)
     
 class UserDataList(ListAPIView):
     queryset = Userdata.objects.all()
     serializer_class = UserDataSerializer
     filter_backends = [DjangoFilterBackend, ]
     filterset_fields = ('username', )
+    permission_classes = (IsAuthenticated,)
     
 class ConnectionViewSet(ListAPIView):
     queryset = Connection.objects.all()
     serializer_class = ConnectionSerializer
     filter_backends = [DjangoFilterBackend, ]
     filterset_fields = ('inviter', )
+    permission_classes = (IsAuthenticated,)
     
 class UserCreate(CreateAPIView):
     queryset=Userdata.objects.all()
     serializer_class = UserDataSerializer
+    permission_classes = (IsAuthenticated,)
     def create(self, request, *args, **kwargs):
         username = User.objects.get(username=request.user.username)
         bio = request.data.get('bio')
@@ -61,8 +67,29 @@ class UserRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView):
 class ObtainTokenPairView(TokenObtainPairView):
     permission_classes = (AllowAny,)
     serializer_class = TokenObtainPairSerializer
-
-class RegisterView(generics.CreateAPIView):
+    
+class RegisterView(CreateAPIView):
     queryset = User.objects.all()
     permission_classes = (AllowAny,)
     serializer_class = RegisterSerializer
+
+    def post(self, request, *args, **kwargs):
+        try:
+            return super().post(request, *args, **kwargs)
+            return Response({'message': 'User Created!' })
+        except:
+            return Response({'message': 'Action Failed!' })
+        
+
+class ChangePasswordView(UpdateAPIView):
+    queryset = User.objects.all()
+    permission_classes = (IsAuthenticated,)
+    serializer_class = ChangePasswordSerializer
+    
+    def update(self, request, *args, **kwargs):
+        try:
+            super().update(request, *args, **kwargs)
+            return Response({'message': 'Password updated!' })
+        except:
+            return Response({'message': 'Action Failed!' })
+        
