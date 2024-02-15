@@ -1,5 +1,5 @@
 from django.contrib.auth.models import User
-from friend_web.models import Userdata, Connection
+from friend_web.models import Userdata, Connection, GenderType
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework.validators import UniqueValidator
@@ -10,16 +10,20 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = User
         fields = ['username', 'id']
+class GenderTypeSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = GenderType
+        fields = ['label',]
 
         
 class UserDataSerializer(serializers.HyperlinkedModelSerializer):
-    gender = serializers.StringRelatedField()
+    gender = GenderTypeSerializer()
     username = serializers.StringRelatedField()
     class Meta:
         model = Userdata
         fields = ["username", "bio", "headshot", "gender",\
         "date_of_birth", "show_horoscope", "instagram_link", "facebook_link", "snapchat_link",\
-            "inviteurl"]
+            "inviteurl", "created_time"]
         
 class UserNameSerializer(serializers.ModelSerializer):
     username = serializers.StringRelatedField()

@@ -2,16 +2,6 @@ from django.db import models
 from django.conf import settings
 
 
-class GenderType(models.Model):
-    """
-    example(cismale)
-    """ 
-    label = models.CharField(max_length=45)
-        
-    def __str__(self):
-        return '%s' % (self.label)
-
-
 class Userdata(models.Model):
     """
     example('U1','I do', '<img>', 'Gendertyple.cismale', '2024-02-26 21:07UTC-8'
@@ -28,8 +18,6 @@ class Userdata(models.Model):
     headshot = models.ImageField(upload_to='img/headshots/')
     created_time = models.DateTimeField()
     
-    gender = models.ForeignKey(GenderType, on_delete=models.CASCADE)
-    
     date_of_birth = models.DateField()
     show_horoscope = models.BooleanField(default=True)
     
@@ -43,7 +31,15 @@ class Userdata(models.Model):
     def __str__(self):
         return '%s' % (self.username)
 
-
+class GenderType(models.Model):
+    """
+    example(cismale)
+    """ 
+    label = models.CharField(max_length=45)
+    user = models.ForeignKey(Userdata, on_delete=models.CASCADE)
+    
+    def __str__(self):
+        return '%s' % (self.label)
     
     
 class Connection(models.Model):

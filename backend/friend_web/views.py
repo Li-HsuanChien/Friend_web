@@ -18,38 +18,38 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.tokens import RefreshToken
 
-
+autentication_level = AllowAny
 
 class UserList(ListAPIView):
     queryset = User.objects.all().order_by('-date_joined')
     serializer_class = UserSerializer
-    permission_classes = [permissions.IsAuthenticated]
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (autentication_level,)
     
 class UserDataList(ListAPIView):
     queryset = Userdata.objects.all()
     serializer_class = UserDataSerializer
     filter_backends = [DjangoFilterBackend, ]
     filterset_fields = ('username', )
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (autentication_level,)
     
 class ConnectionViewSet(ListAPIView):
     queryset = Connection.objects.all()
     serializer_class = ConnectionSerializer
     filterset_fields = ('inviter',)
     lookup_field = 'inviter'
-    permission_classes = (AllowAny,)
-    #connections?inviter=1 Migrate to sort to user based restriction
-    
+    permission_classes = (autentication_level,)
+    #connections?inviter=<int:username_id> Migrate to sort to user based restriction
+
+#TBD Gender    
 class UserCreate(CreateAPIView):
     queryset=Userdata.objects.all()
     serializer_class = UserDataSerializer
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (AllowAny,)
     def create(self, request, *args, **kwargs):
         username = User.objects.get(username=request.user.username)
         bio = request.data.get('bio')
         headshot = request.data.get('headshot')
-        gender = request.data.get('gender')
+        gender_id = request.data.get('gender_id')
         show_horoscope = request.data.get('show_horoscope')
         instagram_link = request.data.get('instagram_link')
         date_of_birth = request.data.get('date_of_birth')
@@ -63,7 +63,24 @@ class UserRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView):
     lookup_field = 'username'
     serializer_class=UserDataSerializer
     
-    
+
+#TBD https://amir.rachum.com/a-case-for-a-onetomany-relationship-in-django/ Add data with postman now
+class ConnectionCreate(CreateAPIView):
+    queryset=Connection.objects.all()
+    serializer_class = ConnectionSerializer
+    permission_classes = (AllowAny,)
+    # def create(self, request, *args, **kwargs):
+    #     username = User.objects.get(username=request.user.username)
+    #     bio = request.data.get('bio')
+    #     headshot = request.data.get('headshot')
+    #     gender_id = request.data.get('gender_id')
+    #     show_horoscope = request.data.get('show_horoscope')
+    #     instagram_link = request.data.get('instagram_link')
+    #     date_of_birth = request.data.get('date_of_birth')
+    #     facebook_link = request.data.get('facebook_link')
+    #     snapchat_link = request.data.get('snapchat_link')
+    #     inviteurl = request.data.get('inviteurl')
+    #     return super().create(request, *args, **kwargs)  
     
 #User management
 

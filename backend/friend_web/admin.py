@@ -1,17 +1,19 @@
 from django.contrib import admin
 from friend_web.models import *
 
+class GenderTypeInline(admin.TabularInline):
+    model = GenderType
 
 class GenderTypeAdmin(admin.ModelAdmin):
-    list_display = ["label"]
+    list_display = ["label", "user"]
     pass
 
 
 class UserAdmin(admin.ModelAdmin):
-    list_display = ["username", "bio", "headshot", "created_time", "gender",\
+    list_display = ["username", "bio", "headshot", "created_time",\
         "date_of_birth", "show_horoscope", "instagram_link", "facebook_link", "snapchat_link",\
             "inviteurl"]
-    pass
+    inlines = [GenderTypeInline]
 
 class InviterchannelInline(admin.TabularInline):
     model = Inviterchannel
