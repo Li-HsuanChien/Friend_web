@@ -1,5 +1,6 @@
-from rest_framework import permissions, generics
+from rest_framework import permissions, generics, status
 from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.views import APIView
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.parsers import JSONParser
 from rest_framework.generics import CreateAPIView, RetrieveUpdateDestroyAPIView, \
@@ -15,6 +16,7 @@ from django.conf import settings
 from rest_framework.permissions import AllowAny
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework.permissions import IsAuthenticated
+from rest_framework_simplejwt.tokens import RefreshToken
 
 
 
@@ -34,9 +36,10 @@ class UserDataList(ListAPIView):
 class ConnectionViewSet(ListAPIView):
     queryset = Connection.objects.all()
     serializer_class = ConnectionSerializer
-    filter_backends = [DjangoFilterBackend, ]
-    filterset_fields = ('inviter', )
-    permission_classes = (IsAuthenticated,)
+    filterset_fields = ('inviter',)
+    lookup_field = 'inviter'
+    permission_classes = (AllowAny,)
+    #connections?inviter=1 Migrate to sort to user based restriction
     
 class UserCreate(CreateAPIView):
     queryset=Userdata.objects.all()
@@ -62,7 +65,7 @@ class UserRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView):
     
     
     
-#registration
+#User management
 
 class ObtainTokenPairView(TokenObtainPairView):
     permission_classes = (AllowAny,)
@@ -80,7 +83,6 @@ class RegisterView(CreateAPIView):
         except:
             return Response({'message': 'Action Failed!' })
         
-
 class ChangePasswordView(UpdateAPIView):
     queryset = User.objects.all()
     permission_classes = (IsAuthenticated,)
@@ -92,4 +94,16 @@ class ChangePasswordView(UpdateAPIView):
             return Response({'message': 'Password updated!' })
         except:
             return Response({'message': 'Action Failed!' })
-        
+
+class LogoutView(APIView):
+    permission_classes = (IsAuthenticated,)
+
+    def post(self, request):
+        try:
+            refresh_token = request.data["refresh_token"]
+            token = RefreshToken(refresh_token)
+            token.blacklist()
+
+            return Response(status=status.HTTP_205_RESET_CONTENT)
+        except Exception as e:
+            return Response(status=status.HTTP_400_BAD_REQUEST)

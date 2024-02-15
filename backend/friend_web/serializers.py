@@ -47,8 +47,6 @@ class TokenObtainPairSerializer(TokenObtainPairSerializer):
         token['username'] = user.username
         return token
 
-
-
 class RegisterSerializer(serializers.ModelSerializer):
     
     password = serializers.CharField(write_only=True, required=True, validators=[validate_password])
@@ -71,6 +69,7 @@ class RegisterSerializer(serializers.ModelSerializer):
         user.save()
 
         return user
+
 class ChangePasswordSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, required=True, validators=[validate_password])
     password2 = serializers.CharField(write_only=True, required=True)
