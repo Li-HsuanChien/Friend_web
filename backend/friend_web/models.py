@@ -22,7 +22,7 @@ class Userdata(models.Model):
     username = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete = models.CASCADE)
     bio = models.TextField(max_length=150)
     headshot = models.ImageField(upload_to='img/headshots/')
-    created_time = models.DateTimeField()
+    created_time = models.DateTimeField(auto_now_add=True)
     gender = models.CharField(choices=Gender_CHOICES)
     date_of_birth = models.DateField()
     show_horoscope = models.BooleanField(default=True)

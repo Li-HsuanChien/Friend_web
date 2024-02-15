@@ -62,8 +62,9 @@ class UserCreate(CreateAPIView):
         date_of_birth = request.data.get('date_of_birth')
         facebook_link = request.data.get('facebook_link')
         snapchat_link = request.data.get('snapchat_link')
-        inviteurl = request.data.get('inviteurl')
-        created_time = request.data.get('created_time')
+        inviteurl = f"https://www.localhost:8000/{user_instance}"
+        #test this above
+        #created_time = request.data.get('created_time') should be auto
         
         # Create Userdata instance with the current user
         userdata_instance = Userdata.objects.create(
@@ -77,7 +78,7 @@ class UserCreate(CreateAPIView):
             facebook_link=facebook_link,
             snapchat_link=snapchat_link,
             inviteurl=inviteurl,
-            created_time=created_time
+            #created_time=created_time
         )
         
         # Now you can return the response
@@ -90,7 +91,7 @@ class UserRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView):
     serializer_class=UserDataSerializer
     
 
-#TBD https://amir.rachum.com/a-case-for-a-onetomany-relationship-in-django/ Add data with postman now
+#TBD https://www.sankalpjonna.com/learn-django/representing-foreign-key-values-in-django-serializers Add data with postman now
 class ConnectionCreate(CreateAPIView):
     queryset=Connection.objects.all()
     serializer_class = ConnectionSerializer
