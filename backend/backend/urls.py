@@ -29,7 +29,7 @@ urlpatterns = [
     path('api/login/refresh', TokenRefreshView.as_view(), name='token_refresh'),
     path('api/register', friend_web.views.RegisterView.as_view(), name='auth_register'),
     path('api/change_password/<int:pk>/', friend_web.views.ChangePasswordView.as_view(), name='auth_change_password'),
-    path('logout/', friend_web.views.LogoutView.as_view(), name='auth_logout'),
+    path('api/logout', friend_web.views.LogoutView.as_view(), name='auth_logout'),
     
     #path('api/user/<str:username>/connections', friend_web.views.ConnectionDataList.as_view())
     
