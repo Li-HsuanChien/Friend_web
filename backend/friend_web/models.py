@@ -20,13 +20,12 @@ class Userdata(models.Model):
         "NA": "Prefer Not To Say"
     }
     username = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete = models.CASCADE)
-    bio = models.TextField(max_length=150)
-    headshot = models.ImageField(upload_to='img/headshots/')
+    bio = models.TextField(max_length=150, blank=True)
+    headshot = models.ImageField(upload_to='img/headshots/', null=True)
     created_time = models.DateTimeField(auto_now_add=True)
     gender = models.CharField(choices=Gender_CHOICES)
     date_of_birth = models.DateField()
     show_horoscope = models.BooleanField(default=True)
-    
     #social media links
     instagram_link = models.URLField(blank=True)
     facebook_link = models.URLField(blank=True)
