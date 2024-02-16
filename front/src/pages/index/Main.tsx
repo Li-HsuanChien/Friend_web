@@ -6,10 +6,7 @@ import WorkspaceComponent from './components/workspace';
 
 function Main() {
   return (
-    <>
-      <WorkspaceComponent/>
-    </>
-    
+    <WorkspaceComponent/>
   );
 }
 

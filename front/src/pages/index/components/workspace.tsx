@@ -1,105 +1,49 @@
-import React, { useState, useEffect, useRef  } from 'react';
+import React, { useState, MouseEvent } from 'react';
 import './workspace.css'
 
-const Workspace = () => {
+interface WorkspaceConf {
+	movementX: number;
+	movementY: number;
+}
 
-  const workspaceRef = useRef<HTMLDivElement>(null);
-  const workspaceContainerRef = useRef<HTMLDivElement>(null);
-  
-  const [workspaceConfState, setWorkspaceConfState] = useState({
-    movementX: 0,
-    movementY: 0,
-  });
+const Workspace: React.FC = () => {
+	const [workspaceConf, setWorkspaceConf] = useState<WorkspaceConf>({
+		movementX: 0,
+		movementY: 0
+	});
 
+	const handleMouseDown = (e: any) => {
+		if (e.target !== document.getElementById('workspaceContainer')) return;
 
-  useEffect(() =>{
-    if(workspaceRef.current !== null ){
-      workspaceRef.current.style["translate"] = `${workspaceConfState.movementX}px ${workspaceConfState.movementY}px`;
-    } 
-  },[workspaceConfState])
+		const move = (moveEvent: any) => {
+			setWorkspaceConf(workspaceConf => ({
+				movementX: workspaceConf.movementX + moveEvent.movementX,
+				movementY: workspaceConf.movementY + moveEvent.movementY
+			}));
+		};
 
-  //const workspace = document.getElementById('workspace')!
+		const handleMouseUp = () => {
+			document.body.removeEventListener('mousemove', move);
+		};
 
-  if(workspaceContainerRef.current){
-    workspaceContainerRef.current.addEventListener("mousedown", (e: any) =>{
-      if(e.target !== workspaceContainerRef.current) return;
-      
-      const move = (event:any) => {
-        setWorkspaceConfState({
-          movementX: workspaceConfState.movementX + event.movementX,
-          movementY: workspaceConfState.movementY + event.movementY,
-        });
-      };
-  
-      document.body.addEventListener('mousemove', move);
-      document.body.addEventListener(
-        "mouseup",
-        e => document.body.removeEventListener("mousemove", move), { once: true }
-      );
-      
-    })
-  }
-  
-  
-  // const workspaceRef = useRef<HTMLDivElement>(null);
-  // const workspaceContainerRef = useRef<HTMLDivElement>(null);
+		document.body.addEventListener('mousemove', move);
+		document.body.addEventListener('mouseup', handleMouseUp, { once: true });
+	};
 
-  // // while the conf change, modify workspace accordingly
-  // const workspaceConf = new Proxy({ movementX: 0, movementY: 0, scale: 1 }, {
-  //   set: (target, key, value) => {
-  //     target[key as keyof typeof target]  = value;
-  //     if (["movementX", "movementY"].includes(key as string) ) { // i.e., if movement changed
-  //       if(workspaceRef.current){
-  //         workspaceRef.current.style["translate"] = `${target.movementX}px ${target.movementY}px`;
-  //       }
-  //     }
+	return (
+		<div id="workspaceContainer" onMouseDown={handleMouseDown}>
+			<main
+				id="workspace"
+				style={{ transform: `translate(${workspaceConf.movementX}px, ${workspaceConf.movementY}px)` }}>
 
-  //     return true; // set handler should return true if success.
-  //   }
-  // });
+				<div className="block">
+					<div className="header">Sample</div>
+					<div className="content">Yes</div>
+				</div>
 
-  // // init workspace
-  // Object.keys(workspaceConf).forEach((key) => {
-  //   workspaceConf[key as keyof typeof workspaceConf] = workspaceConf[key as keyof typeof workspaceConf];
-  // });
-
-  // // move the workspace while mouse dragging
-  // if(workspaceContainerRef.current){
-  //   workspaceContainerRef.current.addEventListener("mousedown", e => {
-  //   if (e.target !== workspaceContainerRef.current) return;
-  //   // prevent unexpected workspace movement (e.g. while blocks being dragged)
-
-  //   const move = (e:any) => { // mousemove event
-  //     workspaceConf.movementX += e.movementX;
-  //     workspaceConf.movementY += e.movementY;
-  //   }
-
-  //   document.body.addEventListener("mousemove", move);
-  //   document.body.addEventListener(
-  //     "mouseup",
-  //     e => document.body.removeEventListener("mousemove", move), { once: true }
-  //   );
-  //   });}
-
-  
-
-  return (
-    <div
-    id="workspaceContainer"
-      ref={workspaceContainerRef}
-      style={{ width: "100vw", height: "100vh", margin: 0, padding: 0, overflow: "hidden" }}
-    >
-      <main
-        id="workspace"
-        ref={workspaceRef}
-      >
-        <div className="block">
-          <div className="header">Sample</div>
-          <div className="content">Yes</div>
-        </div>
-      </main>
-    </div>
-  );
+			</main>
+		</div>
+	);
 };
 
 export default Workspace;
