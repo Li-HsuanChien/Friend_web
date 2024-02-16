@@ -31,7 +31,7 @@ const Workspace: React.FC = () => {
 	};
 
 	return (
-		<div id="workspaceContainer" onMouseDown={handleMouseDown}>
+		<div id="workspaceContainer" onMouseDown={handleMouseDown} style={{height: '100vh'}}>
 			<main
 				id="workspace"
 				style={{ transform: `translate(${workspaceConf.movementX}px, ${workspaceConf.movementY}px)` }}>
