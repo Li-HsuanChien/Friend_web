@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState }from 'react';
+import { ChangeEvent } from 'react';
 import './index.css'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { styled } from 'styled-components';
@@ -106,9 +107,40 @@ button {
 }
 `
 
+interface LoginInfo{
+    username: string|undefined,
+    password: string|undefined,
+    password2: string|undefined
+}
+
+async function RegisterUser(credentials: LoginInfo) {
+    return fetch('http://127.0.0.1:8000/api/register', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(credentials)
+    })
+      .then(data => data.json())
+   }
+
 
 const Register = () => {
+    const [username, setUserName] =  useState<string>();
+    const [password, setPassword] = useState<string>();
+    const [password2, setPassword2] = useState<string>();
+ 
 
+    const handleSubmit = async(e: any) =>{
+        e.preventDefault();
+        let response: object = await RegisterUser({
+            username: username,
+            password: password,
+            password2: password2
+        })
+
+        console.log(response)
+    }
 
 
 	return (
@@ -119,19 +151,22 @@ const Register = () => {
 					<div className="shape"></div>
 				</div>
 
-				<form>
+				<form onSubmit={handleSubmit}>
 					<h3>Login</h3>
 
 					<label htmlFor="username">Username</label>
-					<input type="text" placeholder="Username" id="username" />
+					<input type="text" placeholder="Username" id="username" 
+                    onChange={(e: ChangeEvent<HTMLInputElement>) => setUserName(e.target.value)}/>
 
 					<label htmlFor="password">Password</label>
-					<input type="password" placeholder="Password" id="password" />
+					<input type="password" placeholder="Password" id="password" 
+                    onChange={(e:ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}/>
 
 					<label htmlFor="password2">Confirm Password</label>
-					<input type="password" placeholder="Confirm Password" id="password2" />
+					<input type="password" placeholder="Confirm Password" id="password2" 
+                    onChange={(e:ChangeEvent<HTMLInputElement>) => setPassword2(e.target.value)}/>
 
-					<button>Register</button>
+					<button type='submit'>Register</button>
 
 
 					<a href='/login'>Already an user?</a>
