@@ -1,4 +1,5 @@
-import React, { useState }from 'react';
+import React, { useState} from 'react';
+import { useNavigate } from 'react-router-dom';
 import { ChangeEvent } from 'react';
 import './index.css'
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -6,9 +7,9 @@ import { styled } from 'styled-components';
 
 const RegisterStyle = styled.div`
 	
-.background {
+.background {   
     width: 430px;
-    height: 520px;
+    height: 600px;
     position: absolute;
     transform: translate(-50%, -50%);
     left: 50%;
@@ -60,6 +61,13 @@ form * {
     border: none;
 }
 
+form p {
+    font-family: 'Poppins', sans-serif;
+    color: #ffffff;
+    text-align: center;
+    margin-top: 15px;
+}
+
 form h3 {
     font-size: 32px;
     font-weight: 500;
@@ -107,74 +115,99 @@ button {
 }
 `
 
-interface LoginInfo{
-    username: string|undefined,
-    password: string|undefined,
-    password2: string|undefined
+interface RegisterInfo {
+    username: string | undefined,
+    password: string | undefined,
+    password2: string | undefined
 }
 
-async function RegisterUser(credentials: LoginInfo) {
+interface ReturnMessage {
+    username?: string,
+    message?: string
+}
+
+async function RegisterUser(credentials: RegisterInfo) {
     return fetch('http://127.0.0.1:8000/api/register', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(credentials)
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(credentials)
     })
-      .then(data => data.json())
-   }
+        .then(data => data.json())
+}
+
+const sleep = (ms:number) => new Promise(r => setTimeout(r, ms));
 
 
 const Register = () => {
-    const [username, setUserName] =  useState<string>();
+    const navigate = useNavigate();
+    const [username, setUserName] = useState<string>();
     const [password, setPassword] = useState<string>();
     const [password2, setPassword2] = useState<string>();
- 
+    const [registrationState, setRegistrationState] = useState<any>(null);
 
-    const handleSubmit = async(e: any) =>{
+
+    const handleSubmit = async (e: any) => {
         e.preventDefault();
-        let response: object = await RegisterUser({
-            username: username,
-            password: password,
-            password2: password2
-        })
-
-        console.log(response)
-    }
-
-
-	return (
-		<>
-			<RegisterStyle>
-				<div className="background">
-					<div className="shape"></div>
-					<div className="shape"></div>
-				</div>
-
-				<form onSubmit={handleSubmit}>
-					<h3>Login</h3>
-
-					<label htmlFor="username">Username</label>
-					<input type="text" placeholder="Username" id="username" 
-                    onChange={(e: ChangeEvent<HTMLInputElement>) => setUserName(e.target.value)}/>
-
-					<label htmlFor="password">Password</label>
-					<input type="password" placeholder="Password" id="password" 
-                    onChange={(e:ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}/>
-
-					<label htmlFor="password2">Confirm Password</label>
-					<input type="password" placeholder="Confirm Password" id="password2" 
-                    onChange={(e:ChangeEvent<HTMLInputElement>) => setPassword2(e.target.value)}/>
-
-					<button type='submit'>Register</button>
+        try {
+            let response: ReturnMessage = await RegisterUser({
+                username: username,
+                password: password,
+                password2: password2
+            });
+            if(response.username){
+                setRegistrationState(`Welcome! ${response.username}!`);
+                sleep(3000);
+                navigate("/login");
+                return 
+            }
+            else{
+                setRegistrationState(`Something went wrong! ${response.message}`)
+                return
+            }
+        }
+        catch (error) {
+            setRegistrationState(`Something went Wrong! Try again ${error}`)
+            return
+        }
+    };
 
 
-					<a href='/login'>Already an user?</a>
-				</form>
-			</RegisterStyle>
-		</>
+    return (
+        <>
+            <RegisterStyle>
+                <div className="background">
+                    <div className="shape"></div>
+                    <div className="shape"></div>
+                </div>
 
-	);
+                <form onSubmit={handleSubmit}>
+                    <h3>Login</h3>
+
+                    <label htmlFor="username">Username</label>
+                    <input type="text" placeholder="Username" id="username" required
+                        onChange={(e: ChangeEvent<HTMLInputElement>) => setUserName(e.target.value)} />
+
+                    <label htmlFor="password">Password</label>
+                    <input type="password" placeholder="Password" id="password" required
+                        onChange={(e: ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)} />
+
+                    <label htmlFor="password2">Confirm Password</label>
+                    <input type="password" placeholder="Confirm Password" id="password2" required
+                        onChange={(e: ChangeEvent<HTMLInputElement>) => setPassword2(e.target.value)} />
+
+                    {registrationState !== null && <p>{registrationState}</p>}
+
+                    <button type='submit' style={{ marginTop: registrationState ? '5px' : '50px' }}>Register</button>
+
+
+                    <a href='/login'>Already an user?</a>
+                </form>
+            </RegisterStyle>
+        </>
+
+    );
 }
 
 export default Register;

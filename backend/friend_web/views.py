@@ -125,7 +125,7 @@ class RegisterView(CreateAPIView):
             return super().post(request, *args, **kwargs)
             return Response({'message': 'User Created!' })
         except:
-            return Response({'message': 'Action Failed!' })
+            return Response({'message': 'Action Failed!' }, 406)
         
 class ChangePasswordView(UpdateAPIView):
     queryset = User.objects.all()
