@@ -1,5 +1,6 @@
 from .secret_settings import DATABASENAME, DATABASEPASSWORD, DATABASEUSER
 import os
+from datetime import timedelta
 
 """
 Django settings for backend project.
@@ -157,3 +158,8 @@ CSRF_TRUSTED_ORIGINS = [
 ]
 
 CORS_ORIGIN_ALLOW_ALL = True
+
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=30),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
+}

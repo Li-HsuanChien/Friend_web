@@ -20,33 +20,33 @@ class Userdata(models.Model):
         "NA": "Prefer Not To Say"
     }
     username = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete = models.CASCADE)
-    bio = models.TextField(max_length=150, blank=True)
+    bio = models.TextField(max_length=150, null=True)
     headshot = models.ImageField(upload_to='img/headshots/', null=True)
     created_time = models.DateTimeField(auto_now_add=True)
     gender = models.CharField(choices=Gender_CHOICES)
     date_of_birth = models.DateField()
     show_horoscope = models.BooleanField(default=True)
     #social media links
-    instagram_link = models.URLField(blank=True)
-    facebook_link = models.URLField(blank=True)
-    snapchat_link = models.URLField(blank=True)
-    
-    inviteurl = models.URLField(blank=True)
-    
+    instagram_link = models.URLField(null=True)
+    facebook_link = models.URLField(null=True)
+    snapchat_link = models.URLField(null=True)
+
+    inviteurl = models.URLField()
+
     def __str__(self):
         return '%s' % (self.username)
 
 # class GenderType(models.Model):
 #     """
 #     example(cismale)
-#     """ 
+#     """
 #     label = models.CharField(max_length=45)
 #     user = models.ForeignKey(Userdata, on_delete=models.CASCADE)
-    
+
 #     def __str__(self):
 #         return '%s' % (self.label)
-    
-    
+
+
 class Connection(models.Model):
     """
     example('U1', 'U2', '2010-08-21 15:00UTC-8', 'localhost:8000/invite/U1', 'friend' , 'boo', 'bae')
@@ -61,7 +61,7 @@ class Connection(models.Model):
     ])
     nicknamechildtoparent = models.CharField(max_length=64, null=True)
     nicknameparenttochild = models.CharField(max_length=64, null=True)
-    
+
     def __str__(self):
         return f"{self.inviter} invited {self.invitee}"
 

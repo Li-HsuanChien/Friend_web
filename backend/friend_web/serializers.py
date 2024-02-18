@@ -6,7 +6,7 @@ from rest_framework.validators import UniqueValidator
 from django.contrib.auth.password_validation import validate_password
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
-    
+
     class Meta:
         model = User
         fields = ['username', 'id']
@@ -17,21 +17,27 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class UserDataSerializer(serializers.HyperlinkedModelSerializer):
-    # gender = GenderTypeSerializer()
+    Gender_CHOICES = {
+        "M": "Cis Gender Male",
+        "F": "Cis Gender Female",
+        "N": "NonBinary",
+        "NA": "Prefer Not To Say"
+    }
     username = serializers.StringRelatedField()
+    gender = serializers.ChoiceField(choices=Gender_CHOICES)
     class Meta:
         model = Userdata
         fields = ["username", "bio", "headshot", "gender",\
         "date_of_birth", "show_horoscope", "instagram_link", "facebook_link", "snapchat_link",\
             "inviteurl", "created_time"]
-        
+
 class UserNameSerializer(serializers.ModelSerializer):
     username = serializers.StringRelatedField()
     class Meta:
         model = Userdata
         fields = ('username', 'username_id')
-        
-        
+
+
 class ConnectionSerializer(serializers.HyperlinkedModelSerializer):
     inviter = UserNameSerializer(many=True, read_only=True)
     invitee = UserNameSerializer(many=True, read_only=True)
@@ -39,9 +45,9 @@ class ConnectionSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Connection
         fields = ["inviter", "invitee", "date_established", "closeness", "nicknamechildtoparent", "nicknameparenttochild"]
-        
 
-#registration         
+
+#registration
 class TokenObtainPairSerializer(TokenObtainPairSerializer):
 
     @classmethod
@@ -52,7 +58,7 @@ class TokenObtainPairSerializer(TokenObtainPairSerializer):
         return token
 
 class RegisterSerializer(serializers.ModelSerializer):
-    
+
     password = serializers.CharField(write_only=True, required=True, validators=[validate_password])
     password2 = serializers.CharField(write_only=True, required=True)
     class Meta:
@@ -62,7 +68,7 @@ class RegisterSerializer(serializers.ModelSerializer):
     def validate(self, attrs):
         if attrs['password'] != attrs['password2']:
             raise serializers.ValidationError({"password": "Password fields didn't match."})
-        
+
         return attrs
 
     def create(self, validated_data):

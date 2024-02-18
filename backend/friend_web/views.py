@@ -8,7 +8,7 @@ from rest_framework.generics import CreateAPIView, RetrieveUpdateDestroyAPIView,
 from django.shortcuts import get_object_or_404
 from rest_framework.response import Response
 from django.contrib.auth.models import User
-from friend_web.models import Userdata, Connection 
+from friend_web.models import Userdata, Connection
 from .serializers import UserDataSerializer, UserSerializer, ConnectionSerializer, \
     TokenObtainPairSerializer, RegisterSerializer, ChangePasswordSerializer
 from django_filters.rest_framework import DjangoFilterBackend
@@ -24,14 +24,14 @@ class UserList(ListAPIView):
     queryset = User.objects.all().order_by('-date_joined')
     serializer_class = UserSerializer
     permission_classes = (autentication_level,)
-    
+
 class UserDataList(ListAPIView):
     queryset = Userdata.objects.all()
     serializer_class = UserDataSerializer
     filter_backends = [DjangoFilterBackend, ]
     filterset_fields = ('username', )
     permission_classes = (autentication_level,)
-    
+
 class ConnectionViewSet(ListAPIView):
     queryset = Connection.objects.all()
     serializer_class = ConnectionSerializer
@@ -40,19 +40,16 @@ class ConnectionViewSet(ListAPIView):
     permission_classes = (autentication_level,)
     #connections?inviter=<int:username_id> Migrate to sort to user based restriction
 
-#TBD Gender    
 class UserCreate(CreateAPIView):
     queryset=Userdata.objects.all()
     serializer_class = UserDataSerializer
-    permission_classes = (AllowAny,)
+    permission_classes = (autentication_level,)
     def create(self, request, *args, **kwargs):
         # Get the current user's id
         user_id = request.user.id
-        
-        # Assuming you have a ForeignKey field in Userdata model named 'user' 
-        # which relates to the User model's primary key
+
         user_instance = User.objects.get(id=user_id)
-        
+
         # Now you can create a Userdata instance with the user_instance and other data
         bio = request.data.get('bio')
         headshot = request.data.get('headshot')
@@ -65,7 +62,7 @@ class UserCreate(CreateAPIView):
         inviteurl = f"https://www.localhost:8000/{user_instance}"
         #test this above
         #created_time = request.data.get('created_time') should be auto
-        
+
         # Create Userdata instance with the current user
         userdata_instance = Userdata.objects.create(
             username=user_instance,
@@ -80,16 +77,30 @@ class UserCreate(CreateAPIView):
             inviteurl=inviteurl,
             #created_time=created_time
         )
-        
+
         # Now you can return the response
         serializer = UserDataSerializer(userdata_instance)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 class UserRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView):
-    queryset=Userdata.objects.all()
-    lookup_field = 'username'
-    serializer_class=UserDataSerializer
-    
+    queryset = Userdata.objects.all()
+    serializer_class = UserDataSerializer
+    permission_classes = (autentication_level,)
+
+    def get_object(self):
+        user = self.request.user
+        # Ensure Userdata instance exists for the user
+        userdata_instance = get_object_or_404(Userdata, username=user)
+        return userdata_instance
+
+    def put(self, request, *args, **kwargs):
+        user = request.user
+        userdata_instance = self.get_object()
+        serializer = self.serializer_class(userdata_instance, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()  # This will update the instance
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 #TBD https://www.sankalpjonna.com/learn-django/representing-foreign-key-values-in-django-serializers Add data with postman now
 class ConnectionCreate(CreateAPIView):
@@ -107,14 +118,14 @@ class ConnectionCreate(CreateAPIView):
     #     facebook_link = request.data.get('facebook_link')
     #     snapchat_link = request.data.get('snapchat_link')
     #     inviteurl = request.data.get('inviteurl')
-    #     return super().create(request, *args, **kwargs)  
-    
+    #     return super().create(request, *args, **kwargs)
+
 #User management
 
 class ObtainTokenPairView(TokenObtainPairView):
     permission_classes = (AllowAny,)
     serializer_class = TokenObtainPairSerializer
-    
+
 class RegisterView(CreateAPIView):
     queryset = User.objects.all()
     permission_classes = (AllowAny,)
@@ -123,15 +134,14 @@ class RegisterView(CreateAPIView):
     def post(self, request, *args, **kwargs):
         try:
             return super().post(request, *args, **kwargs)
-            return Response({'message': 'User Created!' })
         except:
             return Response({'message': 'Action Failed!' }, 406)
-        
+
 class ChangePasswordView(UpdateAPIView):
     queryset = User.objects.all()
     permission_classes = (IsAuthenticated,)
     serializer_class = ChangePasswordSerializer
-    
+
     def update(self, request, *args, **kwargs):
         try:
             super().update(request, *args, **kwargs)
