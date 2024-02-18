@@ -36,23 +36,9 @@ class Userdata(models.Model):
     def __str__(self):
         return '%s' % (self.username)
 
-# class GenderType(models.Model):
-#     """
-#     example(cismale)
-#     """
-#     label = models.CharField(max_length=45)
-#     user = models.ForeignKey(Userdata, on_delete=models.CASCADE)
-
-#     def __str__(self):
-#         return '%s' % (self.label)
-
-
 class Connection(models.Model):
-    """
-    example('U1', 'U2', '2010-08-21 15:00UTC-8', 'localhost:8000/invite/U1', 'friend' , 'boo', 'bae')
-    """
-    inviter = models.ManyToManyField(Userdata, related_name='inviter_connections', through="Inviterchannel")
-    invitee = models.ManyToManyField(Userdata, related_name='invitee_connections', through="Inviteechannel")
+    inviter = models.ForeignKey(Userdata, related_name='inviter_connections', on_delete=models.CASCADE)
+    invitee = models.ForeignKey(Userdata, related_name='invitee_connections', on_delete=models.CASCADE)
     date_established = models.DateTimeField()
     closeness = models.CharField(max_length=20, choices=[
         ('friend', 'Friend'),
@@ -65,7 +51,6 @@ class Connection(models.Model):
     def __str__(self):
         return f"{self.inviter} invited {self.invitee}"
 
-
 class Inviterchannel(models.Model):
     inviter = models.ForeignKey(Userdata, on_delete=models.CASCADE)
     connection = models.ForeignKey(Connection, on_delete=models.CASCADE)
@@ -73,3 +58,14 @@ class Inviterchannel(models.Model):
 class Inviteechannel(models.Model):
     invitee = models.ForeignKey(Userdata, on_delete=models.CASCADE)
     connection = models.ForeignKey(Connection, on_delete=models.CASCADE)
+
+
+# class GenderType(models.Model):
+#     """
+#     example(cismale)
+#     """
+#     label = models.CharField(max_length=45)
+#     user = models.ForeignKey(Userdata, on_delete=models.CASCADE)
+
+#     def __str__(self):
+#         return '%s' % (self.label)

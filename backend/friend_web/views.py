@@ -107,18 +107,7 @@ class ConnectionCreate(CreateAPIView):
     queryset=Connection.objects.all()
     serializer_class = ConnectionSerializer
     permission_classes = (AllowAny,)
-    # def create(self, request, *args, **kwargs):
-    #     username = User.objects.get(username=request.user.username)
-    #     bio = request.data.get('bio')
-    #     headshot = request.data.get('headshot')
-    #     gender_id = request.data.get('gender_id')
-    #     show_horoscope = request.data.get('show_horoscope')
-    #     instagram_link = request.data.get('instagram_link')
-    #     date_of_birth = request.data.get('date_of_birth')
-    #     facebook_link = request.data.get('facebook_link')
-    #     snapchat_link = request.data.get('snapchat_link')
-    #     inviteurl = request.data.get('inviteurl')
-    #     return super().create(request, *args, **kwargs)
+
 
 #User management
 
