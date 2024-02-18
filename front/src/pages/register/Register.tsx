@@ -1,44 +1,41 @@
-import React, { useState} from 'react';
-import { useNavigate } from 'react-router-dom';
-import { ChangeEvent } from 'react';
-import './index.css'
+import React, {useState} from 'react';
+// eslint-disable-next-line node/no-unpublished-import
+import {useNavigate} from 'react-router-dom';
+import {ChangeEvent} from 'react';
+import './index.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { styled } from 'styled-components';
+import {styled} from 'styled-components';
 
 const RegisterStyle = styled.div`
-	
-.background {   
+  .background {
     width: 430px;
     height: 600px;
     position: absolute;
     transform: translate(-50%, -50%);
     left: 50%;
     top: 50%;
-}
+  }
 
-.background .shape {
+  .background .shape {
     height: 200px;
     width: 200px;
     position: absolute;
     border-radius: 50%;
-}
+  }
 
-.shape:first-child {
-    background: linear-gradient(#dfe1e4,
-            #b7b7b8);
+  .shape:first-child {
+    background: linear-gradient(#dfe1e4, #b7b7b8);
     left: -80px;
     top: -80px;
-}
+  }
 
-.shape:last-child {
-    background: linear-gradient(to right,
-            #dfe1e4,
-            #b7b7b8);
+  .shape:last-child {
+    background: linear-gradient(to right, #dfe1e4, #b7b7b8);
     right: -30px;
     bottom: -80px;
-}
+  }
 
-form {
+  form {
     height: 600px;
     width: 400px;
     background-color: rgba(255, 255, 255, 0.13);
@@ -51,42 +48,42 @@ form {
     border: 2px solid rgba(255, 255, 255, 0.1);
     box-shadow: 0 0 40px rgba(8, 7, 16, 0.6);
     padding: 50px 35px;
-}
+  }
 
-form * {
+  form * {
     font-family: 'Poppins', sans-serif;
     color: #ffffff;
     letter-spacing: 0.5px;
     outline: none;
     border: none;
-}
+  }
 
-form p {
+  form p {
     font-family: 'Poppins', sans-serif;
     color: #ffffff;
     text-align: center;
     margin-top: 15px;
-}
+  }
 
-form h3 {
+  form h3 {
     font-size: 32px;
     font-weight: 500;
     line-height: 42px;
     text-align: center;
-}
+  }
 
-a {
+  a {
     text-align: center;
-}
+  }
 
-label {
+  label {
     display: block;
     margin-top: 30px;
     font-size: 16px;
     font-weight: 500;
-}
+  }
 
-input {
+  input {
     display: block;
     height: 50px;
     width: 100%;
@@ -96,13 +93,13 @@ input {
     margin-top: 8px;
     font-size: 14px;
     font-weight: 300;
-}
+  }
 
-::placeholder {
+  ::placeholder {
     color: #e5e5e5;
-}
+  }
 
-button {
+  button {
     margin-top: 50px;
     width: 100%;
     background-color: #ffffff;
@@ -112,102 +109,122 @@ button {
     font-weight: 600;
     border-radius: 5px;
     cursor: pointer;
-}
-`
+  }
+`;
 
 interface RegisterInfo {
-    username: string | undefined,
-    password: string | undefined,
-    password2: string | undefined
+  username: string | undefined;
+  password: string | undefined;
+  password2: string | undefined;
 }
 
 interface ReturnMessage {
-    username?: string,
-    message?: string
+  username?: string;
+  message?: string;
 }
 
-async function RegisterUser(credentials: RegisterInfo) {
-    return fetch('http://127.0.0.1:8000/api/register', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(credentials)
-    })
-        .then(data => data.json())
+async function RegisterApi(credentials: RegisterInfo) {
+  return fetch('http://127.0.0.1:8000/api/register', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(credentials),
+  }).then(data => data.json());
 }
 
-const sleep = (ms:number) => new Promise(r => setTimeout(r, ms));
-
+const sleep = (ms: number) => new Promise(r => setTimeout(r, ms));
 
 const Register = () => {
-    const navigate = useNavigate();
-    const [username, setUserName] = useState<string>();
-    const [password, setPassword] = useState<string>();
-    const [password2, setPassword2] = useState<string>();
-    const [registrationState, setRegistrationState] = useState<any>(null);
+  const navigate = useNavigate();
+  const [username, setUserName] = useState<string>();
+  const [password, setPassword] = useState<string>();
+  const [password2, setPassword2] = useState<string>();
+  const [registrationState, setRegistrationState] = useState<string | null>(
+    null
+  );
 
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    try {
+      const response: ReturnMessage = await RegisterApi({
+        username: username,
+        password: password,
+        password2: password2,
+      });
+      if (response.username) {
+        setRegistrationState(`Welcome! ${response.username}!`);
+        sleep(3000);
+        navigate('/login');
+        return;
+      } else {
+        setRegistrationState(`Something went wrong! ${response.message}`);
+        return;
+      }
+    } catch (error) {
+      setRegistrationState(`Something went Wrong! Try again ${error}`);
+      return;
+    }
+  };
 
-    const handleSubmit = async (e: any) => {
-        e.preventDefault();
-        try {
-            let response: ReturnMessage = await RegisterUser({
-                username: username,
-                password: password,
-                password2: password2
-            });
-            if(response.username){
-                setRegistrationState(`Welcome! ${response.username}!`);
-                sleep(3000);
-                navigate("/login");
-                return 
+  return (
+    <>
+      <RegisterStyle>
+        <div className="background">
+          <div className="shape"></div>
+          <div className="shape"></div>
+        </div>
+
+        <form onSubmit={handleSubmit}>
+          <h3>Login</h3>
+
+          <label htmlFor="username">Username</label>
+          <input
+            type="text"
+            placeholder="Username"
+            id="username"
+            required
+            onChange={(e: ChangeEvent<HTMLInputElement>) =>
+              setUserName(e.target.value)
             }
-            else{
-                setRegistrationState(`Something went wrong! ${response.message}`)
-                return
+          />
+
+          <label htmlFor="password">Password</label>
+          <input
+            type="password"
+            placeholder="Password"
+            id="password"
+            required
+            onChange={(e: ChangeEvent<HTMLInputElement>) =>
+              setPassword(e.target.value)
             }
-        }
-        catch (error) {
-            setRegistrationState(`Something went Wrong! Try again ${error}`)
-            return
-        }
-    };
+          />
 
+          <label htmlFor="password2">Confirm Password</label>
+          <input
+            type="password"
+            placeholder="Confirm Password"
+            id="password2"
+            required
+            onChange={(e: ChangeEvent<HTMLInputElement>) =>
+              setPassword2(e.target.value)
+            }
+          />
 
-    return (
-        <>
-            <RegisterStyle>
-                <div className="background">
-                    <div className="shape"></div>
-                    <div className="shape"></div>
-                </div>
+          {registrationState !== null && <p>{registrationState}</p>}
 
-                <form onSubmit={handleSubmit}>
-                    <h3>Login</h3>
+          <button
+            type="submit"
+            style={{marginTop: registrationState ? '5px' : '50px'}}
+          >
+            Register
+          </button>
 
-                    <label htmlFor="username">Username</label>
-                    <input type="text" placeholder="Username" id="username" required
-                        onChange={(e: ChangeEvent<HTMLInputElement>) => setUserName(e.target.value)} />
-
-                    <label htmlFor="password">Password</label>
-                    <input type="password" placeholder="Password" id="password" required
-                        onChange={(e: ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)} />
-
-                    <label htmlFor="password2">Confirm Password</label>
-                    <input type="password" placeholder="Confirm Password" id="password2" required
-                        onChange={(e: ChangeEvent<HTMLInputElement>) => setPassword2(e.target.value)} />
-
-                    {registrationState !== null && <p>{registrationState}</p>}
-
-                    <button type='submit' style={{ marginTop: registrationState ? '5px' : '50px' }}>Register</button>
-
-
-                    <a href='/login'>Already an user?</a>
-                </form>
-            </RegisterStyle>
-        </>
-
-    );
-}
+          <a href="/login">Already an user?</a>
+        </form>
+      </RegisterStyle>
+    </>
+  );
+};
 
 export default Register;

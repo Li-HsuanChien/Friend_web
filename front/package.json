@@ -30,7 +30,14 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "lint": "gts lint",
+    "clean": "gts clean",
+    "compile": "tsc",
+    "fix": "gts fix",
+    "prepare": "npm.cmd run compile",
+    "pretest": "npm.cmd run compile",
+    "posttest": "npm.cmd run lint"
   },
   "eslintConfig": {
     "extends": [
@@ -52,6 +59,10 @@
   },
   "devDependencies": {
     "@babel/plugin-transform-runtime": "^7.23.9",
-    "react-router-dom": "^6.22.0"
+    "eslint": "^8.56.0",
+    "react-router-dom": "^6.22.0",
+    "gts": "^5.2.0",
+    "typescript": "~5.2.0",
+    "@types/node": "20.8.2"
   }
 }

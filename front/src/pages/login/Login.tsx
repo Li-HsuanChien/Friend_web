@@ -1,41 +1,39 @@
-import React from 'react';
-import './index.css'
-import { styled } from 'styled-components'
-
+/* eslint-disable node/no-unpublished-import */
+import React, {useState} from 'react';
+import './index.css';
+import {styled} from 'styled-components';
+import {useNavigate} from 'react-router-dom';
+import {ChangeEvent} from 'react';
 const LoginStyle = styled.div`
-
-.background {
+  .background {
     width: 430px;
     height: 520px;
     position: absolute;
     transform: translate(-50%, -50%);
     left: 50%;
     top: 50%;
-}
+  }
 
-.background .shape {
+  .background .shape {
     height: 200px;
     width: 200px;
     position: absolute;
     border-radius: 50%;
-}
+  }
 
-.shape:first-child {
-    background: linear-gradient(#dfe1e4,
-            #b7b7b8);
+  .shape:first-child {
+    background: linear-gradient(#dfe1e4, #b7b7b8);
     left: -80px;
     top: -80px;
-}
+  }
 
-.shape:last-child {
-    background: linear-gradient(to right,
-            #dfe1e4,
-            #b7b7b8);
+  .shape:last-child {
+    background: linear-gradient(to right, #dfe1e4, #b7b7b8);
     right: -30px;
     bottom: -80px;
-}
+  }
 
-form {
+  form {
     height: 480px;
     width: 400px;
     background-color: rgba(255, 255, 255, 0.13);
@@ -48,35 +46,42 @@ form {
     border: 2px solid rgba(255, 255, 255, 0.1);
     box-shadow: 0 0 40px rgba(8, 7, 16, 0.6);
     padding: 50px 35px;
-}
+  }
 
-form * {
+  form * {
     font-family: 'Poppins', sans-serif;
     color: #ffffff;
     letter-spacing: 0.5px;
     outline: none;
     border: none;
-}
+  }
 
-form h3 {
+  form h3 {
     font-size: 32px;
     font-weight: 500;
     line-height: 42px;
     text-align: center;
-}
+  }
 
-form a {
+  form a {
     text-align: center;
-}
+  }
 
-label {
+  form p {
+    text-align: center;
+    margin-top: 15px;
+    margin-bottom: 10px;
+    font-size: 13px;
+  }
+
+  label {
     display: block;
     margin-top: 30px;
     font-size: 16px;
     font-weight: 500;
-}
+  }
 
-input {
+  input {
     display: block;
     height: 50px;
     width: 100%;
@@ -86,13 +91,13 @@ input {
     margin-top: 8px;
     font-size: 14px;
     font-weight: 300;
-}
+  }
 
-::placeholder {
+  ::placeholder {
     color: #e5e5e5;
-}
+  }
 
-button {
+  button {
     margin-top: 50px;
     width: 100%;
     background-color: #ffffff;
@@ -102,38 +107,103 @@ button {
     font-weight: 600;
     border-radius: 5px;
     cursor: pointer;
+  }
+`;
+
+interface Credentials {
+  username: string;
+  password: string;
+}
+interface successMessage {
+  refresh: string;
+  access: string;
+}
+interface errorMessage {
+  detail: string;
 }
 
-`
+type ReturnMessage = successMessage | errorMessage;
+
+async function LoginApi(credentials: Credentials) {
+  return fetch('http://127.0.0.1:8000/api/login', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(credentials),
+  }).then(data => data.json());
+}
 
 const Login = () => {
-    return (
-        <>
-            <LoginStyle>
-                <div className="background">
-                    <div className="shape"></div>
-                    <div className="shape"></div>
-                </div>
+  const navigate = useNavigate();
+  const storedJwt = localStorage.getItem('token');
+  //Consider redux jwt
+  const [jwt, setJwt] = useState(storedJwt || null);
+  const [username, setUsername] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
+  const [loginState, setLoginState] = useState<string | null>(null);
 
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    try {
+      const response: ReturnMessage = await LoginApi({
+        username: username,
+        password: password,
+      });
+      if ('refresh' in response) {
+        localStorage.setItem('token', response.access);
+        setJwt(response.access);
+        setLoginState('Welcome!');
+        navigate('/');
+      } else {
+        setLoginState(response.detail);
+      }
+    } catch (error) {
+      setLoginState(`Something went Wrong! Try again ${error}`);
+      return;
+    }
+  };
 
-                <form>
-                    <h3>Login</h3>
+  return (
+    <>
+      <LoginStyle>
+        <div className="background">
+          <div className="shape"></div>
+          <div className="shape"></div>
+        </div>
 
-                    <label htmlFor="username">Username</label>
-                    <input type="text" placeholder="Username" id="username" />
+        <form onSubmit={handleSubmit}>
+          <h3>Login</h3>
 
-                    <label htmlFor="password">Password</label>
-                    <input type="password" placeholder="Password" id="password" />
+          <label htmlFor="username">Username</label>
+          <input
+            type="text"
+            placeholder="Username"
+            id="username"
+            onChange={(e: ChangeEvent<HTMLInputElement>) => {
+              setUsername(e.target.value);
+            }}
+          />
 
-                    <button>Log In</button>
-
-
-                    <a href='https://google.com'>Forgot password?</a>
-                </form>
-            </LoginStyle>
-        </>
-
-    );
-}
+          <label htmlFor="password">Password</label>
+          <input
+            type="password"
+            placeholder="Password"
+            id="password"
+            onChange={(e: ChangeEvent<HTMLInputElement>) => {
+              setPassword(e.target.value);
+            }}
+          />
+          {loginState && <p>{loginState}</p>}
+          <button
+            type="submit"
+            style={{marginTop: loginState ? '5px' : '50px'}}
+          >Log In</button>
+          <a href="https://google.com">Forgot password?</a>
+        </form>
+      </LoginStyle>
+    </>
+  );
+};
 
 export default Login;
