@@ -51,13 +51,7 @@ class Connection(models.Model):
     def __str__(self):
         return f"{self.inviter} invited {self.invitee}"
 
-class Inviterchannel(models.Model):
-    inviter = models.ForeignKey(Userdata, on_delete=models.CASCADE)
-    connection = models.ForeignKey(Connection, on_delete=models.CASCADE)
 
-class Inviteechannel(models.Model):
-    invitee = models.ForeignKey(Userdata, on_delete=models.CASCADE)
-    connection = models.ForeignKey(Connection, on_delete=models.CASCADE)
 
 
 # class GenderType(models.Model):

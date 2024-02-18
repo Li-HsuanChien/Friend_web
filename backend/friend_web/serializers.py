@@ -1,5 +1,5 @@
 from django.contrib.auth.models import User
-from friend_web.models import Userdata, Connection, Inviteechannel, Inviterchannel #GenderType
+from friend_web.models import Userdata, Connection #GenderType
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework.validators import UniqueValidator

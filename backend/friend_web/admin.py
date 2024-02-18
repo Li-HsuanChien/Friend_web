@@ -15,19 +15,10 @@ class UserAdmin(admin.ModelAdmin):
             "inviteurl"]
     # inlines = [GenderTypeInline]
 
-class InviterchannelInline(admin.TabularInline):
-    model = Inviterchannel
-    pass
 
-class InviteechannelInline(admin.TabularInline):
-    model = Inviteechannel
-    pass
 class ConnectionAdmin(admin.ModelAdmin):
-    inlines = [
-        InviterchannelInline,
-        InviteechannelInline,
-    ]
-    list_display = ('id', 'date_established', 'closeness', 'nicknamechildtoparent', 'nicknameparenttochild')
+
+    list_display = ('inviter', 'invitee', 'id', 'date_established', 'closeness', 'nicknamechildtoparent', 'nicknameparenttochild')
     pass
 
 admin.site.register(Connection, ConnectionAdmin)
