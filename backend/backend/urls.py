@@ -7,6 +7,9 @@ from rest_framework import routers
 from rest_framework_simplejwt.views import TokenRefreshView
 from friend_web import views
 import friend_web.views
+from django.conf import settings
+from django.conf.urls.static import static
+
 
 
 # router = routers.DefaultRouter()
@@ -33,6 +36,6 @@ urlpatterns = [
 
     #path('api/user/<str:username>/connections', friend_web.views.ConnectionDataList.as_view())
 
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 #urlpatterns += router.urls

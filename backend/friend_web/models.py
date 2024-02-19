@@ -21,7 +21,7 @@ class Userdata(models.Model):
     }
     username = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete = models.CASCADE)
     bio = models.TextField(max_length=150, null=True)
-    headshot = models.ImageField(upload_to='img/headshots/', null=True)
+    headshot = models.ImageField(upload_to='static/img/headshots/', null=True)
     created_time = models.DateTimeField(auto_now_add=True)
     gender = models.CharField(choices=Gender_CHOICES)
     date_of_birth = models.DateField()
