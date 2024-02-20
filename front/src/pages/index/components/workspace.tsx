@@ -1,5 +1,5 @@
-import React, { useState, MouseEvent } from "react";
-import { styled } from "styled-components";
+import React, { useState, MouseEvent } from 'react';
+import { styled } from 'styled-components';
 
 const Wrapper = styled.div`
   #workspaceContainer {
@@ -46,7 +46,7 @@ const Workspace: React.FC = () => {
   });
 
   const handleMouseDown = (e: any) => {
-    if (e.target !== document.getElementById("workspaceContainer")) return;
+    if (e.target !== document.getElementById('workspaceContainer')) return;
 
     const move = (moveEvent: any) => {
       setWorkspaceConf((workspaceConf) => ({
@@ -56,29 +56,29 @@ const Workspace: React.FC = () => {
     };
 
     const handleMouseUp = () => {
-      document.body.removeEventListener("mousemove", move);
+      document.body.removeEventListener('mousemove', move);
     };
 
-    document.body.addEventListener("mousemove", move);
-    document.body.addEventListener("mouseup", handleMouseUp, { once: true });
+    document.body.addEventListener('mousemove', move);
+    document.body.addEventListener('mouseup', handleMouseUp, { once: true });
   };
 
   return (
     <Wrapper>
       <div
-        id="workspaceContainer"
+        id='workspaceContainer'
         onMouseDown={handleMouseDown}
-        style={{ height: "100vh" }}
+        style={{ height: '100vh' }}
       >
         <main
-          id="workspace"
+          id='workspace'
           style={{
             transform: `translate(${workspaceConf.movementX}px, ${workspaceConf.movementY}px)`,
           }}
         >
-          <div className="block">
-            <div className="header">Sample</div>
-            <div className="content">Yes</div>
+          <div className='block'>
+            <div className='header'>Sample</div>
+            <div className='content'>Yes</div>
           </div>
         </main>
       </div>

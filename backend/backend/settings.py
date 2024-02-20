@@ -1,4 +1,4 @@
-from .secret_settings import DATABASENAME, DATABASEPASSWORD, DATABASEUSER
+from .secret_settings import DATABASENAME, DATABASEPASSWORD, DATABASEUSER, DJANGO_SECRET_KEY
 import os
 from datetime import timedelta
 
@@ -24,7 +24,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-4grv5tgo#x%hsj(j_9_b(+7poj%ecube@=9*grw@bz@u=no^xo'
+SECRET_KEY = DJANGO_SECRET_KEY
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -52,11 +52,11 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
 ]
 
@@ -145,21 +145,26 @@ REST_FRAMEWORK = {
                                    'rest_framework.permissions.IsAuthenticated'],
     'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
-    ],
+        'rest_framework.authentication.TokenAuthentication',
+    ]
 }
 
+CORS_ORIGIN_ALLOW_ALL = True
+
 CORS_ALLOWED_ORIGINS = [
-        "http://127.0.0.1",
+    "http://127.0.0.1",
 ]
 
 CSRF_TRUSTED_ORIGINS = [
-        "http://127.0.0.1",
+    "http://127.0.0.1",
 ]
 
-CORS_ORIGIN_ALLOW_ALL = True
+CSRF_COOKIE_DOMAIN = '127.0.0.1'
+
+CSRF_COOKIE_SECURE = False
 
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=30),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
 }
+

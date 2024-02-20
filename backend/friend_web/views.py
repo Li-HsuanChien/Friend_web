@@ -21,10 +21,16 @@ from rest_framework_simplejwt.tokens import RefreshToken
 autentication_level = IsAuthenticated
 
 class UserList(ListAPIView):
-    queryset = User.objects.all().order_by('-date_joined')
     serializer_class = UserSerializer
     permission_classes = (autentication_level,)
-
+    def get_queryset(self):
+        user_id = self.request.user.id
+        try:
+            user_instance = User.objects.filter(id=user_id)
+            return user_instance
+        except User.DoesNotExist:
+            return {'message': 'user not exists'}
+        
 class UserDataList(ListAPIView):
     queryset = Userdata.objects.all()
     serializer_class = UserDataSerializer

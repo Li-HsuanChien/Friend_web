@@ -134,14 +134,34 @@ async function LoginApi(credentials: Credentials) {
   }).then(data => data.json());
 }
 
+async function PingServer(Token: string) {
+  return fetch('http://127.0.0.1:8000/api/currentuser', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(Token),
+  }).then(data => data.json());
+}
+
 const Login = () => {
   const navigate = useNavigate();
   const storedJwt = localStorage.getItem('token');
+  const [user_id, setuser_id] = useState<number>();
   //Consider redux jwt
-  const [jwt, setJwt] = useState(storedJwt || null);
   const [username, setUsername] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [loginState, setLoginState] = useState<string | null>(null);
+
+  const Ping = async(token: string) => {
+    try{
+      const response = await PingServer(token);
+      setuser_id(response)
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  Ping(storedJwt as string);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -152,7 +172,6 @@ const Login = () => {
       });
       if ('refresh' in response) {
         localStorage.setItem('token', response.access);
-        setJwt(response.access);
         setLoginState('Welcome!');
         navigate('/');
       } else {

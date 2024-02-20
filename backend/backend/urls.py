@@ -22,7 +22,7 @@ urlpatterns = [
     #re_path(r'^(?P<path>.*)$', serve, { 'document_root': settings.FRONTEND_ROOT}),
     # path('', include(router.urls)),
     #path('api/', include('rest_framework.urls', namespace='rest_framework')),
-    path('api/users/', friend_web.views.UserList.as_view()),
+    path('api/currentuser', friend_web.views.UserList.as_view()),
     path('api/userdatas', friend_web.views.UserDataList.as_view()),
     path('api/userdatas/add', friend_web.views.UserCreate.as_view()),
     path('api/userdatas/update', friend_web.views.UserRetrieveUpdateDestroy.as_view()),
