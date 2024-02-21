@@ -19,7 +19,7 @@ class Userdata(models.Model):
         "N": "NonBinary",
         "NA": "Prefer Not To Say"
     }
-    username = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete = models.CASCADE)
+    username = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete = models.CASCADE, primary_key=True)
     bio = models.TextField(max_length=150, null=True)
     headshot = models.ImageField(upload_to='static/img/headshots/', null=True)
     created_time = models.DateTimeField(auto_now_add=True)

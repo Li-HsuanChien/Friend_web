@@ -30,7 +30,7 @@ class UserList(ListAPIView):
             return user_instance
         except User.DoesNotExist:
             return {'message': 'user not exists'}
-        
+
 class UserDataList(ListAPIView):
     queryset = Userdata.objects.all()
     serializer_class = UserDataSerializer
@@ -44,6 +44,12 @@ class ConnectionViewSet(ListAPIView):
     filterset_fields = ('inviter',)
     lookup_field = 'inviter'
     permission_classes = (autentication_level,)
+    def get_queryset(self):
+
+        user_id = self.request.user.id
+        query = Connection.objects.filter(inviter_id=user_id)
+        return query
+
     #connections?inviter=<int:username_id> Migrate to sort to user based restriction
 
 class UserCreate(CreateAPIView):
