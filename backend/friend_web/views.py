@@ -173,6 +173,7 @@ class ConnectionRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView):
 
     def put(self, request, *args, **kwargs):
         userdata_instance = self.get_object()
+        #check user status allow edit accordingly
         serializer = self.serializer_class(userdata_instance, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()  # This will update the instance
