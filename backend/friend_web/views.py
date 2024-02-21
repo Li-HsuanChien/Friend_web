@@ -17,12 +17,13 @@ from rest_framework.permissions import AllowAny
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.tokens import RefreshToken
+from datetime import datetime
 
-autentication_level = IsAuthenticated
+authentication_level = IsAuthenticated
 
 class UserList(ListAPIView):
     serializer_class = UserSerializer
-    permission_classes = (autentication_level,)
+    permission_classes = (authentication_level,)
     def get_queryset(self):
         user_id = self.request.user.id
         try:
@@ -36,18 +37,18 @@ class UserDataList(ListAPIView):
     serializer_class = UserDataSerializer
     filter_backends = [DjangoFilterBackend, ]
     filterset_fields = ('username', )
-    permission_classes = (autentication_level,)
+    permission_classes = (authentication_level,)
 
 class ConnectionViewSet(ListAPIView):
     queryset = Connection.objects.all()
     serializer_class = ConnectionSerializer
     filterset_fields = ('inviter',)
     lookup_field = 'inviter'
-    permission_classes = (autentication_level,)
+    permission_classes = (authentication_level,)
     def get_queryset(self):
 
-        user_id = self.request.user.id
-        query = Connection.objects.filter(inviter_id=user_id)
+        inviter_id = self.request.data.get('inviter_id')
+        query = Connection.objects.filter(inviter=inviter_id)
         return query
 
     #connections?inviter=<int:username_id> Migrate to sort to user based restriction
@@ -55,7 +56,7 @@ class ConnectionViewSet(ListAPIView):
 class UserCreate(CreateAPIView):
     queryset=Userdata.objects.all()
     serializer_class = UserDataSerializer
-    permission_classes = (autentication_level,)
+    permission_classes = (authentication_level,)
     def create(self, request, *args, **kwargs):
         # Get the current user's id
         user_id = request.user.id
@@ -97,7 +98,7 @@ class UserCreate(CreateAPIView):
 class UserRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView):
     queryset = Userdata.objects.all()
     serializer_class = UserDataSerializer
-    permission_classes = (autentication_level,)
+    permission_classes = (authentication_level,)
 
     def get_object(self):
         user = self.request.user
@@ -106,7 +107,6 @@ class UserRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView):
         return userdata_instance
 
     def put(self, request, *args, **kwargs):
-        user = request.user
         userdata_instance = self.get_object()
         serializer = self.serializer_class(userdata_instance, data=request.data, partial=True)
         if serializer.is_valid():
@@ -116,9 +116,68 @@ class UserRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView):
 
 #TBD https://www.sankalpjonna.com/learn-django/representing-foreign-key-values-in-django-serializers Add data with postman now
 class ConnectionCreate(CreateAPIView):
+    """Takes data input:
+    "date_established"
+    "closeness('friend', 'Friend'),
+              ('closefriend', 'Close Friend'),
+              ('bestfriend', 'Best Friend'),"
+    "nicknamechildtoparent"(optional),
+    "nicknamechildtoparent"(optional),
+    "inviter(id)"
+    "invitee(id)"
+    """
+    queryset=Connection.objects.all()
+    serializer_class = ConnectionSerializer
+    permission_classes = (authentication_level,)
+
+    def create(self, request, *args, **kwargs):
+        current_user_id = request.user.id
+        established = datetime.now()
+        closness = request.data.get('closeness')
+        inviter_id = request.data.get('inviter_id')
+        invitee_instance = Userdata.objects.get(username=current_user_id)
+        inviter_instance = Userdata.objects.get(username=inviter_id)
+
+        userdata_instance = Connection.objects.create(
+            date_established= established,
+            closeness= closness,
+            inviter= inviter_instance,
+            invitee= invitee_instance
+        )
+
+        serializer = ConnectionSerializer(userdata_instance)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+class ConnectionRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView):
+    """Takes data input:
+    "closeness('friend', 'Friend'),
+              ('closefriend', 'Close Friend'),
+              ('bestfriend', 'Best Friend'),"
+           altered
+    "nicknamechildtoparent" altered,
+    "nicknameparenttochild"altered,
+    "inviter(id) takes user"
+    "invitee(id) takes user"
+    """
     queryset=Connection.objects.all()
     serializer_class = ConnectionSerializer
     permission_classes = (AllowAny,)
+    #implement custom permission class if is inviter allow nicknameparenttochild closeness
+	#implement custom permission class if is invitee allow nicknamechildtoparent closeness
+    def get_object(self):
+        id = self.request.data.get('id')
+        # Ensure Userdata instance exists for the user
+        userdata_instance = get_object_or_404(Connection, id=id)
+        return userdata_instance
+
+    def put(self, request, *args, **kwargs):
+        userdata_instance = self.get_object()
+        serializer = self.serializer_class(userdata_instance, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()  # This will update the instance
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 #User management

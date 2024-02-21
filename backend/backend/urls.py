@@ -28,6 +28,7 @@ urlpatterns = [
     path('api/userdatas/update', friend_web.views.UserRetrieveUpdateDestroy.as_view()),
     path('api/connections', friend_web.views.ConnectionViewSet.as_view()),
     path('api/connections/add', friend_web.views.ConnectionCreate.as_view()),
+    path('api/connections/edit', friend_web.views.ConnectionRetrieveUpdateDestroy.as_view()),
     path('api/login', friend_web.views.ObtainTokenPairView.as_view(), name='token_obtain_pair'),
     path('api/login/refresh', TokenRefreshView.as_view(), name='token_refresh'),
     path('api/register', friend_web.views.RegisterView.as_view(), name='auth_register'),
