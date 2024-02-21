@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     "friend_web",
     'rest_framework',
+    'rest_framework_simplejwt',
     'django_filters',
     'rest_framework_simplejwt.token_blacklist',
     'corsheaders',
@@ -145,7 +146,7 @@ REST_FRAMEWORK = {
                                    'rest_framework.permissions.IsAuthenticated'],
     'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.TokenAuthentication',
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
     ]
 }
 
@@ -158,10 +159,6 @@ CORS_ALLOWED_ORIGINS = [
 CSRF_TRUSTED_ORIGINS = [
     "http://127.0.0.1",
 ]
-
-CSRF_COOKIE_DOMAIN = '127.0.0.1'
-
-CSRF_COOKIE_SECURE = False
 
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=30),
