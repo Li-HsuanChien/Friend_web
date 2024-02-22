@@ -152,7 +152,7 @@ class UserRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView):
         edit's user data
     Args:
         "bio": request.data.get('bio') string
-        "headshot": request.data.get('headshot')
+        "headshot": request.data.get('headshot') image(file)
         "gender": request.data.get('gender') restricted string
         "date_of_birth": request.data.get('date_of_birth') YYYY-MM-DD
         "show_horoscope": request.data.get('show_horoscope') boolean
@@ -185,8 +185,20 @@ class UserRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView):
         userdata_instance = get_object_or_404(Userdata, username=user)
         return userdata_instance
     #TBD update restrictions or custom url???? but no created time
+
     def put(self, request, *args, **kwargs):
         userdata_instance = self.get_object()
+        fields_to_update = ['bio', 'headshot', 'gender', 'date_of_birth', 'show_horoscope',
+                    'instagram_link', 'facebook_link', 'snapchat_link', 'inviteurl']
+
+        for field_name in fields_to_update:
+            field_value = request.data.get(field_name)
+            if field_value is not None:
+                setattr(userdata_instance, field_name, field_value)
+
+        # Save the changes to the user_instance
+        userdata_instance.save()
+
         serializer = self.serializer_class(userdata_instance, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()  # This will update the instance
