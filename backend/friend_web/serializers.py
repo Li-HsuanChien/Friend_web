@@ -10,11 +10,6 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = User
         fields = ['username', 'id']
-# class GenderTypeSerializer(serializers.HyperlinkedModelSerializer):
-#     class Meta:
-#         model = GenderType
-#         fields = ['label',]
-
 
 class UserDataSerializer(serializers.HyperlinkedModelSerializer):
     Gender_CHOICES = {
@@ -106,4 +101,11 @@ class ChangePasswordSerializer(serializers.ModelSerializer):
         instance.save()
 
         return instance
+
+
+
+# class GenderTypeSerializer(serializers.HyperlinkedModelSerializer):
+#     class Meta:
+#         model = GenderType
+#         fields = ['label',]
 

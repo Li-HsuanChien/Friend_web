@@ -19,7 +19,22 @@ from .serializers import UserDataSerializer, UserSerializer, ConnectionSerialize
 
 authentication_level = IsAuthenticated
 
-class UserList(ListAPIView):
+class CurrentUserList(ListAPIView):
+    """_summary_
+        takes request user id
+        returns current logined user name and id
+    Args:
+        self.request.user.id
+    Returns:
+        JSON:{
+                    "username": <string>,
+                    "id": <int>
+                }
+        example: {
+                    "username": "U2",
+                    "id": 9
+                }
+    """
     serializer_class = UserSerializer
     permission_classes = (authentication_level,)
     def get_queryset(self):
@@ -31,6 +46,11 @@ class UserList(ListAPIView):
             return {'message': 'user not exists'}
 
 class UserDataList(ListAPIView):
+    """_summary_
+        Admin privilliged all user data list
+    Args:
+        IsAdminUser
+    """
     queryset = Userdata.objects.all()
     serializer_class = UserDataSerializer
     filter_backends = [DjangoFilterBackend, ]
@@ -38,6 +58,24 @@ class UserDataList(ListAPIView):
     permission_classes = (IsAdminUser,)
 
 class ConnectionViewSet(ListAPIView):
+    """_summary_
+        takes current user id
+        get current user's child connections
+    Args:
+        self.request.user.id
+    Returns:
+        Example:[
+                    {
+                        "id": 4,
+                        "date_established": "2024-02-22T00:44:30.241799Z",
+                        "closeness": "bestfriend",
+                        "nicknamechildtoparent": null,
+                        "nicknameparenttochild": null,
+                        "inviter": 8,
+                        "invitee": 9
+                    }
+                ]
+    """
     queryset = Connection.objects.all()
     serializer_class = ConnectionSerializer
     filterset_fields = ('inviter',)
@@ -49,40 +87,59 @@ class ConnectionViewSet(ListAPIView):
         return query
 
 class UserCreate(CreateAPIView):
+    """_summary_
+        takes user id
+        construct userdata
+    Args:
+        user_id = request.user.id
+        gender = request.data.get('gender') choice field
+        show_horoscope = request.data.get('show_horoscope') boolean
+        date_of_birth = request.data.get('date_of_birth') YYYY-MM-DD
+    Returns:
+        Example: {
+            "username": "U6",
+            "bio": null,
+            "headshot": null,
+            "gender": "F",
+            "date_of_birth": "2011-09-12",
+            "show_horoscope": false,
+            "instagram_link": null,
+            "facebook_link": null,
+            "snapchat_link": null,
+            "inviteurl": "https://www.localhost:8000/U6",
+            "created_time": "2024-02-22T00:57:25.036276Z"
+        }
+    """
     queryset=Userdata.objects.all()
     serializer_class = UserDataSerializer
     permission_classes = (authentication_level,)
     def create(self, request, *args, **kwargs):
-        # Get the current user's id
         user_id = request.user.id
-
         user_instance = User.objects.get(id=user_id)
 
-        # Now you can create a Userdata instance with the user_instance and other data
-        bio = request.data.get('bio')
-        headshot = request.data.get('headshot')
+        # bio = request.data.get('bio')
+        # headshot = request.data.get('headshot')
         gender = request.data.get('gender')
         show_horoscope = request.data.get('show_horoscope')
-        instagram_link = request.data.get('instagram_link')
+        # instagram_link = request.data.get('instagram_link')
         date_of_birth = request.data.get('date_of_birth')
-        facebook_link = request.data.get('facebook_link')
-        snapchat_link = request.data.get('snapchat_link')
+        # facebook_link = request.data.get('facebook_link')
+        # snapchat_link = request.data.get('snapchat_link')
         inviteurl = f"https://www.localhost:8000/{user_instance}"
-        #test this above
-        #created_time = request.data.get('created_time') should be auto
+        #TBD invite link
 
-        # Create Userdata instance with the current user
         userdata_instance = Userdata.objects.create(
             username=user_instance,
-            bio=bio,
-            headshot=headshot,
+
             gender=gender,
             show_horoscope=show_horoscope,
-            instagram_link=instagram_link,
             date_of_birth=date_of_birth,
-            facebook_link=facebook_link,
-            snapchat_link=snapchat_link,
             inviteurl=inviteurl,
+            # instagram_link=instagram_link,
+            # bio=bio,
+            # headshot=headshot,
+            # facebook_link=facebook_link,
+            # snapchat_link=snapchat_link,
             #created_time=created_time
         )
 
@@ -91,6 +148,33 @@ class UserCreate(CreateAPIView):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 class UserRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView):
+    """_summary_
+        edit's user data
+    Args:
+        "bio": request.data.get('bio') string
+        "headshot": request.data.get('headshot')
+        "gender": request.data.get('gender') restricted string
+        "date_of_birth": request.data.get('date_of_birth') YYYY-MM-DD
+        "show_horoscope": request.data.get('show_horoscope') boolean
+        "instagram_link": request.data.get('instagram_link') url
+        "facebook_link": request.data.get('facebook_link') url
+        "snapchat_link": request.data.get('snapchat_link') url
+        "inviteurl": request.data.get('inviteurl')
+    Returns:
+        Example:{
+            "username": "U6",
+            "bio": "I am altered",
+            "headshot": null,
+            "gender": "NA",
+            "date_of_birth": "2011-05-16",
+            "show_horoscope": false,
+            "instagram_link": "http://www.example.com",
+            "facebook_link": "http://www.example.com",
+            "snapchat_link": "http://www.example.com",
+            "inviteurl": "https://www.localhost:8000/U6",
+            "created_time": "2024-02-22T00:57:25.036276Z"
+        }
+    """
     queryset = Userdata.objects.all()
     serializer_class = UserDataSerializer
     permission_classes = (authentication_level,)
@@ -100,7 +184,7 @@ class UserRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView):
         # Ensure Userdata instance exists for the user
         userdata_instance = get_object_or_404(Userdata, username=user)
         return userdata_instance
-
+    #TBD update restrictions or custom url???? but no created time
     def put(self, request, *args, **kwargs):
         userdata_instance = self.get_object()
         serializer = self.serializer_class(userdata_instance, data=request.data, partial=True)
@@ -110,18 +194,32 @@ class UserRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class ConnectionCreate(CreateAPIView):
-    """Takes data input:
-    "date_established"
-    "closeness('friend', 'Friend'),
-              ('closefriend', 'Close Friend'),
-              ('bestfriend', 'Best Friend'),"
-    "inviter(id)"
-    "invitee(id)"
+    """_summary_
+    takes current user as invitee, get inviter id and closeness
+    from request
+    returns successful connection add
+    Args:
+        "closeness:(request.data.get('closeness'))
+            ('friend', 'Friend'),
+            ('closefriend', 'Close Friend'),
+            ('bestfriend', 'Best Friend'),"
+        "inviter(id)": (request.data.get('inviter_id'))
+        "invitee(id)": (request.user.id)
+    Returns:
+        example:{
+                "id": 4,
+                "date_established": "2024-02-22T00:44:30.241799Z",
+                "closeness": "bestfriend",
+                "nicknamechildtoparent": null,
+                "nicknameparenttochild": null,
+                "inviter": 8,
+                "invitee": 9
+            }
     """
     queryset=Connection.objects.all()
     serializer_class = ConnectionSerializer
     permission_classes = (authentication_level,)
-
+    #implement double connect error and parent child reverse error
     def create(self, request, *args, **kwargs):
         current_user_id = request.user.id
         closness = request.data.get('closeness')

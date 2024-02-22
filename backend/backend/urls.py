@@ -22,8 +22,9 @@ urlpatterns = [
     #re_path(r'^(?P<path>.*)$', serve, { 'document_root': settings.FRONTEND_ROOT}),
     # path('', include(router.urls)),
     #path('api/', include('rest_framework.urls', namespace='rest_framework')),
+
     #returns current logined user name and id {"username": {}, "id": {}}
-    path('api/currentuser', friend_web.views.UserList.as_view()),
+    path('api/currentuser', friend_web.views.CurrentUserList.as_view()),
     #returns all userdatas(admin restricted)
     path('api/userdatas', friend_web.views.UserDataList.as_view()),
     #add current user userdata

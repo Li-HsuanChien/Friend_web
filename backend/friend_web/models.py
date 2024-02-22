@@ -23,6 +23,7 @@ class Userdata(models.Model):
     bio = models.TextField(max_length=150, null=True)
     headshot = models.ImageField(upload_to='static/img/headshots/', null=True)
     created_time = models.DateTimeField(auto_now_add=True)
+    #hard coded gender customizable gender TBD
     gender = models.CharField(choices=Gender_CHOICES)
     date_of_birth = models.DateField()
     show_horoscope = models.BooleanField(default=True)
@@ -41,8 +42,8 @@ class Connection(models.Model):
     inviter = models.ForeignKey(Userdata, related_name='inviter_connections', on_delete=models.CASCADE)
 	#invitee user id
     invitee = models.ForeignKey(Userdata, related_name='invitee_connections', on_delete=models.CASCADE)
-
     date_established = models.DateTimeField(auto_now_add=True)
+	#hard coded closeness level
     closeness = models.CharField(max_length=20, choices=[
         ('friend', 'Friend'),
         ('closefriend', 'Close Friend'),
