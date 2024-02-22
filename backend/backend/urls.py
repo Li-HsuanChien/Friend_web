@@ -24,13 +24,15 @@ urlpatterns = [
     #path('api/', include('rest_framework.urls', namespace='rest_framework')),
 
     #returns current logined user name and id {"username": {}, "id": {}}
-    path('api/currentuser', friend_web.views.CurrentUserList.as_view()),
+    path('api/currentuser', friend_web.views.CurrentUser.as_view()),
     #returns all userdatas(admin restricted)
-    path('api/userdatas', friend_web.views.UserDataList.as_view()),
+    path('api/adminonly/userdatas', friend_web.views.UserDataList.as_view()),
+    #returns user data by inputing user_id
+    path('api/userdata', friend_web.views.TargetUserData.as_view()),
     #add current user userdata
     path('api/userdatas/add', friend_web.views.UserCreate.as_view()),
     #update current user userdata
-    path('api/userdatas/update', friend_web.views.UserRetrieveUpdateDestroy.as_view()),
+    path('api/userdatas/update', friend_web.views.CurrentUserRetrieveUpdateDestroy.as_view()),
     #returns all child connections
     path('api/connections', friend_web.views.ConnectionViewSet.as_view()),
     #adds connection by getting "closeness('friend', 'Friend'),"inviter(id)", invitee is the current user

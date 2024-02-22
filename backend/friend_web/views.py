@@ -17,13 +17,13 @@ from friend_web.models import Userdata, Connection
 from .serializers import UserDataSerializer, UserSerializer, ConnectionSerializer, \
     TokenObtainPairSerializer, RegisterSerializer, ChangePasswordSerializer
 
-authentication_level = IsAuthenticated
+authentication_level = AllowAny
 
-#TBD alter api to one instance instead of lists and add get target data
-class CurrentUserList(ListAPIView):
+#TBD added userdata endpoint need permission classes to restrict endpoints that isn't thiers
+class CurrentUser(APIView):
     """_summary_
         takes request user id
-        returns current logined user name and id
+        returns current logged-in user name and id
     Args:
         self.request.user.id
     Returns:
@@ -38,13 +38,15 @@ class CurrentUserList(ListAPIView):
     """
     serializer_class = UserSerializer
     permission_classes = (authentication_level,)
-    def get_queryset(self):
-        user_id = self.request.user.id
+
+    def get(self, request):
+        user_id = request.user.id
         try:
-            user_instance = User.objects.filter(id=user_id)
-            return user_instance
+            user_instance = User.objects.get(id=user_id)
+            serializer = self.serializer_class(user_instance)
+            return Response(serializer.data)
         except User.DoesNotExist:
-            return {'message': 'user not exists'}
+            return Response({'message': 'User does not exist'}, status=status.HTTP_404_NOT_FOUND)
 
 class UserDataList(ListAPIView):
     """_summary_
@@ -86,6 +88,38 @@ class ConnectionViewSet(ListAPIView):
         inviter_id = self.request.data.get('inviter_id')
         query = Connection.objects.filter(inviter=inviter_id)
         return query
+
+class TargetUserData(APIView):
+    """_summary_
+		returns targer user data by inputing target user_id
+    Args:
+        user_id = request.data.get('user_id')
+    Returns:
+        example: {
+			"username": "U1",
+			"bio": "I am U1 programmed",
+			"headshot": "/img/headshots/IMG_0905_nIlVA1z.JPG",
+			"gender": "M",
+			"date_of_birth": "2000-02-01",
+			"show_horoscope": true,
+			"instagram_link": "http://www.filler.com",
+			"facebook_link": "http://www.filler.com",
+			"snapchat_link": "http://www.filler.com",
+			"inviteurl": "http://www.filler.com",
+			"created_time": "2024-02-14T09:52:45Z"
+		}
+    """
+    serializer_class = UserDataSerializer
+    permission_classes = (authentication_level,)
+
+    def get(self, request):
+        user_id = request.data.get('user_id')
+        try:
+            user_instance = Userdata.objects.get(username_id=user_id)
+            serializer = self.serializer_class(user_instance)
+            return Response(serializer.data)
+        except User.DoesNotExist:
+            return Response({'message': 'User does not exist'}, status=status.HTTP_404_NOT_FOUND)
 
 class UserCreate(CreateAPIView):
     """_summary_
@@ -148,7 +182,7 @@ class UserCreate(CreateAPIView):
         serializer = UserDataSerializer(userdata_instance)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-class UserRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView):
+class CurrentUserRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView):
     """_summary_
         edit's user data
     Args:
