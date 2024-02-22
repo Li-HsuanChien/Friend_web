@@ -4,7 +4,7 @@ from django.conf import settings
 
 class Userdata(models.Model):
     """
-    example('U1','I do', '<img>', 'Gendertyple.cismale', '2024-02-26 21:07UTC-8'
+    example('U1','I do', '<img>', 'M', '2024-02-26 21:07UTC-8'
             '2010-08-21',
             'true', 'https://www.instagram.com/p/CxPC67MS7nx/',
             'https://www.facebook.com/tuntundragon/',
@@ -37,9 +37,12 @@ class Userdata(models.Model):
         return '%s' % (self.username)
 
 class Connection(models.Model):
+    #inviter user id
     inviter = models.ForeignKey(Userdata, related_name='inviter_connections', on_delete=models.CASCADE)
+	#invitee user id
     invitee = models.ForeignKey(Userdata, related_name='invitee_connections', on_delete=models.CASCADE)
-    date_established = models.DateTimeField()
+
+    date_established = models.DateTimeField(auto_now_add=True)
     closeness = models.CharField(max_length=20, choices=[
         ('friend', 'Friend'),
         ('closefriend', 'Close Friend'),

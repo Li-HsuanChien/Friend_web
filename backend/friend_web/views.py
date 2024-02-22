@@ -1,23 +1,21 @@
-from rest_framework import permissions, generics, status
+from rest_framework import status
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.views import APIView
-from django.views.decorators.csrf import csrf_exempt
-from rest_framework.parsers import JSONParser
 from rest_framework.generics import CreateAPIView, RetrieveUpdateDestroyAPIView, \
     ListAPIView, UpdateAPIView
 from django.shortcuts import get_object_or_404
 from rest_framework.response import Response
+from django.conf import settings
+from rest_framework.permissions import AllowAny
+from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from rest_framework_simplejwt.tokens import RefreshToken
+from datetime import datetime
+
 from django.contrib.auth.models import User
 from friend_web.models import Userdata, Connection
 from .serializers import UserDataSerializer, UserSerializer, ConnectionSerializer, \
     TokenObtainPairSerializer, RegisterSerializer, ChangePasswordSerializer
-from django_filters.rest_framework import DjangoFilterBackend
-from django.conf import settings
-from rest_framework.permissions import AllowAny
-from rest_framework_simplejwt.views import TokenObtainPairView
-from rest_framework.permissions import IsAuthenticated
-from rest_framework_simplejwt.tokens import RefreshToken
-from datetime import datetime
 
 authentication_level = IsAuthenticated
 
@@ -37,7 +35,7 @@ class UserDataList(ListAPIView):
     serializer_class = UserDataSerializer
     filter_backends = [DjangoFilterBackend, ]
     filterset_fields = ('username', )
-    permission_classes = (authentication_level,)
+    permission_classes = (IsAdminUser,)
 
 class ConnectionViewSet(ListAPIView):
     queryset = Connection.objects.all()
@@ -111,15 +109,12 @@ class UserRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-#TBD https://www.sankalpjonna.com/learn-django/representing-foreign-key-values-in-django-serializers Add data with postman now
 class ConnectionCreate(CreateAPIView):
     """Takes data input:
     "date_established"
     "closeness('friend', 'Friend'),
               ('closefriend', 'Close Friend'),
               ('bestfriend', 'Best Friend'),"
-    "nicknamechildtoparent"(optional),
-    "nicknamechildtoparent"(optional),
     "inviter(id)"
     "invitee(id)"
     """
@@ -129,14 +124,12 @@ class ConnectionCreate(CreateAPIView):
 
     def create(self, request, *args, **kwargs):
         current_user_id = request.user.id
-        established = datetime.now()
         closness = request.data.get('closeness')
         inviter_id = request.data.get('inviter_id')
         invitee_instance = Userdata.objects.get(username=current_user_id)
         inviter_instance = Userdata.objects.get(username=inviter_id)
 
         userdata_instance = Connection.objects.create(
-            date_established= established,
             closeness= closness,
             inviter= inviter_instance,
             invitee= invitee_instance
@@ -144,7 +137,6 @@ class ConnectionCreate(CreateAPIView):
 
         serializer = ConnectionSerializer(userdata_instance)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
-
 
 class ConnectionRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView):
     """Takes data input:
