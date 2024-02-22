@@ -46,12 +46,9 @@ class ConnectionViewSet(ListAPIView):
     lookup_field = 'inviter'
     permission_classes = (authentication_level,)
     def get_queryset(self):
-
         inviter_id = self.request.data.get('inviter_id')
         query = Connection.objects.filter(inviter=inviter_id)
         return query
-
-    #connections?inviter=<int:username_id> Migrate to sort to user based restriction
 
 class UserCreate(CreateAPIView):
     queryset=Userdata.objects.all()
@@ -163,8 +160,6 @@ class ConnectionRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView):
     queryset=Connection.objects.all()
     serializer_class = ConnectionSerializer
     permission_classes = (AllowAny,)
-    #implement custom permission class if is inviter allow nicknameparenttochild closeness
-	#implement custom permission class if is invitee allow nicknamechildtoparent closeness
     def get_object(self):
         id = self.request.data.get('id')
         # Ensure Userdata instance exists for the user
@@ -172,9 +167,29 @@ class ConnectionRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView):
         return userdata_instance
 
     def put(self, request, *args, **kwargs):
-        userdata_instance = self.get_object()
+        current_user_id = self.request.user.id
+        connection_instance = self.get_object()
+
+        if(connection_instance.inviter_id == current_user_id):
+            nicknameparenttochild = self.request.data.get('nicknameparenttochild')
+            closeness = self.request.data.get('closeness')
+            if(nicknameparenttochild):
+                connection_instance.nicknameparenttochild = nicknameparenttochild
+            if(closeness):
+                connection_instance.closeness = closeness
+        elif(connection_instance.invitee_id == current_user_id):
+            nicknamechildtoparent = self.request.data.get('nicknamechildtoparent')
+            closeness = self.request.data.get('closeness')
+            if(nicknamechildtoparent):
+                connection_instance.nicknamechildtoparent = nicknamechildtoparent
+            if(closeness):
+                connection_instance.closeness = closeness
+        else:
+            return Response({'message': 'user not part of connection'}, status=status.HTTP_400_BAD_REQUEST)
+
+        connection_instance.save()
         #check user status allow edit accordingly
-        serializer = self.serializer_class(userdata_instance, data=request.data, partial=True)
+        serializer = self.serializer_class(connection_instance, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()  # This will update the instance
             return Response(serializer.data, status=status.HTTP_200_OK)
