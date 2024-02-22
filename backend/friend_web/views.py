@@ -19,6 +19,7 @@ from .serializers import UserDataSerializer, UserSerializer, ConnectionSerialize
 
 authentication_level = IsAuthenticated
 
+#TBD alter api to one instance instead of lists and add get target data
 class CurrentUserList(ListAPIView):
     """_summary_
         takes request user id
@@ -184,8 +185,8 @@ class UserRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView):
         # Ensure Userdata instance exists for the user
         userdata_instance = get_object_or_404(Userdata, username=user)
         return userdata_instance
-    #TBD update restrictions or custom url???? but no created time
 
+    #TBD update restrictions or custom url????
     def put(self, request, *args, **kwargs):
         userdata_instance = self.get_object()
         fields_to_update = ['bio', 'headshot', 'gender', 'date_of_birth', 'show_horoscope',
