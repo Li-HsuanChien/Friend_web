@@ -111,57 +111,47 @@ const LoginStyle = styled.div`
 `;
 
 interface Credentials {
-  username: string;
-  password: string;
+  username: string
+  password: string
 }
 interface successMessage {
-  refresh: string;
-  access: string;
+  refresh: string,
+  access: string
 }
 interface errorMessage {
-  detail: string;
+  detail: string
 }
-
 type ReturnMessage = successMessage | errorMessage;
 
 async function LoginApi(credentials: Credentials) {
-  return fetch('http://127.0.0.1:8000/api/login', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(credentials),
-  }).then(data => data.json());
+  try {
+    const response = await fetch('http://127.0.0.1:8000/api/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(credentials),
+    });
+    if (!response.ok) {
+      throw new Error('Failed to login');
+    }
+
+    return response.json();
+  } catch (error) {
+    // Handle error
+    console.error('Login error:', error);
+    throw error; // Rethrow the error to be caught by the caller
+  }
 }
 
-async function PingServer(Token: string) {
-  return fetch('http://127.0.0.1:8000/api/currentuser', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(Token),
-  }).then(data => data.json());
-}
+
 
 const Login = () => {
   const navigate = useNavigate();
-  const storedJwt = localStorage.getItem('token');
-  const [user_id, setuser_id] = useState<number>();
   //Consider redux jwt
   const [username, setUsername] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [loginState, setLoginState] = useState<string | null>(null);
-
-  const Ping = async(token: string) => {
-    try{
-      const response = await PingServer(token);
-      setuser_id(response)
-    } catch (error) {
-      console.log(error);
-    }
-  };
-  Ping(storedJwt as string);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -171,7 +161,7 @@ const Login = () => {
         password: password,
       });
       if ('refresh' in response) {
-        localStorage.setItem('token', response.access);
+        window.localStorage.setItem('JWTToken', response.access);
         setLoginState('Welcome!');
         navigate('/');
       } else {
@@ -196,6 +186,7 @@ const Login = () => {
 
           <label htmlFor="username">Username</label>
           <input
+            required
             type="text"
             placeholder="Username"
             id="username"
@@ -206,6 +197,7 @@ const Login = () => {
 
           <label htmlFor="password">Password</label>
           <input
+            required
             type="password"
             placeholder="Password"
             id="password"

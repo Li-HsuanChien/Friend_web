@@ -1,20 +1,15 @@
 import React from 'react';
-import {IoIosMenu} from 'react-icons/io';
+import { IconContext } from 'react-icons';
+import { TbMenu2 } from 'react-icons/tb';
 
-const Menu = (): any => {
+const Menu = () => {
   return (
     <>
-      <nav className="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
-        <div className="container-fluid">
-          <h1 className="navbar-brand">Friend Web</h1>
-
-          <div className="collapse navbar-collapse" id="navbarNav">
-            <div className="navbar-text ms-auto">
-              <IoIosMenu />
-            </div>
-          </div>
-        </div>
-      </nav>
+        <IconContext.Provider
+        value={{ color: 'white', size: '50px' }}
+      >
+        <TbMenu2 />
+      </IconContext.Provider>
     </>
   );
 };

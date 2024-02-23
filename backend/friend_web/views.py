@@ -17,7 +17,7 @@ from friend_web.models import Userdata, Connection
 from .serializers import UserDataSerializer, UserSerializer, ConnectionSerializer, \
     TokenObtainPairSerializer, RegisterSerializer, ChangePasswordSerializer
 
-authentication_level = AllowAny
+authentication_level = IsAuthenticated
 
 #TBD added userdata endpoint need permission classes to restrict endpoints that isn't thiers
 class CurrentUser(APIView):
