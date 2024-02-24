@@ -147,7 +147,9 @@ const Register = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      const response: ReturnMessage = await RegisterApi({
+      if(password !== password2){
+        setRegistrationState('password does not match!')
+      } else {const response: ReturnMessage = await RegisterApi({
         username: username,
         password: password,
         password2: password2,
@@ -161,10 +163,9 @@ const Register = () => {
         setRegistrationState(`Something went wrong! ${response.message}`);
         return;
       }
-    } catch (error) {
+    }} catch (error) {
       setRegistrationState(`Something went Wrong! Try again ${error}`);
-      return;
-    }
+      return;}
   };
 
   return (
