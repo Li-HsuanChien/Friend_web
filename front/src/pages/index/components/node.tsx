@@ -7,12 +7,16 @@ import { Url } from 'url';
 type Gender = 'M' | 'F' | 'N' | 'NA'
 
 // eslint-disable-next-line node/no-unsupported-features/node-builtins
-const NodeStyle = styled.div`
-
+const NodeStyle = styled.div<{current:boolean}>`
+  position: absolute;
   width: 48px;
   height: 48px;
   background-color: white;
   border-radius: 50%; 
+  ${props => props.current  && `
+         top:45vh;
+         left:50vw;
+    `}
 `
 interface userData{
   username: string,
@@ -49,10 +53,9 @@ async function getUserData(user_id: number, Token: string): Promise<userData>{
   }
 }
 
-const UserNode: React.FC<{user_id: number}> = ({user_id}) => {
+const UserNode: React.FC<{user_id: number, current:boolean}> = ({user_id, current}) => {
   const {dispatch, jwt} = useContext(AppContext);
-  const [data, setData] = useState<userData>()
-
+  const [data, setData] = useState<userData>();
   useEffect(() =>{
     if(user_id){
       getUserData(user_id, jwt as string)
@@ -69,7 +72,7 @@ const UserNode: React.FC<{user_id: number}> = ({user_id}) => {
 
   return (
     <>
-      { data && <NodeStyle title={`this is ${data.username}`}></NodeStyle>}
+      { data && <NodeStyle title={`this is ${data.username}`} current = {current}></NodeStyle>}
     </>
   );
 };

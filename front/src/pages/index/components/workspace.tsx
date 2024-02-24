@@ -7,8 +7,11 @@ const Wrapper = styled.div`
   #workspaceContainer {
     flex: 1;
     overflow: hidden;
-    height: 100vh;
-    width: 100vh
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
   }
 
   #workspace {
@@ -62,7 +65,7 @@ const Workspace: React.FC = () => {
           }}
         >
           {/* childrens */}
-          <UserNode user_id = {current_user_id as number}></UserNode>
+          <UserNode user_id = {current_user_id as number} current = {true}></UserNode>
         </main>
       </div>
     </Wrapper>

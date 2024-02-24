@@ -62,7 +62,7 @@ async function PingServer(Token: string): Promise<pingSuccessResponse> {
 
 
 function Main() {
-  const { current_user_id, jwt, dispatch } = useContext(AppContext);
+  const { jwt, dispatch } = useContext(AppContext);
   const navigate = useNavigate();
   useEffect(()=>{
     const JWTToken = window.localStorage.getItem('JWTToken');
