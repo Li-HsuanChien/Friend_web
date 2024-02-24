@@ -2,15 +2,18 @@ import React, {useState} from 'react';
 // eslint-disable-next-line node/no-unpublished-import
 import {useNavigate, Link} from 'react-router-dom';
 import {ChangeEvent} from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css';
 import {styled} from 'styled-components';
 
 
 const RegisterStyle = styled.div`
 
-  width: 100vw;
-  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   background-color: #080710;
+
   .background {
     width: 430px;
     height: 600px;
@@ -40,7 +43,7 @@ const RegisterStyle = styled.div`
   }
 
   form {
-    height: 600px;
+    height: 500px;
     width: 400px;
     background-color: rgba(255, 255, 255, 0.13);
     position: absolute;
@@ -51,7 +54,7 @@ const RegisterStyle = styled.div`
     backdrop-filter: blur(10px);
     border: 2px solid rgba(255, 255, 255, 0.1);
     box-shadow: 0 0 40px rgba(8, 7, 16, 0.6);
-    padding: 50px 35px;
+    padding: 40px 35px;
   }
 
   form * {
@@ -72,7 +75,7 @@ const RegisterStyle = styled.div`
   form h3 {
     font-size: 32px;
     font-weight: 500;
-    line-height: 42px;
+    line-height: 20px;
     text-align: center;
   }
 

@@ -7,8 +7,12 @@ import { AppContext } from '../../AppContext';
 import { sendCurrentId, sendJWT, sendCurrentUsername } from '../../actions';
 
 const LoginStyle = styled.div`
-  width: 100vw;
-  height: 100vh;
+
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   background-color: #080710;
 
   .background {
@@ -40,7 +44,7 @@ const LoginStyle = styled.div`
   }
 
   form {
-    height: 480px;
+    height: 400px;
     width: 400px;
     background-color: rgba(255, 255, 255, 0.13);
     position: absolute;
@@ -218,7 +222,7 @@ const Login = () => {
         setLoginState(response.detail);
       }
     } catch (error) {
-      setLoginState(`Something went Wrong! Try again ${error}`);
+      setLoginState('Something went Wrong! Try again!');
       console.error(error)
       return;
     }
