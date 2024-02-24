@@ -8,10 +8,11 @@ type Gender = 'M' | 'F' | 'N' | 'NA'
 
 // eslint-disable-next-line node/no-unsupported-features/node-builtins
 const NodeStyle = styled.div`
+
   width: 48px;
   height: 48px;
-  background: 'https://upload.wikimedia.org/wikipedia/commons/9/99/Sample_User_Icon.png';
-  border-radius: 50%; /*the magic*/
+  background-color: white;
+  border-radius: 50%; 
 `
 interface userData{
   username: string,
@@ -67,7 +68,9 @@ const UserNode: React.FC<{user_id: number}> = ({user_id}) => {
 
 
   return (
-    <NodeStyle></NodeStyle>
+    <>
+      { data && <NodeStyle title={`this is ${data.username}`}></NodeStyle>}
+    </>
   );
 };
 
