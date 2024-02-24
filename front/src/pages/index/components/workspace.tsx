@@ -19,6 +19,14 @@ const Wrapper = styled.div`
     height: 0;
     overflow: visible;
   }
+
+  button{
+    position:absolute;
+    width: 40px;
+    height: 20px;
+    bottom: 20px;
+    left: 30px;
+  }
 `;
 
 interface WorkspaceConf {
@@ -50,6 +58,12 @@ const Workspace: React.FC = () => {
     document.body.addEventListener('mousemove', move);
     document.body.addEventListener('mouseup', handleMouseUp, { once: true });
   };
+  const returnPos = () =>{
+    setWorkspaceConf({
+      movementX: 0,
+      movementY: 0,
+    })
+  }
 
   return (
     <Wrapper>
@@ -67,6 +81,7 @@ const Workspace: React.FC = () => {
           {/* childrens */}
           <UserNode user_id = {current_user_id as number} current = {true}></UserNode>
         </main>
+        <button onClick={returnPos}>Back</button>
       </div>
     </Wrapper>
   );
