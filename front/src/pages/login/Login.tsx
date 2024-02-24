@@ -169,12 +169,11 @@ interface pingSuccessResponse{
 async function PingServer(Token: string): Promise<pingSuccessResponse> {
   try {
     const response = await fetch('http://127.0.0.1:8000/api/currentuser', {
-      method: 'POST',
+      method: 'GET',
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${Token}`
       },
-      body: JSON.stringify(Token),
     });
     if (!response.ok) {
       throw new Error('Failed to ping server');

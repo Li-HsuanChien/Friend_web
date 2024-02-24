@@ -1,36 +1,18 @@
-import React, { useState, MouseEvent } from 'react';
+import React, { useState } from 'react';
 import { styled } from 'styled-components';
 
 const Wrapper = styled.div`
   #workspaceContainer {
     flex: 1;
     overflow: hidden;
+    height: 100vh;
+    width: 100vh
   }
 
   #workspace {
     width: 0;
     height: 0;
     overflow: visible;
-  }
-
-  .block {
-    position: absolute;
-    background-color: #f1f1f1;
-    border: solid 2px #d3d3d3;
-    min-width: 16ch;
-    width: fit-content;
-    height: fit-content;
-  }
-
-  .block > .header {
-    padding: 0.5em;
-    cursor: move;
-    background-color: #2196f3;
-  }
-
-  .block > .content {
-    background-color: #222;
-    text-align: left;
   }
 `;
 
