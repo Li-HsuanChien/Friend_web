@@ -119,8 +119,7 @@ const LoginStyle = styled.div`
     border-radius: 5px;
     cursor: pointer;
   }
-`;
-
+`
 const ForgotLink = styled(Link)`
   display: block;
   text-align: right;
@@ -129,7 +128,6 @@ const SignLink = styled(Link)`
   display: block;
   text-align: left;
 `
-
 interface Credentials {
   username: string
   password: string

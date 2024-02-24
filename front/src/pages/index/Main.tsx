@@ -15,6 +15,26 @@ const Topright = styled.div`
     top: 50px;
   }
 `
+const StyleDiv = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #080710;
+  margin: 0;
+  display: flex;
+  flex-flow: column nowrap;
+
+  user-select: none;
+
+  div {
+    flex: 1;
+
+    display: grid;
+    grid-template: 1fr / 3em 9em 1fr;
+  }
+`
 interface pingSuccessResponse{
   username:string,
   id: number
@@ -74,11 +94,12 @@ function Main() {
 
   return (
     <>
-
-      <Topright>
-        <Menu/>
-      </Topright>
-      <WorkspaceComponent />
+      <StyleDiv>
+        <Topright>
+          <Menu/>
+        </Topright>
+        <WorkspaceComponent />
+      </StyleDiv>
     </>
   )
   ;

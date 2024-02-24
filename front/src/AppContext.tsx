@@ -1,6 +1,5 @@
 import React, { createContext, useReducer, ReactNode } from 'react';
 
-
 // Define the interface for the context state
 interface ContextState {
   current_user_id: number | null;
@@ -18,9 +17,6 @@ type Action =
 interface AppContextValue extends ContextState {
   dispatch: React.Dispatch<Action>;
 }
-
-
-
 
 export const AppReducer = (state: ContextState, action: Action): ContextState => {
   switch (action.type) {
