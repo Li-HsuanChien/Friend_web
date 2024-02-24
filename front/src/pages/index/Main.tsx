@@ -1,9 +1,11 @@
 /* eslint-disable node/no-unpublished-import */
-import React, { useState } from 'react';
+import React, { useContext, useEffect } from 'react';
 import {useNavigate} from 'react-router-dom';
 import WorkspaceComponent from './components/workspace';
 import Menu from './components/menu';
 import styled from 'styled-components';
+import { AppContext } from '../../AppContext';
+import { sendCurrentId, sendCurrentUsername } from '../../actions';
 
 const Topright = styled.div`
   {
@@ -41,21 +43,35 @@ async function PingServer(Token: string): Promise<pingSuccessResponse> {
 
 
 function Main() {
-  const [user_id, setuser_id] = useState(0);
+  const { current_user_id, jwt, dispatch } = useContext(AppContext);
   const navigate = useNavigate();
+  useEffect(()=>{
+    const JWTToken = window.localStorage.getItem('JWTToken');
+    if (JWTToken) {
+      PingServer(JWTToken)
+        .then((result) => {
+          const { username, id } = result;
+          dispatch(sendCurrentId(id));
+          dispatch(sendCurrentUsername(username));
+        })
+        .catch((error) => {
+          console.error('Error occurred while pinging server:', error);
+          navigate('/login');
+        });
+    } else if (jwt){
+      PingServer(jwt)
+        .then((result) => {
+          const { username, id } = result;
+          dispatch(sendCurrentId(id));
+          dispatch(sendCurrentUsername(username));
+        })
+        .catch((error) => {
+          console.error('Error occurred while pinging server:', error);
+          navigate('/login');
+        });
+    }
+  }, [])
 
-  const JWTToken = window.localStorage.getItem('JWTToken');
-  if (JWTToken) {
-    PingServer(JWTToken)
-      .then((result) => {
-        const { username, id } = result;
-        setuser_id(id);
-        navigate('/');
-      })
-      .catch((error) => {
-        console.error('Error occurred while pinging server:', error);
-      });
-  }
   return (
     <>
 

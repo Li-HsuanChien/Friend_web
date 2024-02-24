@@ -1,10 +1,16 @@
 /* eslint-disable node/no-unpublished-import */
-import React, {useState} from 'react';
-import './index.css';
-import {styled} from 'styled-components';
+import React, {useState, useContext} from 'react';
+import { styled } from 'styled-components';
 import {useNavigate} from 'react-router-dom';
 import {ChangeEvent} from 'react';
+import { AppContext } from '../../AppContext';
+import { sendCurrentId, sendJWT, sendCurrentUsername } from '../../actions';
+
 const LoginStyle = styled.div`
+  width: 100vw;
+  height: 100vh;
+  background-color: #080710;
+
   .background {
     width: 430px;
     height: 520px;
@@ -143,12 +149,35 @@ async function LoginApi(credentials: Credentials) {
     throw error; // Rethrow the error to be caught by the caller
   }
 }
+interface pingSuccessResponse{
+  username:string,
+  id: number
+}
 
-
+async function PingServer(Token: string): Promise<pingSuccessResponse> {
+  try {
+    const response = await fetch('http://127.0.0.1:8000/api/currentuser', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${Token}`
+      },
+      body: JSON.stringify(Token),
+    });
+    if (!response.ok) {
+      throw new Error('Failed to ping server');
+    }
+    return response.json();
+  } catch (error) {
+    // Handle error
+    console.error('Ping server error:', error);
+    throw error; // Rethrow the error to be caught by the caller
+  }
+}
 
 const Login = () => {
   const navigate = useNavigate();
-  //Consider redux jwt
+  const {dispatch} = useContext(AppContext);
   const [username, setUsername] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [loginState, setLoginState] = useState<string | null>(null);
@@ -161,7 +190,18 @@ const Login = () => {
         password: password,
       });
       if ('refresh' in response) {
-        window.localStorage.setItem('JWTToken', response.access);
+        const {refresh , access} = response;
+        //debug
+        console.log(refresh);
+        console.log(access);
+        window.localStorage.setItem('JWTToken', access);
+        dispatch(sendJWT(access));
+        PingServer(response.access)
+          .then((result) => {
+            const { username, id } = result;
+            dispatch(sendCurrentId(id));
+            dispatch(sendCurrentUsername(username));
+          })
         setLoginState('Welcome!');
         navigate('/');
       } else {
@@ -169,6 +209,7 @@ const Login = () => {
       }
     } catch (error) {
       setLoginState(`Something went Wrong! Try again ${error}`);
+      console.error(error)
       return;
     }
   };
