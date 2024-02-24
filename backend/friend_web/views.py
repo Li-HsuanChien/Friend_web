@@ -112,7 +112,7 @@ class TargetUserData(APIView):
     serializer_class = UserDataSerializer
     permission_classes = (authentication_level,)
 
-    def get(self, request):
+    def post(self, request):
         user_id = request.data.get('user_id')
         try:
             user_instance = Userdata.objects.get(username_id=user_id)

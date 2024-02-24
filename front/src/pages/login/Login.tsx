@@ -210,6 +210,8 @@ const Login = () => {
         PingServer(response.access)
           .then((result) => {
             const { username, id } = result;
+            console.log(`got id ${id}`);
+            console.log(`got username ${username}`);
             dispatch(sendCurrentId(id));
             dispatch(sendCurrentUsername(username));
           })

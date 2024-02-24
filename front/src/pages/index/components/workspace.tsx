@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { styled } from 'styled-components';
+import { AppContext } from '../../../AppContext';
+import UserNode from './node';
 
 const Wrapper = styled.div`
   #workspaceContainer {
@@ -22,6 +24,7 @@ interface WorkspaceConf {
 }
 
 const Workspace: React.FC = () => {
+  const { current_user_id } = useContext(AppContext);
   const [workspaceConf, setWorkspaceConf] = useState<WorkspaceConf>({
     movementX: 0,
     movementY: 0,
@@ -58,10 +61,8 @@ const Workspace: React.FC = () => {
             transform: `translate(${workspaceConf.movementX}px, ${workspaceConf.movementY}px)`,
           }}
         >
-          <div className='block'>
-            <div className='header'>Sample</div>
-            <div className='content'>Yes</div>
-          </div>
+          {/* childrens */}
+          <UserNode user_id = {current_user_id as number}></UserNode>
         </main>
       </div>
     </Wrapper>
