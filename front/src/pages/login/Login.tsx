@@ -1,7 +1,7 @@
 /* eslint-disable node/no-unpublished-import */
 import React, {useState, useContext} from 'react';
 import { styled } from 'styled-components';
-import {useNavigate} from 'react-router-dom';
+import {useNavigate, Link} from 'react-router-dom';
 import {ChangeEvent} from 'react';
 import { AppContext } from '../../AppContext';
 import { sendCurrentId, sendJWT, sendCurrentUsername } from '../../actions';
@@ -69,10 +69,6 @@ const LoginStyle = styled.div`
     text-align: center;
   }
 
-  form a {
-    text-align: center;
-  }
-
   form p {
     text-align: center;
     margin-top: 15px;
@@ -99,6 +95,11 @@ const LoginStyle = styled.div`
     font-weight: 300;
   }
 
+  // input:-webkit-autofill { 
+  //   -webkit-box-shadow:200px 200px 100px black inset; 
+  //   box-shadow:200px 200px 100px white inset; 
+  // }
+
   ::placeholder {
     color: #e5e5e5;
   }
@@ -115,6 +116,15 @@ const LoginStyle = styled.div`
     cursor: pointer;
   }
 `;
+
+const ForgotLink = styled(Link)`
+  display: block;
+  text-align: right;
+`
+const SignLink = styled(Link)`
+  display: block;
+  text-align: left;
+`
 
 interface Credentials {
   username: string
@@ -246,12 +256,13 @@ const Login = () => {
               setPassword(e.target.value);
             }}
           />
+          <ForgotLink to="/password">Forgot password</ForgotLink>
           {loginState && <p>{loginState}</p>}
           <button
             type="submit"
-            style={{marginTop: loginState ? '5px' : '50px'}}
+            style={{marginTop: loginState ? '5px' : '20px'}}
           >Log In</button>
-          <a href="https://google.com">Forgot password?</a>
+          <SignLink to="/register">Sign up!</SignLink>
         </form>
       </LoginStyle>
     </>

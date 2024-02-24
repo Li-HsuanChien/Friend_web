@@ -1,12 +1,16 @@
 import React, {useState} from 'react';
 // eslint-disable-next-line node/no-unpublished-import
-import {useNavigate} from 'react-router-dom';
+import {useNavigate, Link} from 'react-router-dom';
 import {ChangeEvent} from 'react';
-import './index.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {styled} from 'styled-components';
 
+
 const RegisterStyle = styled.div`
+
+  width: 100vw;
+  height: 100vh;
+  background-color: #080710;
   .background {
     width: 430px;
     height: 600px;
@@ -177,7 +181,7 @@ const Register = () => {
         </div>
 
         <form onSubmit={handleSubmit}>
-          <h3>Login</h3>
+          <h3>Register</h3>
 
           <label htmlFor="username">Username</label>
           <input
@@ -221,7 +225,7 @@ const Register = () => {
             Register
           </button>
 
-          <a href="/login">Already an user?</a>
+          <Link to="/login">Already an user?</Link>
         </form>
       </RegisterStyle>
     </>
