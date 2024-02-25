@@ -10,7 +10,7 @@ from rest_framework.permissions import AllowAny
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework_simplejwt.tokens import RefreshToken
-from datetime import datetime
+from .permission import MaxAccessPermission
 
 from django.contrib.auth.models import User
 from friend_web.models import Userdata, Connection
@@ -20,6 +20,18 @@ from .serializers import UserDataSerializer, UserSerializer, ConnectionSerialize
 authentication_level = IsAuthenticated
 
 #TBD added userdata endpoint need permission classes to restrict endpoints that isn't thiers
+
+class UserDataList(ListAPIView):
+    """_summary_
+        Admin privilliged all user data list
+    Args:
+        IsAdminUser
+    """
+    queryset = Userdata.objects.all()
+    serializer_class = UserDataSerializer
+    filter_backends = [DjangoFilterBackend, ]
+    filterset_fields = ('username', )
+    permission_classes = (IsAdminUser,)
 class CurrentUser(APIView):
     """_summary_
         takes request user id
@@ -47,18 +59,6 @@ class CurrentUser(APIView):
             return Response(serializer.data)
         except User.DoesNotExist:
             return Response({'message': 'User does not exist'}, status=status.HTTP_404_NOT_FOUND)
-
-class UserDataList(ListAPIView):
-    """_summary_
-        Admin privilliged all user data list
-    Args:
-        IsAdminUser
-    """
-    queryset = Userdata.objects.all()
-    serializer_class = UserDataSerializer
-    filter_backends = [DjangoFilterBackend, ]
-    filterset_fields = ('username', )
-    permission_classes = (IsAdminUser,)
 
 class ConnectionViewSet(ListAPIView):
     """_summary_
@@ -110,7 +110,7 @@ class TargetUserData(APIView):
 		}
     """
     serializer_class = UserDataSerializer
-    permission_classes = (authentication_level,)
+    permission_classes = (MaxAccessPermission,)
 
     def post(self, request):
         user_id = request.data.get('user_id')
@@ -298,9 +298,9 @@ class ConnectionRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView):
     serializer_class = ConnectionSerializer
     permission_classes = (AllowAny,)
     def get_object(self):
-        id = self.request.data.get('id')
+        connection_id = self.request.data.get('connection_id')
         # Ensure Userdata instance exists for the user
-        userdata_instance = get_object_or_404(Connection, id=id)
+        userdata_instance = get_object_or_404(Connection, id=connection_id)
         return userdata_instance
 
     def put(self, request, *args, **kwargs):
