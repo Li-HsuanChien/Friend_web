@@ -91,23 +91,23 @@ class ConnectionViewSet(ListAPIView):
 
 class TargetUserData(APIView):
     """_summary_
-		returns targer user data by inputing target user_id
+        returns targer user data by inputing target user_id
     Args:
         user_id = request.data.get('user_id')
     Returns:
         example: {
-			"username": "U1",
-			"bio": "I am U1 programmed",
-			"headshot": "/img/headshots/IMG_0905_nIlVA1z.JPG",
-			"gender": "M",
-			"date_of_birth": "2000-02-01",
-			"show_horoscope": true,
-			"instagram_link": "http://www.filler.com",
-			"facebook_link": "http://www.filler.com",
-			"snapchat_link": "http://www.filler.com",
-			"inviteurl": "http://www.filler.com",
-			"created_time": "2024-02-14T09:52:45Z"
-		}
+            "username": "U1",
+            "bio": "I am U1 programmed",
+            "headshot": "/img/headshots/IMG_0905_nIlVA1z.JPG",
+            "gender": "M",
+            "date_of_birth": "2000-02-01",
+            "show_horoscope": true,
+            "instagram_link": "http://www.filler.com",
+            "facebook_link": "http://www.filler.com",
+            "snapchat_link": "http://www.filler.com",
+            "inviteurl": "http://www.filler.com",
+            "created_time": "2024-02-14T09:52:45Z"
+        }
     """
     serializer_class = UserDataSerializer
     permission_classes = (MaxAccessPermission,)
@@ -283,7 +283,7 @@ class ConnectionCreate(CreateAPIView):
         serializer = ConnectionSerializer(userdata_instance)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-class ConnectionRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView):
+class ConnectionRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView, ):
     """Takes data input:
     "closeness('friend', 'Friend'),
               ('closefriend', 'Close Friend'),
@@ -294,9 +294,8 @@ class ConnectionRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView):
     "inviter(id) takes user"
     "invitee(id) takes user"
     """
-    queryset=Connection.objects.all()
     serializer_class = ConnectionSerializer
-    permission_classes = (AllowAny,)
+    permission_classes = (MaxAccessPermission,)
     def get_object(self):
         connection_id = self.request.data.get('connection_id')
         # Ensure Userdata instance exists for the user
@@ -310,17 +309,13 @@ class ConnectionRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView):
         if(connection_instance.inviter_id == current_user_id):
             nicknameparenttochild = self.request.data.get('nicknameparenttochild')
             closeness = self.request.data.get('closeness')
-            if(nicknameparenttochild):
-                connection_instance.nicknameparenttochild = nicknameparenttochild
-            if(closeness):
-                connection_instance.closeness = closeness
+            connection_instance.nicknameparenttochild = nicknameparenttochild
+            connection_instance.closeness = closeness
         elif(connection_instance.invitee_id == current_user_id):
             nicknamechildtoparent = self.request.data.get('nicknamechildtoparent')
             closeness = self.request.data.get('closeness')
-            if(nicknamechildtoparent):
-                connection_instance.nicknamechildtoparent = nicknamechildtoparent
-            if(closeness):
-                connection_instance.closeness = closeness
+            connection_instance.nicknamechildtoparent = nicknamechildtoparent
+            connection_instance.closeness = closeness
         else:
             return Response({'message': 'user not part of connection'}, status=status.HTTP_400_BAD_REQUEST)
 
