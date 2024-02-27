@@ -19,7 +19,7 @@ from .serializers import UserDataSerializer, UserSerializer, ConnectionSerialize
 
 authentication_level = IsAuthenticated
 
-#TBD added userdata endpoint need permission classes to restrict endpoints that isn't thiers
+
 
 class UserDataList(ListAPIView):
     """_summary_
@@ -32,6 +32,7 @@ class UserDataList(ListAPIView):
     filter_backends = [DjangoFilterBackend, ]
     filterset_fields = ('username', )
     permission_classes = (IsAdminUser,)
+
 class CurrentUser(APIView):
     """_summary_
         takes request user id
@@ -282,7 +283,6 @@ class ConnectionCreate(CreateAPIView):
 
         serializer = ConnectionSerializer(userdata_instance)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
-
 class ConnectionRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView, ):
     """Takes data input:
     "closeness('friend', 'Friend'),

@@ -5,6 +5,7 @@ import {useNavigate, Link} from 'react-router-dom';
 import {ChangeEvent} from 'react';
 import { AppContext } from '../../AppContext';
 import { sendCurrentId, sendJWT, sendCurrentUsername } from '../../actions';
+import { Url } from 'url';
 
 const LoginStyle = styled.div`
 
@@ -186,6 +187,44 @@ async function PingServer(Token: string): Promise<pingSuccessResponse> {
   }
 }
 
+type Gender = 'M' | 'F' | 'N' | 'NA'
+interface SuccessUserData{
+  username: string,
+  bio: string | null,
+  headshot: Url | null,
+  gender: Gender,
+  date_of_birth: string,
+  show_horoscope: boolean,
+  instagram_link: Url | null,
+  facebook_link: Url | null,
+  snapchat_link: Url | null,
+  inviteurl: Url,
+  created_time: string
+}
+
+type userData = SuccessUserData;
+
+async function getUserData(user_id: number, Token: string): Promise<userData>{
+  try{
+    const response = await fetch('http://127.0.0.1:8000/api/userdata', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${Token}`
+      },
+      body: JSON.stringify({'user_id': user_id}),
+    });
+    if(!response.ok){
+      console.log('user not found redirect to add page')
+    }
+    const userData: userData = await response.json();
+    return userData;
+  } catch (error) {
+    console.error('Get User data error:', error);
+    throw error;
+  }
+}
+
 const Login = () => {
   const navigate = useNavigate();
   const {dispatch} = useContext(AppContext);
@@ -210,18 +249,24 @@ const Login = () => {
         PingServer(response.access)
           .then((result) => {
             const { username, id } = result;
-            console.log(`got id ${id}`);
-            console.log(`got username ${username}`);
+            // console.log(`got id ${id}`);
+            // console.log(`got username ${username}`);
             dispatch(sendCurrentId(id));
             dispatch(sendCurrentUsername(username));
+            setLoginState('Welcome!');
+            getUserData(id, access as string)
+            .then(() => {
+              navigate('/');
+            })
+            .catch(() =>{
+              navigate('/add');
+            })
           })
-        setLoginState('Welcome!');
-        navigate('/');
       } else {
         setLoginState(response.detail);
       }
     } catch (error) {
-      setLoginState('Something went Wrong! Try again!');
+      setLoginState(`Something went Wrong! ${error}`);
       console.error(error)
       return;
     }

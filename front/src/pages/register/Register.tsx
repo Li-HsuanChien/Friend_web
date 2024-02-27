@@ -140,7 +140,6 @@ async function RegisterApi(credentials: RegisterInfo) {
   }).then(data => data.json());
 }
 
-const sleep = (ms: number) => new Promise(r => setTimeout(r, ms));
 
 const Register = () => {
   const navigate = useNavigate();
@@ -162,9 +161,10 @@ const Register = () => {
         password2: password2,
       });
       if (response.username) {
-        setRegistrationState(`Welcome! ${response.username}!`);
-        sleep(3000);
-        navigate('/login');
+        setRegistrationState(`Welcome! ${response.username}, redirecting you to login page!`);
+        setTimeout(() => {
+          navigate('/login');
+        }, 2000);
         return;
       } else {
         setRegistrationState(`Something went wrong! ${response.message}`);

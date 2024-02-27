@@ -1,8 +1,10 @@
+/* eslint-disable node/no-unpublished-import */
 import React, { useEffect, useState, useContext } from 'react';
 import { styled } from 'styled-components';
 import { AppContext } from '../../../AppContext';
 // import Connections from './connectors';
 import { Url } from 'url';
+import { Link, useNavigate } from 'react-router-dom';
 
 type Gender = 'M' | 'F' | 'N' | 'NA'
 
@@ -18,7 +20,7 @@ const NodeStyle = styled.div<{current:boolean}>`
          left:50vw;
     `}
 `
-interface userData{
+interface SuccessUserData{
   username: string,
   bio: string | null,
   headshot: Url | null,
@@ -31,6 +33,8 @@ interface userData{
   inviteurl: Url,
   created_time: string
 }
+
+type userData = SuccessUserData;
 
 async function getUserData(user_id: number, Token: string): Promise<userData>{
   try{
@@ -55,17 +59,22 @@ async function getUserData(user_id: number, Token: string): Promise<userData>{
 
 const UserNode: React.FC<{user_id: number, current:boolean}> = ({user_id, current}) => {
   const {dispatch, jwt} = useContext(AppContext);
+  const navigate = useNavigate();
   const [data, setData] = useState<userData>();
   useEffect(() =>{
     if(user_id){
       getUserData(user_id, jwt as string)
       .then((result) => {
-        console.log(result);
+        console.log(`The data fetch returns ${result}`)
         setData(result);
+      })
+      .catch((error) =>{
+        navigate('/add');
       })
     }
     else{
-      console.log('no user_id')
+      console.error('You have no cridencials!');
+      navigate('/login');
     }
   }, []);
 

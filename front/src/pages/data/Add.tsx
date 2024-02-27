@@ -1,7 +1,15 @@
-import React, {useState} from 'react';
+import React, {useState, useContext} from 'react';
 import {styled} from 'styled-components';
+import { AppContext } from '../../AppContext';
 
 const AddPageStyle = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #080710;
+
   .background {
     width: 430px;
     height: 540px;
@@ -97,6 +105,17 @@ const AddPageStyle = styled.div`
     height: 18px; 
   }
 
+  input[type='date'] {
+    height: 50px;
+    width: 95%;
+    background-color: rgba(255, 255, 255, 0.07);
+    border-radius: 3px;
+    padding: 0 10px;
+    margin-top: 8px;
+    font-size: 14px;
+    font-weight: 300;
+  }
+
   input {
     display: block;
     height: 50px;
@@ -128,8 +147,32 @@ const AddPageStyle = styled.div`
   }
 }`;
 
+
+async function postData(Gender: number, Birthday: Date, horoscope: boolean): Promise<userData>{
+  try{
+    const response = await fetch('http://127.0.0.1:8000/api/userdata', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${Token}`
+      },
+      body: JSON.stringify({'user_id': user_id}),
+    });
+    if(!response.ok){
+      console.log('user not found redirect to add page')
+    }
+    const userData: userData = await response.json();
+    return userData;
+  } catch (error) {
+    console.error('Get User data error:', error);
+    throw error;
+  }
+}
+
 const Add = () => {
   const [horoscopeState, setHoroscopeState] = useState(false);
+  const {jwt} = useContext(AppContext);
+
 
   return (
     <>
