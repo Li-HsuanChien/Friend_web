@@ -81,7 +81,7 @@ const UserNode: React.FC<{user_id: number, current:boolean}> = ({user_id, curren
 
   return (
     <>
-      { data && <NodeStyle title={`this is ${data.username}`} current = {current}></NodeStyle>}
+      { data && <NodeStyle title={`${data.username}`} current = {current}></NodeStyle>}
     </>
   );
 };

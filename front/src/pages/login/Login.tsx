@@ -212,11 +212,12 @@ async function getUserData(user_id: number, Token: string): Promise<userData>{
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${Token}`
       },
-      body: JSON.stringify({'user_id': user_id}),
+      body: JSON.stringify({ 'user_id': user_id }),
     });
     if(!response.ok){
       console.log('user not found redirect to add page')
     }
+    //TBD check response json
     const userData: userData = await response.json();
     return userData;
   } catch (error) {

@@ -1,6 +1,10 @@
+/* eslint-disable node/no-unpublished-import */
 import React, {useState, useContext} from 'react';
 import {styled} from 'styled-components';
 import { AppContext } from '../../AppContext';
+import { useNavigate } from 'react-router-dom';
+// import {ChangeEvent} from 'react';
+// import { Url } from 'url';
 
 const AddPageStyle = styled.div`
   position: fixed;
@@ -148,31 +152,49 @@ const AddPageStyle = styled.div`
 }`;
 
 
-async function postData(Gender: number, Birthday: Date, horoscope: boolean): Promise<userData>{
+// TBD add ping in every page! to check user!
+async function postData(gender: string, date_of_birth: string, show_horoscope: boolean, Token: string): Promise<void>{
   try{
-    const response = await fetch('http://127.0.0.1:8000/api/userdata', {
+    const response = await fetch('http://127.0.0.1:8000/api/userdatas/add', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${Token}`
       },
-      body: JSON.stringify({'user_id': user_id}),
+      body: JSON.stringify({'show_horoscope': show_horoscope,
+                            'gender': gender,
+                            'date_of_birth': date_of_birth}),
     });
     if(!response.ok){
-      console.log('user not found redirect to add page')
+      console.log('user not added! something went wrong')
     }
-    const userData: userData = await response.json();
-    return userData;
+    return;
   } catch (error) {
-    console.error('Get User data error:', error);
+    console.error('Add User data error:', error);
     throw error;
   }
 }
 
+
 const Add = () => {
-  const [horoscopeState, setHoroscopeState] = useState(false);
+  const navigate = useNavigate();
+  const [horoscopeState, setHoroscopeState] = useState<boolean>(false);
+  const [date, setDate] = useState<string>('');
+  const [gender, setGender] = useState<string>('');
   const {jwt} = useContext(AppContext);
 
+  const handleSubmit = async(e: React.FormEvent<HTMLFormElement>) =>{
+    e.preventDefault();
+    try{
+        if(gender && date && horoscopeState && jwt){
+          await postData(gender, date, horoscopeState, jwt);
+          navigate('/');
+        }
+    } catch(error)  {
+      console.error(error)
+      return;
+    }
+  }
 
   return (
     <>
@@ -182,11 +204,11 @@ const Add = () => {
           <div className="shape"></div>
         </div>
 
-        <form>
+        <form onSubmit={handleSubmit}>
           <h3>Who are you?</h3>
 
           <label htmlFor="Gender">Gender</label>
-          <select id="Gender" name="Gender">
+          <select id="Gender" name="Gender" onChange={(e)=>setGender(e.target.value)}>
             <option value="M">Cis Gender Male</option>
             <option value="F">Cis Gender Female</option>
             <option value="N">NonBinary</option>
@@ -194,7 +216,11 @@ const Add = () => {
           </select>
 
           <label htmlFor="Date_of_birth">Birthday</label>
-          <input type="date" placeholder="Birthday" id="Date_of_birth" />
+          <input
+            type="date"
+            placeholder="Birthday"
+            id="Date_of_birth"
+            onChange={(e) => setDate(e.target.value)} />
 
           <div id="Show_horoscope_div">
             <label htmlFor="Show_horoscope">
@@ -208,7 +234,7 @@ const Add = () => {
             </label>
           </div>
 
-          <button>Comfirm</button>
+          <button type="submit">Comfirm</button>
         </form>
       </AddPageStyle>
     </>
