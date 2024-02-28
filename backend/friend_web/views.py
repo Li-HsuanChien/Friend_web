@@ -19,7 +19,7 @@ from .serializers import UserDataSerializer, UserSerializer, ConnectionSerialize
 
 authentication_level = IsAuthenticated
 
-
+#TBD connection permission reversed(child to parent double way now), check connection validate
 
 class UserDataList(ListAPIView):
     """_summary_
@@ -240,7 +240,7 @@ class CurrentUserRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView):
             serializer.save()  # This will update the instance
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
+#TBD validate connections
 class ConnectionCreate(CreateAPIView):
     """_summary_
     takes current user as invitee, get inviter id and closeness
@@ -271,18 +271,26 @@ class ConnectionCreate(CreateAPIView):
     def create(self, request, *args, **kwargs):
         current_user_id = request.user.id
         closness = request.data.get('closeness')
-        inviter_id = request.data.get('inviter_id')
-        invitee_instance = Userdata.objects.get(username=current_user_id)
-        inviter_instance = Userdata.objects.get(username=inviter_id)
+        invitee_id = request.data.get('invitee_id')
+        inviter_instance = Userdata.objects.get(username=current_user_id)
+        invitee_instance = Userdata.objects.get(username=invitee_id)
 
+        duplicate_connenction = Connection.objects.filter(inviter_id=inviter_instance,\
+            invitee=invitee_instance)
+        reversed_connection = Connection.objects.filter(inviter_id=invitee_instance,\
+            invitee=inviter_instance)
+
+        if(duplicate_connenction.exists() or reversed_connection.exists()):
+            return Response({"error": "connection exists"}, status=status.HTTP_400_BAD_REQUEST)
         userdata_instance = Connection.objects.create(
-            closeness= closness,
-            inviter= inviter_instance,
-            invitee= invitee_instance
-        )
-
+                closeness= closness,
+                inviter= inviter_instance,
+                invitee= invitee_instance
+            )
         serializer = ConnectionSerializer(userdata_instance)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+        
+
 class ConnectionRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView, ):
     """Takes data input:
     "closeness('friend', 'Friend'),

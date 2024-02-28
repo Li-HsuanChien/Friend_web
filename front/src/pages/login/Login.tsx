@@ -217,7 +217,7 @@ async function getUserData(user_id: number, Token: string): Promise<userData>{
     if(!response.ok){
       console.log('user not found redirect to add page')
     }
-    //TBD check response json
+    //TBD check response json, redirect to invite! 
     const userData: userData = await response.json();
     return userData;
   } catch (error) {
