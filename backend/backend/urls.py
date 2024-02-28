@@ -27,6 +27,8 @@ urlpatterns = [
     path('api/currentuser', friend_web.views.CurrentUser.as_view()),
 	#returns targeted user username and id using username
     path('api/targetuser', friend_web.views.TargetUser.as_view()),
+    #returns all userdata that contains search substring
+    path('api/search', friend_web.views.SearchUserName.as_view()),
     #returns all userdatas(admin restricted)
     path('api/adminonly/userdatas', friend_web.views.UserDataList.as_view()),
     #returns user data by inputing user_id

@@ -15,7 +15,7 @@ from .permission import MaxAccessPermission
 from django.contrib.auth.models import User
 from friend_web.models import Userdata, Connection
 from .serializers import UserDataSerializer, UserSerializer, ConnectionSerializer, \
-    TokenObtainPairSerializer, RegisterSerializer, ChangePasswordSerializer
+    TokenObtainPairSerializer, RegisterSerializer, ChangePasswordSerializer, PublicUserDataSerializer
 
 authentication_level = IsAuthenticated
 
@@ -78,14 +78,41 @@ class TargetUser(APIView):
     serializer_class = UserSerializer
     permission_classes = (authentication_level,)
 
-    def get(self, request):
+    def post(self, request):
         username = request.data.get('username')
         try:
             user_instance = User.objects.get(username=username)
+            userdata = Userdata.objects.filter(username=user_instance)
             serializer = self.serializer_class(user_instance)
-            return Response(serializer.data)
-        except User.DoesNotExist:
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except User.DoesNotExist or Userdata.DoesNotExist:
             return Response({'message': 'User does not exist'}, status=status.HTTP_404_NOT_FOUND)
+
+class SearchUserName(ListAPIView):
+    #TBD documentation
+    """_summary_
+	returns all user's id name and headshoot that contains search substring
+    Args:
+        ListAPIView (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """
+    queryset = Userdata.objects.all()
+    permission_classes = (AllowAny,)
+    def post(self, request, *args, **kwargs):
+        search = request.data.get("search")
+        if search:
+            output = []
+            users = User.objects.filter(username__icontains=search)
+            for user in users:
+                userdata = Userdata.objects.filter(username=user)
+                if userdata.exists():
+                    serializer = PublicUserDataSerializer(userdata.first())
+                    output.append(serializer.data)
+            return Response({"users": output}, status=status.HTTP_200_OK)
+        else:
+            return Response({"message": "No search query provided"}, status=status.HTTP_400_BAD_REQUEST)
 
 class ConnectionViewSet(ListAPIView):
     """_summary_
@@ -124,6 +151,7 @@ class TargetUserData(APIView):
     Returns:
         example: {
             "username": "U1",
+            "username_id": "10"
             "bio": "I am U1 programmed",
             "headshot": "/img/headshots/IMG_0905_nIlVA1z.JPG",
             "gender": "M",

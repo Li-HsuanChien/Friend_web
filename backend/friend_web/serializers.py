@@ -22,9 +22,15 @@ class UserDataSerializer(serializers.HyperlinkedModelSerializer):
     gender = serializers.ChoiceField(choices=Gender_CHOICES)
     class Meta:
         model = Userdata
-        fields = ["username", "bio", "headshot", "gender",\
+        fields = ["username", "username_id", "bio", "headshot", "gender",\
         "date_of_birth", "show_horoscope", "instagram_link", "facebook_link", "snapchat_link",\
             "inviteurl", "created_time"]
+
+class PublicUserDataSerializer(serializers.HyperlinkedModelSerializer):
+    username = serializers.StringRelatedField()
+    class Meta:
+        model = Userdata
+        fields = ["username","headshot", "username_id"]
 
 class UserNameSerializer(serializers.ModelSerializer):
     username = serializers.StringRelatedField()
