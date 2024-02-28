@@ -1,5 +1,6 @@
 from rest_framework import permissions
 from .models import Connection
+from django.db.models import Q
 
 class MaxAccessPermission(permissions.BasePermission):
     """
@@ -23,7 +24,7 @@ class MaxAccessPermission(permissions.BasePermission):
         request_connection_id = request.data.get("connection_id")
         for i in range(MAX_BREADTH - 1):
             for user in allowed_userdata_id.copy():
-                connection_list = Connection.objects.filter(inviter = user).values()
+                connection_list = Connection.objects.filter(Q(inviter = user)|Q(invitee=user)).values()
                 if connection_list:
                     for row in connection_list:
                         allowed_userdata_id.add(row["invitee_id"])
