@@ -19,7 +19,6 @@ from .serializers import UserDataSerializer, UserSerializer, ConnectionSerialize
 
 authentication_level = IsAuthenticated
 
-#TBD connection permission reversed(child to parent double way now), check connection validate
 
 class UserDataList(ListAPIView):
     """_summary_
@@ -56,6 +55,33 @@ class CurrentUser(APIView):
         user_id = request.user.id
         try:
             user_instance = User.objects.get(id=user_id)
+            serializer = self.serializer_class(user_instance)
+            return Response(serializer.data)
+        except User.DoesNotExist:
+            return Response({'message': 'User does not exist'}, status=status.HTTP_404_NOT_FOUND)
+class TargetUser(APIView):
+    """_summary_
+        takes request data username
+        returns targeted user username and id
+    Args:
+        request.data.get('username')
+    Returns:
+        JSON:{
+                    "username": <string>,
+                    "id": <int>
+                }
+        example: {
+                    "username": "U2",
+                    "id": 9
+                }
+    """
+    serializer_class = UserSerializer
+    permission_classes = (authentication_level,)
+
+    def get(self, request):
+        username = request.data.get('username')
+        try:
+            user_instance = User.objects.get(username=username)
             serializer = self.serializer_class(user_instance)
             return Response(serializer.data)
         except User.DoesNotExist:
@@ -289,7 +315,7 @@ class ConnectionCreate(CreateAPIView):
             )
         serializer = ConnectionSerializer(userdata_instance)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
-        
+
 
 class ConnectionRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView, ):
     """Takes data input:
