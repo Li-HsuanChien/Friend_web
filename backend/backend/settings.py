@@ -29,8 +29,7 @@ SECRET_KEY = DJANGO_SECRET_KEY
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["*"]
-
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 
@@ -152,9 +151,11 @@ REST_FRAMEWORK = {
 
 CORS_ORIGIN_ALLOW_ALL = True
 
-CORS_ALLOWED_ORIGINS = [ "http://127.0.0.1", "http://localhost",]
+CORS_ALLOW_CREDENTIALS = False
 
-CSRF_TRUSTED_ORIGINS = [ "http://127.0.0.1", "http://localhost",]
+CORS_ALLOWED_ORIGINS = [ "http://127.0.0.1", "http://localhost",'http://127.0.0.1:3000','http://localhost:3000',]
+
+CSRF_TRUSTED_ORIGINS = [ "http://127.0.0.1", "http://localhost",'http://127.0.0.1:3000','http://localhost:3000',]
 
 SIMPLE_JWT = {"ACCESS_TOKEN_LIFETIME": timedelta(minutes=30), \
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),}

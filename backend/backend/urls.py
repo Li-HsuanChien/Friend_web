@@ -37,13 +37,13 @@ urlpatterns = [
     path('api/userdatas/add', friend_web.views.UserCreate.as_view()),
     #update current user userdata
     path('api/userdatas/update', friend_web.views.CurrentUserRetrieveUpdateDestroy.as_view()),
-    #returns all child connections
-    path('api/connections', friend_web.views.ConnectionViewSet.as_view()),
+    #takes 'user_id' and get user's connections
+    path('api/connections', friend_web.views.ConnectionList.as_view()),
     #adds connection by getting "closeness('friend', 'Friend'),"inviter(id)", invitee is the current user
     #consider front end invite or backend
     path('api/connections/add', friend_web.views.ConnectionCreate.as_view()),
     #edits connections, takes user side to determine whether edit nicknametochild or parent and closness
-    path('api/connections/edit', friend_web.views.ConnectionRetrieveUpdateDestroy.as_view()),
+    path('api/connections/self', friend_web.views.ConnectionRetrieveUpdateDestroy.as_view()),
     #login url takes username and pass returns jwt
     path('api/login', friend_web.views.ObtainTokenPairView.as_view(), name='token_obtain_pair'),
     #returns Token refreshview

@@ -79,7 +79,7 @@ const Workspace: React.FC = () => {
           }}
         >
           {/* childrens */}
-          <UserNode user_id = {current_user_id as number} current = {true}></UserNode>
+          <UserNode user_id = {current_user_id as number} current = {'true'}></UserNode>
         </main>
         <button onClick={returnPos}>Back</button>
       </div>

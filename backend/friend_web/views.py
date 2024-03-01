@@ -11,11 +11,13 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework_simplejwt.tokens import RefreshToken
 from .permission import MaxAccessPermission
-
+from django.db.models import Q
+from django.views.decorators.csrf import ensure_csrf_cookie
 from django.contrib.auth.models import User
 from friend_web.models import Userdata, Connection
 from .serializers import UserDataSerializer, UserSerializer, ConnectionSerializer, \
     TokenObtainPairSerializer, RegisterSerializer, ChangePasswordSerializer, PublicUserDataSerializer
+
 
 authentication_level = IsAuthenticated
 
@@ -76,7 +78,7 @@ class TargetUser(APIView):
                 }
     """
     serializer_class = UserSerializer
-    permission_classes = (authentication_level,)
+    permission_classes = (MaxAccessPermission,)
 
     def post(self, request):
         username = request.data.get('username')
@@ -99,7 +101,7 @@ class SearchUserName(ListAPIView):
         _type_: _description_
     """
     queryset = Userdata.objects.all()
-    permission_classes = (AllowAny,)
+    permission_classes = (authentication_level,)
     def post(self, request, *args, **kwargs):
         search = request.data.get("search")
         if search:
@@ -114,34 +116,23 @@ class SearchUserName(ListAPIView):
         else:
             return Response({"message": "No search query provided"}, status=status.HTTP_400_BAD_REQUEST)
 
-class ConnectionViewSet(ListAPIView):
-    """_summary_
-        takes current user id
-        get current user's child connections
-    Args:
-        self.request.user.id
-    Returns:
-        Example:[
-                    {
-                        "id": 4,
-                        "date_established": "2024-02-22T00:44:30.241799Z",
-                        "closeness": "bestfriend",
-                        "nicknamechildtoparent": null,
-                        "nicknameparenttochild": null,
-                        "inviter": 8,
-                        "invitee": 9
-                    }
-                ]
+class ConnectionList(APIView):
     """
-    queryset = Connection.objects.all()
-    serializer_class = ConnectionSerializer
-    filterset_fields = ('inviter',)
-    lookup_field = 'inviter'
-    permission_classes = (authentication_level,)
-    def get_queryset(self):
-        inviter_id = self.request.data.get('inviter_id')
-        query = Connection.objects.filter(inviter=inviter_id)
-        return query
+    Takes input user id and returns target user's child connections.
+    """
+
+    permission_classes = (MaxAccessPermission,)
+
+    def post(self, request, *args, **kwargs):
+        user_id = request.data.get('user_id')
+        if user_id is None:
+            return Response({'error': 'user_id parameter is required'}, status=400)
+
+        query = Connection.objects.filter(Q(inviter=user_id) | Q(invitee=user_id))
+        serializer = ConnectionSerializer(query, many=True)
+        return Response(serializer.data)
+
+
 
 class TargetUserData(APIView):
     """_summary_
@@ -275,7 +266,6 @@ class CurrentUserRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView):
         userdata_instance = get_object_or_404(Userdata, username=user)
         return userdata_instance
 
-    #TBD update restrictions or custom url????
     def put(self, request, *args, **kwargs):
         userdata_instance = self.get_object()
         fields_to_update = ['bio', 'headshot', 'gender', 'date_of_birth', 'show_horoscope',
@@ -294,7 +284,7 @@ class CurrentUserRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView):
             serializer.save()  # This will update the instance
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-#TBD validate connections
+#TBD double way connections
 class ConnectionCreate(CreateAPIView):
     """_summary_
     takes current user as invitee, get inviter id and closeness
@@ -343,7 +333,6 @@ class ConnectionCreate(CreateAPIView):
             )
         serializer = ConnectionSerializer(userdata_instance)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
-
 
 class ConnectionRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView, ):
     """Takes data input:

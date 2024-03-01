@@ -16,7 +16,7 @@ const AddPageStyle = styled.div`
 
   .background {
     width: 430px;
-    height: 540px;
+    height: 460px;
     position: absolute;
     transform: translate(-50%, -50%);
     left: 50%;
@@ -46,7 +46,7 @@ const AddPageStyle = styled.div`
   }
 
   form {
-    height: 540px;
+    height: 460px;
     width: 400px;
     background-color: rgba(255, 255, 255, 0.13);
     position: absolute;
