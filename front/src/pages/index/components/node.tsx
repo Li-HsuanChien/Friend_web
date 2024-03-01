@@ -63,12 +63,12 @@ interface connectiontype{
   nicknamechildtoparent?: string,
   nicknameparenttochild?: string,
   inviter: number,
-  invitee: number
+  invitee: number,
 }
 async function getConnection(user_id: number, Token: string, csrf: string ): Promise<connectiontype[]>{
   try{
     console.log(csrf);
-    const response = await fetch('http://127.0.0.1:8000/api/connections/', {
+    const response = await fetch('http://127.0.0.1:8000/api/connections', {
       credentials: 'include',
       method: 'POST',
       headers: {

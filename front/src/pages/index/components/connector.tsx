@@ -14,6 +14,7 @@ interface ConnectionProps {
 }
 
 const Connection: React.FC<ConnectionProps> = ({ data }) => {
+  console.log(data)
   const {
     id,
     date_established,
@@ -27,7 +28,6 @@ const Connection: React.FC<ConnectionProps> = ({ data }) => {
   return (
     <div>
       <h1>{id}</h1>
-      {/* Render other connection details here */}
     </div>
   );
 };
