@@ -42,10 +42,9 @@ urlpatterns = [
 
     #takes 'user_id' and get user's connections
     path('api/connections', friend_web.views.ConnectionList.as_view()),
-    #adds connection by getting "closeness('friend', 'Friend'),"inviter(id)", invitee is the current user
-    
+    #adds connection by getting "closeness, "inviter(id)", inviter is the current user
     path('api/connections/add', friend_web.views.ConnectionCreate.as_view()),
-    #edits single self connection
+    #edits(takes nickname and closeness) single self connection or destroy
     path('api/connections/self', friend_web.views.ConnectionRetrieveUpdateDestroy.as_view()),
 
     #login url takes username and pass returns jwt bearer token
