@@ -363,42 +363,42 @@ class ConnectionCreate(CreateAPIView):
 
 class ConnectionRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView, ):
     """_summary_
-    	edits single self connection,
-    	takes user's side to determine whether edit nicknametochild or parent and closness
+        edits single self connection,
+        takes user's side to determine whether edit nicknametochild or parent and closness
     Args:
         self.request.data.get('connection_id')
         self.request.data.get('closeness'):
-			('friend', 'Friend')
-			('closefriend', 'Close Friend')
-			('bestfriend', 'Best Friend')
-		self.request.data.get('nickname')
+            ('friend', 'Friend')
+            ('closefriend', 'Close Friend')
+            ('bestfriend', 'Best Friend')
+        self.request.data.get('nickname')
         Example1: {"connection_id": "2"}
         Example2:{"connection_id": "2",
-					"nickname": "edited nick name",
-					"closeness": "bestfriend"
-     			}
+                    "nickname": "edited nick name",
+                    "closeness": "bestfriend"
+                 }
 
     Returns:
         Example1: {
-			"id": 2,
-			"date_established": "2024-02-20T20:32:46.863427Z",
-			"closeness": "friend",
-			"nicknamechildtoparent": "U1toU2",
-			"nicknameparenttochild": null,
-			"activated": false,
-			"inviter": 9,
-			"invitee": 10
-			}
-		Example2: {
-				"id": 2,
-				"date_established": "2024-02-20T20:32:46.863427Z",
-				"closeness": "bestfriend",
-				"nicknamechildtoparent": "edited nick name",
-				"nicknameparenttochild": null,
-				"activated": false,
-				"inviter": 9,
-				"invitee": 10
-			}
+            "id": 2,
+            "date_established": "2024-02-20T20:32:46.863427Z",
+            "closeness": "friend",
+            "nicknamechildtoparent": "U1toU2",
+            "nicknameparenttochild": null,
+            "activated": false,
+            "inviter": 9,
+            "invitee": 10
+            }
+        Example2: {
+                "id": 2,
+                "date_established": "2024-02-20T20:32:46.863427Z",
+                "closeness": "bestfriend",
+                "nicknamechildtoparent": "edited nick name",
+                "nicknameparenttochild": null,
+                "activated": false,
+                "inviter": 9,
+                "invitee": 10
+            }
     """
     serializer_class = ConnectionSerializer
     permission_classes = (MaxAccessPermission,)
@@ -411,7 +411,7 @@ class ConnectionRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView, ):
     def put(self, request, *args, **kwargs):
         current_user_id = self.request.user.id
         connection_instance = self.get_object()
-
+        connection_instance.activated = True
         if connection_instance.inviter_id == current_user_id:
             nicknameparenttochild = self.request.data.get('nickname')
             closeness = self.request.data.get('closeness')

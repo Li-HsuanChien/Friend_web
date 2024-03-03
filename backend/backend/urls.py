@@ -18,10 +18,13 @@ from django.conf.urls.static import static
 # router.register(r'connection', views.ConnectionViewSet)
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
     #re_path(r'^(?P<path>.*)$', serve, { 'document_root': settings.FRONTEND_ROOT}),
     # path('', include(router.urls)),
     #path('api/', include('rest_framework.urls', namespace='rest_framework')),
+
+    path('admin/', admin.site.urls),
+    #returns all userdatas(admin restricted)
+    path('api/adminonly/userdatas', friend_web.views.UserDataList.as_view()),
 
     #returns current logined user name and id {"username": {}, "id": {}}
     path('api/currentuser', friend_web.views.CurrentUser.as_view()),
@@ -29,22 +32,23 @@ urlpatterns = [
     path('api/targetuser', friend_web.views.TargetUser.as_view()),
     #returns all userdata that contains search substring
     path('api/search', friend_web.views.SearchUserName.as_view()),
-    #returns all userdatas(admin restricted)
-    path('api/adminonly/userdatas', friend_web.views.UserDataList.as_view()),
+
     #returns user data by inputing user_id
     path('api/userdata', friend_web.views.TargetUserData.as_view()),
     #add current user userdata
     path('api/userdatas/add', friend_web.views.UserCreate.as_view()),
     #update current user userdata
     path('api/userdatas/update', friend_web.views.CurrentUserRetrieveUpdateDestroy.as_view()),
+
     #takes 'user_id' and get user's connections
     path('api/connections', friend_web.views.ConnectionList.as_view()),
     #adds connection by getting "closeness('friend', 'Friend'),"inviter(id)", invitee is the current user
-    #consider front end invite or backend
+    
     path('api/connections/add', friend_web.views.ConnectionCreate.as_view()),
     #edits single self connection
     path('api/connections/self', friend_web.views.ConnectionRetrieveUpdateDestroy.as_view()),
-    #login url takes username and pass returns jwt
+
+    #login url takes username and pass returns jwt bearer token
     path('api/login', friend_web.views.ObtainTokenPairView.as_view(), name='token_obtain_pair'),
     #returns Token refreshview
     path('api/login/refresh', TokenRefreshView.as_view(), name='token_refresh'),
