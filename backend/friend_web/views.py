@@ -91,14 +91,46 @@ class TargetUser(APIView):
             return Response({'message': 'User does not exist'}, status=status.HTTP_404_NOT_FOUND)
 
 class SearchUserName(ListAPIView):
-    #TBD documentation
     """_summary_
-	returns all user's id name and headshoot that contains search substring
+    returns all user's id name and headshoot that contains search substring
     Args:
-        ListAPIView (_type_): _description_
-
+        request.data.get("search")
+        Example:
+            {"search": "U"}
     Returns:
-        _type_: _description_
+    Example:
+        [
+            {
+                "username": "U6",
+                "headshot": null,
+                "username_id": 7
+            },
+            {
+                "username": "U3",
+                "headshot": "/img/headshots/IMG_0905_GSB8BGe.JPG",
+                "username_id": 8
+            },
+            {
+                "username": "U2",
+                "headshot": "/img/headshots/IMG_0905_sHJnMjn.JPG",
+                "username_id": 9
+            },
+            {
+                "username": "U1",
+                "headshot": "/img/headshots/IMG_0905_nIlVA1z.JPG",
+                "username_id": 10
+            },
+            {
+                "username": "U1111",
+                "headshot": null,
+                "username_id": 20
+            },
+            {
+                "username": "Serious",
+                "headshot": null,
+                "username_id": 26
+            }
+        ]
     """
     queryset = Userdata.objects.all()
     permission_classes = (authentication_level,)
@@ -112,7 +144,7 @@ class SearchUserName(ListAPIView):
                 if userdata.exists():
                     serializer = PublicUserDataSerializer(userdata.first())
                     output.append(serializer.data)
-            return Response({"users": output}, status=status.HTTP_200_OK)
+            return Response(output, status=status.HTTP_200_OK)
         else:
             return Response({"message": "No search query provided"}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -131,8 +163,6 @@ class ConnectionList(APIView):
         query = Connection.objects.filter(Q(inviter=user_id) | Q(invitee=user_id))
         serializer = ConnectionSerializer(query, many=True)
         return Response(serializer.data)
-
-
 
 class TargetUserData(APIView):
     """_summary_
@@ -207,7 +237,6 @@ class UserCreate(CreateAPIView):
         # facebook_link = request.data.get('facebook_link')
         # snapchat_link = request.data.get('snapchat_link')
         inviteurl = f"https://www.localhost:8000/{user_instance}"
-        #TBD invite link
 
         userdata_instance = Userdata.objects.create(
             username=user_instance,
@@ -284,7 +313,6 @@ class CurrentUserRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView):
             serializer.save()  # This will update the instance
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-#TBD double way connections
 class ConnectionCreate(CreateAPIView):
     """_summary_
     takes current user as invitee, get inviter id and closeness
@@ -311,7 +339,6 @@ class ConnectionCreate(CreateAPIView):
     queryset=Connection.objects.all()
     serializer_class = ConnectionSerializer
     permission_classes = (authentication_level,)
-    #implement double connect error and parent child reverse error
     def create(self, request, *args, **kwargs):
         current_user_id = request.user.id
         closness = request.data.get('closeness')
@@ -335,15 +362,43 @@ class ConnectionCreate(CreateAPIView):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 class ConnectionRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView, ):
-    """Takes data input:
-    "closeness('friend', 'Friend'),
-              ('closefriend', 'Close Friend'),
-              ('bestfriend', 'Best Friend'),"
-           altered
-    "nicknamechildtoparent" altered,
-    "nicknameparenttochild"altered,
-    "inviter(id) takes user"
-    "invitee(id) takes user"
+    """_summary_
+    	edits single self connection,
+    	takes user's side to determine whether edit nicknametochild or parent and closness
+    Args:
+        self.request.data.get('connection_id')
+        self.request.data.get('closeness'):
+			('friend', 'Friend')
+			('closefriend', 'Close Friend')
+			('bestfriend', 'Best Friend')
+		self.request.data.get('nickname')
+        Example1: {"connection_id": "2"}
+        Example2:{"connection_id": "2",
+					"nickname": "edited nick name",
+					"closeness": "bestfriend"
+     			}
+
+    Returns:
+        Example1: {
+			"id": 2,
+			"date_established": "2024-02-20T20:32:46.863427Z",
+			"closeness": "friend",
+			"nicknamechildtoparent": "U1toU2",
+			"nicknameparenttochild": null,
+			"activated": false,
+			"inviter": 9,
+			"invitee": 10
+			}
+		Example2: {
+				"id": 2,
+				"date_established": "2024-02-20T20:32:46.863427Z",
+				"closeness": "bestfriend",
+				"nicknamechildtoparent": "edited nick name",
+				"nicknameparenttochild": null,
+				"activated": false,
+				"inviter": 9,
+				"invitee": 10
+			}
     """
     serializer_class = ConnectionSerializer
     permission_classes = (MaxAccessPermission,)
@@ -357,16 +412,20 @@ class ConnectionRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView, ):
         current_user_id = self.request.user.id
         connection_instance = self.get_object()
 
-        if(connection_instance.inviter_id == current_user_id):
-            nicknameparenttochild = self.request.data.get('nicknameparenttochild')
+        if connection_instance.inviter_id == current_user_id:
+            nicknameparenttochild = self.request.data.get('nickname')
             closeness = self.request.data.get('closeness')
-            connection_instance.nicknameparenttochild = nicknameparenttochild
-            connection_instance.closeness = closeness
-        elif(connection_instance.invitee_id == current_user_id):
-            nicknamechildtoparent = self.request.data.get('nicknamechildtoparent')
+            if nicknameparenttochild:
+                connection_instance.nicknameparenttochild = nicknameparenttochild
+            if closeness:
+                connection_instance.closeness = closeness
+        elif connection_instance.invitee_id == current_user_id:
+            nicknamechildtoparent = self.request.data.get('nickname')
             closeness = self.request.data.get('closeness')
-            connection_instance.nicknamechildtoparent = nicknamechildtoparent
-            connection_instance.closeness = closeness
+            if nicknamechildtoparent:
+                connection_instance.nicknamechildtoparent = nicknamechildtoparent
+            if closeness:
+                connection_instance.closeness = closeness
         else:
             return Response({'message': 'user not part of connection'}, status=status.HTTP_400_BAD_REQUEST)
 

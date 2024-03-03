@@ -42,7 +42,7 @@ urlpatterns = [
     #adds connection by getting "closeness('friend', 'Friend'),"inviter(id)", invitee is the current user
     #consider front end invite or backend
     path('api/connections/add', friend_web.views.ConnectionCreate.as_view()),
-    #edits connections, takes user side to determine whether edit nicknametochild or parent and closness
+    #edits single self connection
     path('api/connections/self', friend_web.views.ConnectionRetrieveUpdateDestroy.as_view()),
     #login url takes username and pass returns jwt
     path('api/login', friend_web.views.ObtainTokenPairView.as_view(), name='token_obtain_pair'),

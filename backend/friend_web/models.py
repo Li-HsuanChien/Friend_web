@@ -51,6 +51,7 @@ class Connection(models.Model):
     ])
     nicknamechildtoparent = models.CharField(max_length=64, null=True)
     nicknameparenttochild = models.CharField(max_length=64, null=True)
+    activated = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.inviter} invited {self.invitee}"
