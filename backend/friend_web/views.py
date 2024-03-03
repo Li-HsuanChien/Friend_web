@@ -323,8 +323,11 @@ class ConnectionCreate(CreateAPIView):
             ('friend', 'Friend'),
             ('closefriend', 'Close Friend'),
             ('bestfriend', 'Best Friend'),"
-        "inviter(id)": (request.data.get('inviter_id'))
-        "invitee(id)": (request.user.id)
+        "inviter(id)": (request.user.id)
+        "invitee(id)": (request.data.get('invitee_id'))
+        example: {"closeness": "bestfriend",
+        		  "invitee_id:"10"
+            	}
     Returns:
         example:{
                 "id": 4,
@@ -332,8 +335,8 @@ class ConnectionCreate(CreateAPIView):
                 "closeness": "bestfriend",
                 "nicknamechildtoparent": null,
                 "nicknameparenttochild": null,
-                "inviter": 8,
-                "invitee": 9
+                "inviter": 9,
+                "invitee": 10
             }
     """
     queryset=Connection.objects.all()
@@ -351,8 +354,10 @@ class ConnectionCreate(CreateAPIView):
         reversed_connection = Connection.objects.filter(inviter_id=invitee_instance,\
             invitee=inviter_instance)
 
-        if(duplicate_connenction.exists() or reversed_connection.exists()):
+        if(duplicate_connenction.exists()):
             return Response({"error": "connection exists"}, status=status.HTTP_400_BAD_REQUEST)
+        if(reversed_connection.exists()):
+            return Response({"error": "reversed connection exists"}, status=status.HTTP_400_BAD_REQUEST)
         userdata_instance = Connection.objects.create(
                 closeness= closness,
                 inviter= inviter_instance,
@@ -372,12 +377,12 @@ class ConnectionRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView, ):
             ('closefriend', 'Close Friend')
             ('bestfriend', 'Best Friend')
         self.request.data.get('nickname')
-        Example1: {"connection_id": "2"}
-        Example2:{"connection_id": "2",
+        Example1(PUT): {"connection_id": "2"}
+        Example2(PUT):{"connection_id": "2",
                     "nickname": "edited nick name",
                     "closeness": "bestfriend"
                  }
-
+        Example3(DELETE): {"connection_id": "9"}
     Returns:
         Example1: {
             "id": 2,
@@ -399,6 +404,9 @@ class ConnectionRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView, ):
                 "inviter": 9,
                 "invitee": 10
             }
+        Example3: {
+
+        }
     """
     serializer_class = ConnectionSerializer
     permission_classes = (MaxAccessPermission,)
@@ -436,6 +444,12 @@ class ConnectionRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView, ):
             serializer.save()  # This will update the instance
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def destroy(self, request, *args, **kwargs):
+        connection_instance = self.get_object()
+        self.perform_destroy(connection_instance)
+    	  # This will update the instance
+        return Response({"message": "connection deleted!"}, status=status.HTTP_204_NO_CONTENT)
 
 
 #User management
