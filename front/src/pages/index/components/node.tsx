@@ -9,17 +9,21 @@ import { Link, useNavigate } from 'react-router-dom';
 type Gender = 'M' | 'F' | 'N' | 'NA'
 
 // eslint-disable-next-line node/no-unsupported-features/node-builtins
-const NodeStyle = styled.div<{ current: string }>`
+
+interface Posdata{
+  posx:number,
+  posy:number
+}
+
+const NodeStyle = styled.div<{ posdata?: Posdata }>`
   position: absolute;
   width: 80px;
   height: 80px;
   background-color: white;
-  border-radius: 50%; 
-  ${props => props.current && `
-         top:45vh;
-         left:50vw;
-    `}
-`
+  border-radius: 50%;
+  ${props => props.posdata ? `top: ${props.posdata.posy}vh` : '0'};
+  ${props => props.posdata ? `left: ${props.posdata.posx}vw` : '0'};
+`;
 interface SuccessUserData {
   username: string,
   bio: string | null,
@@ -88,11 +92,33 @@ async function getConnection(user_id: number, Token: string, csrf: string): Prom
   }
 }
 
-const UserNode: React.FC<{ user_id: number, current: string }> = ({ user_id, current }) => {
+function calcpos(itemcount: number,
+                 evenunit:number,
+                 oddunit: number,
+                 startposx:number,
+                 startposy:number):Posdata[]{
+  const split = Math.PI/itemcount;
+  const res:Posdata[] = []
+  for(let i = 0; i < itemcount; i++){
+    const unit = i % 2 === 0? evenunit: oddunit;
+    res.push({
+              posy:(startposy + unit * Math.sin((Math.PI/8) + split * i)),
+              posx:(startposx + unit * Math.cos((Math.PI/8) + split * i))
+            });
+  }
+  return res;
+}
+
+type Combinearr = connectiontype & Posdata;
+
+const UserNode: React.FC<{ user_id: number, posData: Posdata }> = ({ user_id, posData }) => {
   const { dispatch, jwt, csrf } = useContext(AppContext);
   const navigate = useNavigate();
   const [data, setData] = useState<userData>();
-  const [connections, setconnections] = useState<connectiontype[]>();
+  const [connections, setConnections] = useState<connectiontype[]>();
+  const [endposarr, setEndPosArr] = useState<Posdata[]>([]);
+  const [combineArr, setCombineArr] = useState<Combinearr[]>([]);
+
 
   useEffect(() => {
     if (user_id && jwt) {
@@ -107,12 +133,29 @@ const UserNode: React.FC<{ user_id: number, current: string }> = ({ user_id, cur
         });
       getConnection(user_id, jwt, csrf as string)
         .then((result) => {
-          setconnections(result);
+          setConnections(result);
         })
         .catch((error) => {
           console.error('Failed to get user connections:', error);
           // Handle error appropriately, e.g., show a toast message
         });
+      if(connections){
+        setEndPosArr(
+          calcpos(
+            connections.length,
+            30,
+            50,
+            posData.posx,
+            posData.posy)
+        );
+        if(connections){
+          const combinedData: Combinearr[] = connections.map((item, index) =>({
+            ...item,
+            ...endposarr[index]
+          }));
+          setCombineArr(combinedData);
+        }
+      }
     } else {
       console.error('You have no credentials!');
       navigate('/login');
@@ -121,8 +164,12 @@ const UserNode: React.FC<{ user_id: number, current: string }> = ({ user_id, cur
 
   return (
     <>
-      {data && <NodeStyle title={`${data.username}`} current={current}>
-        {connections?.map((connection) => <Connection key={connection.id} data={connection} />)}
+      {data && <NodeStyle title={`${data.username}`} posdata={posData}>
+        {combineArr?.map((connection) => <Connection
+                                            key={connection.id}
+                                            data={connection}
+                                            startposdata={posData}
+                                            endposdata={{posx: connection.posx, posy: connection.posy}}/>)}
       </NodeStyle>}
     </>
   );

@@ -1,20 +1,27 @@
-import React, { useState, useContext } from 'react';
-
+import React, { useState } from 'react';
 
 interface ConnectionProps {
-  data: {
-    id: number;
-    date_established: string;
-    closeness: string;
-    nicknamechildtoparent?: string;
-    nicknameparenttochild?: string;
-    inviter: number;
-    invitee: number;
-  };
+  id: number;
+  date_established: string;
+  closeness: string;
+  nicknamechildtoparent?: string;
+  nicknameparenttochild?: string;
+  inviter: number;
+  invitee: number;
 }
 
-const Connection: React.FC<ConnectionProps> = ({ data }) => {
-  console.log(data)
+interface Posdata {
+  posx: number;
+  posy: number;
+}
+
+interface Props {
+  data: ConnectionProps;
+  startposdata: Posdata;
+  endposdata: Posdata;
+}
+
+const Connection: React.FC<Props> = (props) => {
   const {
     id,
     date_established,
@@ -23,12 +30,24 @@ const Connection: React.FC<ConnectionProps> = ({ data }) => {
     nicknameparenttochild,
     inviter,
     invitee
-  } = data;
+  } = props.data;
+
+  const startposx = props.startposdata.posx;
+  const startposy = props.startposdata.posy;
+
+  const endPosx = props.endposdata.posx; // Add 50 pixels to the x-coordinate
+  const endPosy = props.endposdata.posy; // Add 50 pixels to the y-coordinate
 
   return (
-    <div>
-      <h1>{id}</h1>
-    </div>
+    <svg>
+      <line
+        x1={startposx}
+        y1={startposy}
+        x2={endPosx}
+        y2={endPosy}
+        style={{ stroke: 'white', strokeWidth: 2 }}
+      />
+    </svg>
   );
 };
 
