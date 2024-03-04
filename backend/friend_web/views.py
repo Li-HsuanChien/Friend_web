@@ -20,6 +20,7 @@ from .serializers import UserDataSerializer, UserSerializer, ConnectionSerialize
 
 
 authentication_level = IsAuthenticated
+#TBD serve front end, image redering, tests
 
 
 class UserDataList(ListAPIView):

@@ -79,7 +79,7 @@ const Workspace: React.FC = () => {
           }}
         >
           {/* childrens */}
-          <UserNode user_id = {current_user_id as number} posData={{posy:45, posx:50}}></UserNode>
+          <UserNode user_id = {current_user_id as number} posData={{posy:45, posx:50}} connectionState = {true}></UserNode>
         </main>
         <button onClick={returnPos}>Back</button>
       </div>

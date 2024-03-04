@@ -10,9 +10,9 @@ type Gender = 'M' | 'F' | 'N' | 'NA'
 
 // eslint-disable-next-line node/no-unsupported-features/node-builtins
 
-interface Posdata{
-  posx:number,
-  posy:number
+interface Posdata {
+  posx: number,
+  posy: number
 }
 
 const NodeStyle = styled.div<{ posdata?: Posdata }>`
@@ -93,31 +93,32 @@ async function getConnection(user_id: number, Token: string, csrf: string): Prom
 }
 
 function calcpos(itemcount: number,
-                 evenunit:number,
-                 oddunit: number,
-                 startposx:number,
-                 startposy:number):Posdata[]{
-  const split = Math.PI/itemcount;
-  const res:Posdata[] = []
-  for(let i = 0; i < itemcount; i++){
-    const unit = i % 2 === 0? evenunit: oddunit;
+  evenunit: number,
+  oddunit: number,
+  startposx: number,
+  startposy: number): Posdata[] {
+  const split = Math.PI / itemcount;
+  const res: Posdata[] = []
+  for (let i = 0; i < itemcount; i++) {
+    const unit = i % 2 === 0 ? evenunit : oddunit;
     res.push({
-              posy:(startposy + unit * Math.sin((Math.PI/8) + split * i)),
-              posx:(startposx + unit * Math.cos((Math.PI/8) + split * i))
-            });
+      posy: (startposy + unit * Math.sin((Math.PI / 8) + split * i)),
+      posx: (startposx + unit * Math.cos((Math.PI / 8) + split * i))
+    });
   }
   return res;
 }
 
 type Combinearr = connectiontype & Posdata;
 
-const UserNode: React.FC<{ user_id: number, posData: Posdata }> = ({ user_id, posData }) => {
+const UserNode: React.FC<{ user_id: number, posData: Posdata, connectionState: boolean }> = ({ user_id, posData, connectionState }) => {
   const { dispatch, jwt, csrf } = useContext(AppContext);
   const navigate = useNavigate();
   const [data, setData] = useState<userData>();
   const [connections, setConnections] = useState<connectiontype[]>();
   const [endposarr, setEndPosArr] = useState<Posdata[]>([]);
   const [combineArr, setCombineArr] = useState<Combinearr[]>([]);
+  const [showConnection, setShowConnection] = useState<boolean>(connectionState);
 
 
   useEffect(() => {
@@ -139,38 +140,51 @@ const UserNode: React.FC<{ user_id: number, posData: Posdata }> = ({ user_id, po
           console.error('Failed to get user connections:', error);
           // Handle error appropriately, e.g., show a toast message
         });
-      if(connections){
-        setEndPosArr(
-          calcpos(
-            connections.length,
-            30,
-            50,
-            posData.posx,
-            posData.posy)
-        );
-        if(connections){
-          const combinedData: Combinearr[] = connections.map((item, index) =>({
-            ...item,
-            ...endposarr[index]
-          }));
-          setCombineArr(combinedData);
-        }
-      }
     } else {
       console.error('You have no credentials!');
       navigate('/login');
     }
   }, [user_id, jwt]);
+  useEffect(() => {
+    if (connections && connections.length > 0) {
+      const calculatedPos = calcpos(
+        connections.length,
+        30,
+        50,
+        posData.posx,
+        posData.posy
+      );
+      setEndPosArr(calculatedPos);
+    }
+  }, [connections]);
+  useEffect(() => {
+    console.log(`endarr`)
+    console.log(endposarr)
+    console.log('connections')
+    console.log(connections)
+    if(connections){
+      const combinedData: Combinearr[] = connections.map((item, index) =>({
+        ...item,
+        ...endposarr[index]
+      }));
+      setCombineArr(combinedData);
+    }
+  }, [endposarr]);
 
   return (
     <>
-      {data && <NodeStyle title={`${data.username}`} posdata={posData}>
-        {combineArr?.map((connection) => <Connection
-                                            key={connection.id}
-                                            data={connection}
-                                            startposdata={posData}
-                                            endposdata={{posx: connection.posx, posy: connection.posy}}/>)}
-      </NodeStyle>}
+      {data &&
+        <NodeStyle
+          title={`${data.username}`}
+          posdata={posData}
+          onClick={() => setShowConnection(!showConnection)}>
+          {showConnection &&
+            combineArr?.map((connection) => <Connection
+              key={connection.id}
+              data={connection}
+              startposdata={posData}
+              endposdata={{ posx: connection.posx, posy: connection.posy }} />)}
+        </NodeStyle>}
     </>
   );
 };
