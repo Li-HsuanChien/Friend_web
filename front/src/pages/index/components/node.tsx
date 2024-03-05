@@ -16,7 +16,7 @@ interface Posdata {
 }
 
 const NodeStyle = styled.div<{ posdata?: Posdata, nodeSize?:number }>`
-  position: absolute;
+  position: fixed;
   ${props => props.nodeSize ? `width: ${props.nodeSize}px` : '80px'};
   ${props => props.nodeSize ? `height: ${props.nodeSize}px` : '80px'};
   background-color: white;
@@ -99,9 +99,11 @@ function calcpos(itemcount: number,
   const res: Posdata[] = []
   for (let i = 0; i < itemcount; i++) {
     const unit = i % 2 === 0 ? evenunit : oddunit;
+    const unitX = (unit / window.innerWidth) * 100;
+    const unitY = (unit / window.innerHeight) * 100;
     res.push({
-      posy: (startposy - unit * Math.sin((Math.PI / 8) + split * i)),
-      posx: (startposx + unit * Math.cos((Math.PI / 8) + split * i))
+      posy: (startposy - unitX * Math.sin((Math.PI / 8) + split * i)),
+      posx: (startposx + unitY * Math.cos((Math.PI / 8) + split * i))
     });
   }
   return res;
@@ -119,10 +121,12 @@ const UserNode: React.FC<{ user_id: number, posData: Posdata,
   const [endposarr, setEndPosArr] = useState<Posdata[]>([]);
   const [combineArr, setCombineArr] = useState<Combinearr[]>([]);
   const [showConnection, setShowConnection] = useState<boolean>(connectionState);
-  const nodeSizeInVw = (nodeSize / window.innerWidth) * 100;
-  const nodeSizeMidPointInVw = nodeSizeInVw/2;
-  const lineStartPos = {posx: posData.posx+nodeSizeMidPointInVw,
-                        posy: posData.posy+nodeSizeMidPointInVw}
+  const nodeSizeInVwX = (nodeSize / window.innerWidth) * 100;
+  const nodeSizeInVwY = (nodeSize / window.innerHeight) * 100;
+  const nodeSizeMidPointInVwX = nodeSizeInVwX/2;
+  const nodeSizeMidPointInVwY = nodeSizeInVwY/2;
+  const lineStartPos = {posx: posData.posx+nodeSizeMidPointInVwX,
+                        posy: posData.posy+nodeSizeMidPointInVwY}
 
   useEffect(() => {
     if (user_id && jwt) {
@@ -152,8 +156,8 @@ const UserNode: React.FC<{ user_id: number, posData: Posdata,
     if (connections && connections.length > 0) {
       const calculatedPos = calcpos(
         connections.length,
-        30,
-        50,
+        100,
+        150,
         lineStartPos.posx,
         lineStartPos.posy
       );

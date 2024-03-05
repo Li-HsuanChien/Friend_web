@@ -65,12 +65,14 @@ const Workspace: React.FC = () => {
     })
   }
 
-  const nodeSize = 80
-  const nodeSizeInVw = (nodeSize / window.innerWidth) * 100;
-  const nodeSizeMidPointInVw = nodeSizeInVw/2;
+  const nodeSize = 80 //px
+  const nodeSizeInVwX = (nodeSize / window.innerWidth) * 100;
+  const nodeSizeInVwY = (nodeSize / window.innerHeight) * 100;
+  const nodeSizeMidPointInVwX = nodeSizeInVwX/2;
+  const nodeSizeMidPointInVwY = nodeSizeInVwY/2;
   const mainNodepos = {
-    posx: 50-nodeSizeMidPointInVw,
-    posy: 50-nodeSizeMidPointInVw
+    posx: 50-nodeSizeMidPointInVwX,
+    posy: 50-nodeSizeMidPointInVwY
   }
 
   return (

@@ -66,10 +66,10 @@ const Connection: React.FC<Props> = (props) => {
   return (
     <LineBox fullPosdata={fullPosdata} height={fullPosdata.height} width={fullPosdata.width} id={`connection ${id}`}>
       <line
-        x1={`${fullPosdata.left}vw`}
-        y1={`${fullPosdata.top}vh`}
-        x2={`${fullPosdata.left + fullPosdata.width}vw`}
-        y2={`${fullPosdata.top + fullPosdata.height}vh`}
+        x1={0}
+        y1={0}
+        x2={fullPosdata.width}
+        y2={fullPosdata.height}
         style={{ stroke: 'white', strokeWidth: 2 }}
       />
     </LineBox>
