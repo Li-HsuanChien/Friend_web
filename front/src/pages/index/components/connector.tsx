@@ -35,6 +35,7 @@ interface Props {
   nodeSize: number,
   startposdata: Posdata;
   endposdata: Posdata;
+  parents:Set<number>;
 }
 interface LineData{
   x1: number,
@@ -120,7 +121,8 @@ const Connection: React.FC<Props> = (props) => {
       <UserNode user_id = {inviter === parent_id? invitee: inviter}
                 posData={props.endposdata}
                 connectionState = {false}
-                nodeSize={childNodeSize}></UserNode>
+                nodeSize={childNodeSize}
+                parents={props.parents}></UserNode>
     </>
   );
 };
