@@ -160,7 +160,7 @@ const UserNode: React.FC<{ user_id: number, posData: Posdata,
       const calculatedPos = calcpos(
         connections.length,
         100,
-        150,
+        120,
         lineStartPos.posx,
         lineStartPos.posy
       );
