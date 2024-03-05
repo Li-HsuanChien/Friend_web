@@ -95,19 +95,22 @@ function calcpos(itemcount: number,
   oddunit: number,
   startposx: number,
   startposy: number): Posdata[] {
-  const split = Math.PI / itemcount;
+  const split = 2 * Math.PI / itemcount;
   const res: Posdata[] = []
   for (let i = 0; i < itemcount; i++) {
     const unit = i % 2 === 0 ? evenunit : oddunit;
-    const unitX = (unit / window.innerWidth) * 100;
-    const unitY = (unit / window.innerHeight) * 100;
+    const Angle = (Math.PI / 4) + split * i;
+    const YDiffPx = unit * Math.sin(Angle);
+    const XDiffPx = unit * Math.cos(Angle);
+    console.log(`split ${i} angle is ${Angle} Ydiff ${YDiffPx} Xdiff ${XDiffPx}`);
     res.push({
-      posy: (startposy - unitX * Math.sin((Math.PI / 8) + split * i)),
-      posx: (startposx + unitY * Math.cos((Math.PI / 8) + split * i))
+      posy: startposy - ((YDiffPx / window.innerWidth) * 100),
+      posx: startposx + ((XDiffPx / window.innerWidth) * 100)
     });
   }
   return res;
 }
+//TBD unit change function
 
 type Combinearr = connectiontype & Posdata;
 

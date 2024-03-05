@@ -55,7 +55,7 @@ const Connection: React.FC<Props> = (props) => {
   const endPosy = props.endposdata.posy;
   console.log(`${id} startx:${startPosx} starty:${startPosy} endx:${endPosx} endy:${endPosy}`)
   const fullPosdata = {
-    top: Math.max(startPosy, endPosy),
+    top: Math.min(startPosy, endPosy),
     left: Math.min(startPosx, endPosx),
     height: Math.abs(startPosy - endPosy),
     width:  Math.abs(startPosx - endPosx),
