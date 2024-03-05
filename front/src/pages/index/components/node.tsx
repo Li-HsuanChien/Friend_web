@@ -14,14 +14,14 @@ interface Posdata {
   posx: number,
   posy: number
 }
-const NodeStyle = styled.div<{ posdata?: Posdata, nodeSize?:number }>`
+const NodeStyle = styled.div<{ posdata: Posdata, nodeSize:number }>`
   position: fixed;
   ${props => props.nodeSize ? `width: ${props.nodeSize}px` : '80px'};
   ${props => props.nodeSize ? `height: ${props.nodeSize}px` : '80px'};
   background-color: white;
   border-radius: 50%;
-  ${props => props.posdata ? `top: ${props.posdata.posy}vh` : '0'};
-  ${props => props.posdata ? `left: ${props.posdata.posx}vw` : '0'};
+  ${props => props.posdata ? `top: ${props.posdata.posy - (pxToVH(props.nodeSize)/2)}vh` : '0'};
+  ${props => props.posdata ? `left: ${props.posdata.posx -(pxToVW(props.nodeSize)/2)}vw` : '0'};
 `;
 
 
@@ -58,12 +58,6 @@ const UserNode: React.FC<{ user_id: number, posData: Posdata,
   const [endposarr, setEndPosArr] = useState<Posdata[]>([]);
   const [combineArr, setCombineArr] = useState<Combinearr[]>([]);
   const [showConnection, setShowConnection] = useState<boolean>(connectionState);
-  const nodeSizeInVwX = pxToVW(nodeSize);
-  const nodeSizeInVwY = pxToVH(nodeSize);
-  const nodeSizeMidPointInVwX = nodeSizeInVwX/2;
-  const nodeSizeMidPointInVwY = nodeSizeInVwY/2;
-  const lineStartPos = {posx: posData.posx+nodeSizeMidPointInVwX,
-                        posy: posData.posy+nodeSizeMidPointInVwY}
 
   useEffect(() => {
     if (user_id && jwt) {
@@ -90,13 +84,14 @@ const UserNode: React.FC<{ user_id: number, posData: Posdata,
     }
   }, [user_id, jwt]);
   useEffect(() => {
+    if(user_id === 10) console.log(posData)
     if (connections && connections.length > 0) {
       const calculatedPos = calcpos(
         connections.length,
         100,
         120,
-        lineStartPos.posx,
-        lineStartPos.posy
+        posData.posx,
+        posData.posy
       );
       setEndPosArr(calculatedPos);
     }
@@ -113,8 +108,7 @@ const UserNode: React.FC<{ user_id: number, posData: Posdata,
 
   return (
     <>
-      {data &&
-        <NodeStyle
+      {data?(<NodeStyle
           title={`${data.username}`}
           posdata={posData}
           nodeSize={nodeSize}
@@ -125,10 +119,12 @@ const UserNode: React.FC<{ user_id: number, posData: Posdata,
             combineArr?.map((connection) => <Connection
               key={connection.id}
               data={connection}
-              startposdata={lineStartPos}
+              parent_id={user_id}
+              nodeSize = {nodeSize}
+              startposdata={posData}
               endposdata={{ posx: connection.posx, posy: connection.posy }}
               />)}
-        </NodeStyle>}
+        </NodeStyle>): ''}
     </>
   );
 };

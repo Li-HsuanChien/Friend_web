@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
+import UserNode from './node';
 
 const LineBox = styled.svg<{ fullPosdata?: fullPosdata }>`
   position: fixed;
@@ -30,10 +31,11 @@ interface fullPosdata{
 }
 interface Props {
   data: ConnectionProps;
+  parent_id: number,
+  nodeSize: number,
   startposdata: Posdata;
   endposdata: Posdata;
 }
-
 interface LineData{
   x1: number,
   x2: number,
@@ -51,6 +53,8 @@ const Connection: React.FC<Props> = (props) => {
     inviter,
     invitee
   } = props.data;
+  const parent_id = props.parent_id;
+  const [childNodeSize, setChildNodeSize] = useState<number>(80);
   // known start and finish
   const [lineData, setLineData] = useState<LineData>({
     x1: 0,
@@ -65,11 +69,19 @@ const Connection: React.FC<Props> = (props) => {
     width: 0,
   })
   useEffect(() => {
+    const nodeSize = props.nodeSize;
+    if(closeness === 'friend'){
+      setChildNodeSize(nodeSize - 15);
+    } else if(closeness === 'closefriend'){
+      setChildNodeSize(nodeSize - 10);
+    } else{
+      setChildNodeSize(nodeSize - 5);
+    }
     const startPosx = props.startposdata.posx;
     const startPosy = props.startposdata.posy;
     const endPosx = props.endposdata.posx;
     const endPosy = props.endposdata.posy;
-
+    console.log(`line ${id} sx ${startPosx} sy${startPosy} ex${endPosx} ey${endPosy} `)
     SetFullPosData({
       top: Math.min(startPosy, endPosy),
       left: Math.min(startPosx, endPosx),
@@ -95,15 +107,21 @@ const Connection: React.FC<Props> = (props) => {
 
 
   return (
-    <LineBox fullPosdata={fullPosdata} height={fullPosdata.height} width={fullPosdata.width} id={`connection ${id}`}>
-      <line
-        x1={`${lineData.x1}%`}
-        y1={`${lineData.y1}%`}
-        x2={`${lineData.x2}%`}
-        y2={`${lineData.y2}%`}
-        style={{ stroke: 'white', strokeWidth: 2 }}
-      />
-    </LineBox>
+    <>
+      <LineBox fullPosdata={fullPosdata} height={fullPosdata.height} width={fullPosdata.width} id={`connection ${id}`}>
+        <line
+          x1={`${lineData.x1}%`}
+          y1={`${lineData.y1}%`}
+          x2={`${lineData.x2}%`}
+          y2={`${lineData.y2}%`}
+          style={{ stroke: 'white', strokeWidth: 2 }}
+        />
+      </LineBox>
+      <UserNode user_id = {inviter === parent_id? invitee: inviter}
+                posData={props.endposdata}
+                connectionState = {false}
+                nodeSize={childNodeSize}></UserNode>
+    </>
   );
 };
 
