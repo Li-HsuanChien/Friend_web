@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 const LineBox = styled.svg<{ fullPosdata?: fullPosdata }>`
@@ -36,6 +36,13 @@ interface Props {
   endposdata: Posdata;
 }
 
+interface LineData{
+  x1: number,
+  x2: number,
+  y1: number,
+  y2: number,
+}
+
 const Connection: React.FC<Props> = (props) => {
   const {
     id,
@@ -47,29 +54,60 @@ const Connection: React.FC<Props> = (props) => {
     invitee
   } = props.data;
   // known start and finish
+  const [lineData, setLineData] = useState<LineData>({
+    x1: 0,
+    x2: 0,
+    y1: 0,
+    y2: 0,
+  })
+  const [fullPosdata, SetFullPosData] = useState<fullPosdata>({
+    top: 0,
+    left: 0,
+    height: 0,
+    width: 0,
+  })
+  useEffect(() => {
+    const startPosx = props.startposdata.posx;
+    const startPosy = props.startposdata.posy;
+    const endPosx = props.endposdata.posx;
+    const endPosy = props.endposdata.posy;
 
-  const startPosx = props.startposdata.posx;
-  const startPosy = props.startposdata.posy;
+    console.log(`${id} startx:${startPosx} starty:${startPosy} endx:${endPosx} endy:${endPosy}`)
+    SetFullPosData({
+      top: Math.min(startPosy, endPosy),
+      left: Math.min(startPosx, endPosx),
+      height: Math.abs(startPosy - endPosy),
+      width:  Math.abs(startPosx - endPosx),
+    })
+    // console.log(startPosx, startPosy, endPosx, endPosy);
+    // console.log(fullPosdata)
+    if((endPosy < startPosy && endPosx > startPosx) || (endPosy > startPosy && endPosx < endPosx)){
+      console.log(`${id} is in dimension 1, 3`)
+      setLineData({
+                  x1: 0,
+                  y1 : 100,
+                  x2 : 100,
+                  y2 : 0
+                })
+    } else {
+      console.log(`${id} is in dimension 2, 4`)
+      setLineData({
+        x1: 0,
+        y1 : 0,
+        x2 : 100,
+        y2 : 100
+      })
+    }
+  }, [window.innerHeight, window.innerWidth])
 
-  const endPosx = props.endposdata.posx;
-  const endPosy = props.endposdata.posy;
-  console.log(`${id} startx:${startPosx} starty:${startPosy} endx:${endPosx} endy:${endPosy}`)
-  const fullPosdata = {
-    top: Math.min(startPosy, endPosy),
-    left: Math.min(startPosx, endPosx),
-    height: Math.abs(startPosy - endPosy),
-    width:  Math.abs(startPosx - endPosx),
-  }
-  // console.log(startPosx, startPosy, endPosx, endPosy);
-  // console.log(fullPosdata)
 
   return (
     <LineBox fullPosdata={fullPosdata} height={fullPosdata.height} width={fullPosdata.width} id={`connection ${id}`}>
       <line
-        x1={0}
-        y1={0}
-        x2={fullPosdata.width}
-        y2={fullPosdata.height}
+        x1={`${lineData.x1}%`}
+        y1={`${lineData.y1}%`}
+        x2={`${lineData.x2}%`}
+        y2={`${lineData.y2}%`}
         style={{ stroke: 'white', strokeWidth: 2 }}
       />
     </LineBox>
