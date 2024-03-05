@@ -65,6 +65,14 @@ const Workspace: React.FC = () => {
     })
   }
 
+  const nodeSize = 80
+  const nodeSizeInVw = (nodeSize / window.innerWidth) * 100;
+  const nodeSizeMidPointInVw = nodeSizeInVw/2;
+  const mainNodepos = {
+    posx: 50-nodeSizeMidPointInVw,
+    posy: 50-nodeSizeMidPointInVw
+  }
+
   return (
     <Wrapper>
       <div
@@ -79,7 +87,7 @@ const Workspace: React.FC = () => {
           }}
         >
           {/* childrens */}
-          <UserNode user_id = {current_user_id as number} posData={{posy:45, posx:50}} connectionState = {true}></UserNode>
+          <UserNode user_id = {current_user_id as number} posData={mainNodepos} connectionState = {true} nodeSize={nodeSize}></UserNode>
         </main>
         <button onClick={returnPos}>Back</button>
       </div>

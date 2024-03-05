@@ -15,10 +15,10 @@ interface Posdata {
   posy: number
 }
 
-const NodeStyle = styled.div<{ posdata?: Posdata }>`
+const NodeStyle = styled.div<{ posdata?: Posdata, nodeSize?:number }>`
   position: absolute;
-  width: 80px;
-  height: 80px;
+  ${props => props.nodeSize ? `width: ${props.nodeSize}px` : '80px'};
+  ${props => props.nodeSize ? `height: ${props.nodeSize}px` : '80px'};
   background-color: white;
   border-radius: 50%;
   ${props => props.posdata ? `top: ${props.posdata.posy}vh` : '0'};
@@ -37,9 +37,7 @@ interface SuccessUserData {
   inviteurl: Url,
   created_time: string
 }
-
 type userData = SuccessUserData;
-
 async function getUserData(user_id: number, Token: string): Promise<userData> {
   try {
     const response = await fetch('http://127.0.0.1:8000/api/userdata', {
@@ -102,7 +100,7 @@ function calcpos(itemcount: number,
   for (let i = 0; i < itemcount; i++) {
     const unit = i % 2 === 0 ? evenunit : oddunit;
     res.push({
-      posy: (startposy + unit * Math.sin((Math.PI / 8) + split * i)),
+      posy: (startposy - unit * Math.sin((Math.PI / 8) + split * i)),
       posx: (startposx + unit * Math.cos((Math.PI / 8) + split * i))
     });
   }
@@ -111,7 +109,9 @@ function calcpos(itemcount: number,
 
 type Combinearr = connectiontype & Posdata;
 
-const UserNode: React.FC<{ user_id: number, posData: Posdata, connectionState: boolean }> = ({ user_id, posData, connectionState }) => {
+const UserNode: React.FC<{ user_id: number, posData: Posdata,
+                           connectionState: boolean, nodeSize:number }>
+                            = ({ user_id, posData, connectionState, nodeSize }) => {
   const { dispatch, jwt, csrf } = useContext(AppContext);
   const navigate = useNavigate();
   const [data, setData] = useState<userData>();
@@ -119,7 +119,10 @@ const UserNode: React.FC<{ user_id: number, posData: Posdata, connectionState: b
   const [endposarr, setEndPosArr] = useState<Posdata[]>([]);
   const [combineArr, setCombineArr] = useState<Combinearr[]>([]);
   const [showConnection, setShowConnection] = useState<boolean>(connectionState);
-
+  const nodeSizeInVw = (nodeSize / window.innerWidth) * 100;
+  const nodeSizeMidPointInVw = nodeSizeInVw/2;
+  const lineStartPos = {posx: posData.posx+nodeSizeMidPointInVw,
+                        posy: posData.posy+nodeSizeMidPointInVw}
 
   useEffect(() => {
     if (user_id && jwt) {
@@ -151,17 +154,13 @@ const UserNode: React.FC<{ user_id: number, posData: Posdata, connectionState: b
         connections.length,
         30,
         50,
-        posData.posx,
-        posData.posy
+        lineStartPos.posx,
+        lineStartPos.posy
       );
       setEndPosArr(calculatedPos);
     }
   }, [connections]);
   useEffect(() => {
-    console.log(`endarr`)
-    console.log(endposarr)
-    console.log('connections')
-    console.log(connections)
     if(connections){
       const combinedData: Combinearr[] = connections.map((item, index) =>({
         ...item,
@@ -177,13 +176,15 @@ const UserNode: React.FC<{ user_id: number, posData: Posdata, connectionState: b
         <NodeStyle
           title={`${data.username}`}
           posdata={posData}
+          nodeSize={nodeSize}
           onClick={() => setShowConnection(!showConnection)}>
           {showConnection &&
             combineArr?.map((connection) => <Connection
               key={connection.id}
               data={connection}
-              startposdata={posData}
-              endposdata={{ posx: connection.posx, posy: connection.posy }} />)}
+              startposdata={lineStartPos}
+              endposdata={{ posx: connection.posx, posy: connection.posy }}
+              />)}
         </NodeStyle>}
     </>
   );

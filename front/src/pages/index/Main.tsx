@@ -94,9 +94,9 @@ function Main() {
   return (
     <>
       <StyleDiv>
-        <Topright>
-          {/*<Menu/>*/}
-        </Topright>
+        {/* <Topright>
+          <Menu/>
+        </Topright> */}
         <WorkspaceComponent />
       </StyleDiv>
     </>
