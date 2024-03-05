@@ -8,7 +8,6 @@ const LineBox = styled.svg<{ fullPosdata?: fullPosdata }>`
   ${props => props.fullPosdata ? `width: ${props.fullPosdata.width}vw` : '0'};
   ${props => props.fullPosdata ? `height: ${props.fullPosdata.height}vh` : '0'};
 `
-
 interface ConnectionProps {
   id: number;
   date_established: string;
@@ -18,7 +17,6 @@ interface ConnectionProps {
   inviter: number;
   invitee: number;
 }
-
 interface Posdata {
   posx: number;
   posy: number;
@@ -72,17 +70,13 @@ const Connection: React.FC<Props> = (props) => {
     const endPosx = props.endposdata.posx;
     const endPosy = props.endposdata.posy;
 
-    console.log(`${id} startx:${startPosx} starty:${startPosy} endx:${endPosx} endy:${endPosy}`)
     SetFullPosData({
       top: Math.min(startPosy, endPosy),
       left: Math.min(startPosx, endPosx),
       height: Math.abs(startPosy - endPosy),
       width:  Math.abs(startPosx - endPosx),
     })
-    // console.log(startPosx, startPosy, endPosx, endPosy);
-    // console.log(fullPosdata)
     if((endPosy < startPosy && endPosx > startPosx) || (endPosy > startPosy && endPosx < endPosx)){
-      console.log(`${id} is in dimension 1, 3`)
       setLineData({
                   x1: 0,
                   y1 : 100,
@@ -90,7 +84,6 @@ const Connection: React.FC<Props> = (props) => {
                   y2 : 0
                 })
     } else {
-      console.log(`${id} is in dimension 2, 4`)
       setLineData({
         x1: 0,
         y1 : 0,

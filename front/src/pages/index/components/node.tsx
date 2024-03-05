@@ -4,18 +4,16 @@ import { styled } from 'styled-components';
 import { AppContext } from '../../../AppContext';
 import {clickedUser} from  '../../../actions';
 import Connection from './connector';
-import { Url } from 'url';
-import { Link, useNavigate } from 'react-router-dom';
-
-type Gender = 'M' | 'F' | 'N' | 'NA'
+import { useNavigate } from 'react-router-dom';
+import getUserData, { SuccessUserData } from '../../../lib/getUserData';
+import getConnection, { Connectiontype } from '../../../lib/getConnection';
+import { pxToVH, pxToVW } from '../../../lib/pxToVSize';
 
 // eslint-disable-next-line node/no-unsupported-features/node-builtins
-
 interface Posdata {
   posx: number,
   posy: number
 }
-
 const NodeStyle = styled.div<{ posdata?: Posdata, nodeSize?:number }>`
   position: fixed;
   ${props => props.nodeSize ? `width: ${props.nodeSize}px` : '80px'};
@@ -25,71 +23,7 @@ const NodeStyle = styled.div<{ posdata?: Posdata, nodeSize?:number }>`
   ${props => props.posdata ? `top: ${props.posdata.posy}vh` : '0'};
   ${props => props.posdata ? `left: ${props.posdata.posx}vw` : '0'};
 `;
-interface SuccessUserData {
-  username: string,
-  bio: string | null,
-  headshot: Url | null,
-  gender: Gender,
-  date_of_birth: string,
-  show_horoscope: boolean,
-  instagram_link: Url | null,
-  facebook_link: Url | null,
-  snapchat_link: Url | null,
-  inviteurl: Url,
-  created_time: string
-}
-type userData = SuccessUserData;
-async function getUserData(user_id: number, Token: string): Promise<userData> {
-  try {
-    const response = await fetch('http://127.0.0.1:8000/api/userdata', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${Token}`
-      },
-      body: JSON.stringify({ user_id: user_id }),
-    });
-    if (!response.ok) {
-      throw new Error('Failed to get user data')
-    }
-    const userData: userData = await response.json();
-    return userData;
-  } catch (error) {
-    console.error('Get User data error:', error);
-    throw error;
-  }
-}
-interface connectiontype {
-  id: number,
-  date_established: string,
-  closeness: string,
-  nicknamechildtoparent?: string,
-  nicknameparenttochild?: string,
-  inviter: number,
-  invitee: number,
-}
-async function getConnection(user_id: number, Token: string, csrf: string): Promise<connectiontype[]> {
-  try {
-    console.log(csrf);
-    const response = await fetch('http://127.0.0.1:8000/api/connections', {
-      credentials: 'include',
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${Token}`
-      },
-      body: JSON.stringify({ user_id: user_id }),
-    });
-    if (!response.ok) {
-      throw new Error('Failed to get user connection')
-    }
-    const connections: connectiontype[] = await response.json();
-    return connections;
-  } catch (error) {
-    console.error('Get User data error:', error);
-    throw error;
-  }
-}
+
 
 function calcpos(itemcount: number,
   evenunit: number,
@@ -103,30 +37,29 @@ function calcpos(itemcount: number,
     const Angle = (Math.PI / 4) + split * i;
     const YDiffPx = unit * Math.sin(Angle);
     const XDiffPx = unit * Math.cos(Angle);
-    console.log(`split ${i} angle is ${Angle} Ydiff ${YDiffPx} Xdiff ${XDiffPx}`);
     res.push({
-      posy: startposy - ((YDiffPx / window.innerWidth) * 100),
-      posx: startposx + ((XDiffPx / window.innerWidth) * 100)
+      posy: startposy - pxToVH(YDiffPx),
+      posx: startposx + pxToVW(XDiffPx)
     });
   }
   return res;
 }
 //TBD unit change function
 
-type Combinearr = connectiontype & Posdata;
+type Combinearr = Connectiontype & Posdata;
 
 const UserNode: React.FC<{ user_id: number, posData: Posdata,
                            connectionState: boolean, nodeSize:number }>
                             = ({ user_id, posData, connectionState, nodeSize }) => {
-  const { dispatch, jwt, csrf } = useContext(AppContext);
+  const { dispatch, jwt } = useContext(AppContext);
   const navigate = useNavigate();
-  const [data, setData] = useState<userData>();
-  const [connections, setConnections] = useState<connectiontype[]>();
+  const [data, setData] = useState<SuccessUserData>();
+  const [connections, setConnections] = useState<Connectiontype[]>();
   const [endposarr, setEndPosArr] = useState<Posdata[]>([]);
   const [combineArr, setCombineArr] = useState<Combinearr[]>([]);
   const [showConnection, setShowConnection] = useState<boolean>(connectionState);
-  const nodeSizeInVwX = (nodeSize / window.innerWidth) * 100;
-  const nodeSizeInVwY = (nodeSize / window.innerHeight) * 100;
+  const nodeSizeInVwX = pxToVW(nodeSize);
+  const nodeSizeInVwY = pxToVH(nodeSize);
   const nodeSizeMidPointInVwX = nodeSizeInVwX/2;
   const nodeSizeMidPointInVwY = nodeSizeInVwY/2;
   const lineStartPos = {posx: posData.posx+nodeSizeMidPointInVwX,
@@ -143,7 +76,7 @@ const UserNode: React.FC<{ user_id: number, posData: Posdata,
           // Handle error appropriately, e.g., show a toast message
           navigate('/add');
         });
-      getConnection(user_id, jwt, csrf as string)
+      getConnection(user_id, jwt)
         .then((result) => {
           setConnections(result);
         })

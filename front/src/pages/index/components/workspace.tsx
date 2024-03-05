@@ -2,6 +2,7 @@ import React, { useState, useContext } from 'react';
 import { styled } from 'styled-components';
 import { AppContext } from '../../../AppContext';
 import UserNode from './node';
+import { pxToVH, pxToVW } from '../../../lib/pxToVSize';
 
 const Wrapper = styled.div`
   #workspaceContainer {
@@ -33,7 +34,6 @@ interface WorkspaceConf {
   movementX: number;
   movementY: number;
 }
-
 const Workspace: React.FC = () => {
   const { current_user_id } = useContext(AppContext);
   const [workspaceConf, setWorkspaceConf] = useState<WorkspaceConf>({
@@ -66,8 +66,8 @@ const Workspace: React.FC = () => {
   }
 
   const nodeSize = 80 //px
-  const nodeSizeInVwX = (nodeSize / window.innerWidth) * 100;
-  const nodeSizeInVwY = (nodeSize / window.innerHeight) * 100;
+  const nodeSizeInVwX = pxToVW(nodeSize);
+  const nodeSizeInVwY = pxToVH(nodeSize);
   const nodeSizeMidPointInVwX = nodeSizeInVwX/2;
   const nodeSizeMidPointInVwY = nodeSizeInVwY/2;
   const mainNodepos = {
