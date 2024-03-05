@@ -84,7 +84,7 @@ const Workspace: React.FC = () => {
             posData={{posx: 50, posy:50}}
             connectionState = {true}
             nodeSize={80}
-            parents={new Set()}></UserNode>
+            ></UserNode>
         </main>
         <button onClick={returnPos}>Back</button>
       </div>

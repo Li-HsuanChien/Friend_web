@@ -49,8 +49,8 @@ function calcpos(itemcount: number,
 type Combinearr = Connectiontype & Posdata;
 
 const UserNode: React.FC<{ user_id: number, posData: Posdata,
-                           connectionState: boolean, nodeSize:number, parents:Set<number> }>
-                            = ({ user_id, posData, connectionState, nodeSize, parents }) => {
+                           connectionState: boolean, nodeSize:number}>
+                            = ({ user_id, posData, connectionState, nodeSize}) => {
   const { dispatch, jwt } = useContext(AppContext);
   const navigate = useNavigate();
   const [data, setData] = useState<SuccessUserData>();
@@ -98,15 +98,11 @@ const UserNode: React.FC<{ user_id: number, posData: Posdata,
   }, [connections]);
   useEffect(() => {
     if(connections){
-      let combinedData: Combinearr[] = connections.map((item, index) =>({
+      const combinedData: Combinearr[] = connections.map((item, index) =>({
         ...item,
         ...endposarr[index]
       }));
-      combinedData = combinedData.filter(connection => !(parents.has(connection.invitee) || parents.has(connection.inviter)));
       setCombineArr(combinedData);
-      parents.add(user_id)
-      console.log(combinedData);
-      console.log(parents);
     }
   }, [endposarr]);
 
@@ -131,7 +127,6 @@ const UserNode: React.FC<{ user_id: number, posData: Posdata,
               nodeSize = {nodeSize}
               startposdata={posData}
               endposdata={{ posx: connection.posx, posy: connection.posy }}
-              parents = {parents}
               />)}
         </NodeStyle>): ''}
     </>
