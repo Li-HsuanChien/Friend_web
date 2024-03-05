@@ -2,6 +2,7 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { styled } from 'styled-components';
 import { AppContext } from '../../../AppContext';
+import {clickedUser} from  '../../../actions';
 import Connection from './connector';
 import { Url } from 'url';
 import { Link, useNavigate } from 'react-router-dom';
@@ -184,7 +185,9 @@ const UserNode: React.FC<{ user_id: number, posData: Posdata,
           title={`${data.username}`}
           posdata={posData}
           nodeSize={nodeSize}
-          onClick={() => setShowConnection(!showConnection)}>
+          onClick={() => {
+                            setShowConnection(!showConnection)
+                            dispatch(clickedUser(user_id))}}>
           {showConnection &&
             combineArr?.map((connection) => <Connection
               key={connection.id}
