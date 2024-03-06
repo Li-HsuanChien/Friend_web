@@ -20,6 +20,7 @@ class UserDataSerializer(serializers.HyperlinkedModelSerializer):
     }
     username = serializers.StringRelatedField()
     gender = serializers.ChoiceField(choices=Gender_CHOICES)
+    headshot = serializers.ImageField()
     class Meta:
         model = Userdata
         fields = ["username", "username_id", "bio", "headshot", "gender",\

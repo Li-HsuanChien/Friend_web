@@ -230,7 +230,7 @@ class UserCreate(CreateAPIView):
         user_instance = User.objects.get(id=user_id)
 
         # bio = request.data.get('bio')
-        # headshot = request.data.get('headshot')
+        headshot = request.data.get('headshot')
         gender = request.data.get('gender')
         show_horoscope = request.data.get('show_horoscope')
         # instagram_link = request.data.get('instagram_link')
@@ -248,7 +248,7 @@ class UserCreate(CreateAPIView):
             inviteurl=inviteurl,
             # instagram_link=instagram_link,
             # bio=bio,
-            # headshot=headshot,
+            headshot=headshot,
             # facebook_link=facebook_link,
             # snapchat_link=snapchat_link,
             #created_time=created_time

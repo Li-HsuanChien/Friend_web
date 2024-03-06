@@ -173,21 +173,27 @@ const AddPageStyle = styled.div`
 
 
 // TBD add ping in every page! to check user!
-async function postData(gender: string, date_of_birth: string, show_horoscope: boolean, Token: string): Promise<void>{
+async function postData(gender: string, date_of_birth: string, show_horoscope: boolean, Token: string, image: File): Promise<void>{
   try{
+    const formData = new FormData();
+    const pythonBoolean = show_horoscope ? 'True': 'False';
+    formData.append('show_horoscope', pythonBoolean);
+    formData.append('gender', gender);
+    formData.append('date_of_birth', date_of_birth);
+    formData.append('headshot', image);
+
     const response = await fetch('http://127.0.0.1:8000/api/userdatas/add', {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
+        // No need for Content-Type here, as it will be automatically set
         'Authorization': `Bearer ${Token}`
       },
-      body: JSON.stringify({'show_horoscope': show_horoscope,
-                            'gender': gender,
-                            'date_of_birth': date_of_birth}),
+      body: formData,
     });
+
     if(!response.ok){
       console.log('user not added! something went wrong')
-    }
+    } else console.log('probably added');
     return;
   } catch (error) {
     console.error('Add User data error:', error);
@@ -195,29 +201,19 @@ async function postData(gender: string, date_of_birth: string, show_horoscope: b
   }
 }
 
-interface imageData{
-  title: string,
-  description: string,
-  image_url: string,
-}
-
 const Add = () => {
   const navigate = useNavigate();
   const [horoscopeState, setHoroscopeState] = useState<boolean>(false);
   const [date, setDate] = useState<string>('');
   const [gender, setGender] = useState<string>('');
-  const [image, setImage] = useState<imageData>({
-        title: '',
-        description: '',
-        image_url: '',
-    })
+  const [image, setImage] = useState<File>();
   const {jwt} = useContext(AppContext);
 
   const handleSubmit = async(e: React.FormEvent<HTMLFormElement>) =>{
     e.preventDefault();
     try{
-        if(gender && date && horoscopeState && jwt){
-          await postData(gender, date, horoscopeState, jwt);
+        if(gender && date && horoscopeState && jwt && image){
+          await postData(gender, date, horoscopeState, jwt, image);
           navigate('/');
         }
     } catch(error)  {
@@ -226,11 +222,12 @@ const Add = () => {
     }
   }
 
-  const handleImageChange = (e: any) => {
-        const newData = { ...image };
-        newData['image_url'] = e.target.files[0];
-        setImage(newData);
-  };
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files && e.target.files[0]) {
+          const selectedFile = e.target.files[0];
+          setImage(selectedFile);
+        }
+      };
 
   return (
     <>
