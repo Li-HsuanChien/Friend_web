@@ -8,7 +8,6 @@ from rest_framework_simplejwt.views import TokenRefreshView
 from friend_web import views
 import friend_web.views
 from django.conf import settings
-from django.conf.urls.static import static
 
 
 

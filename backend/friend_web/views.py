@@ -237,7 +237,7 @@ class UserCreate(CreateAPIView):
         date_of_birth = request.data.get('date_of_birth')
         # facebook_link = request.data.get('facebook_link')
         # snapchat_link = request.data.get('snapchat_link')
-        inviteurl = f"https://www.localhost:8000/{user_instance}"
+        inviteurl = f"https://www.localhost:8000/inviteurl/{user_instance}"
 
         userdata_instance = Userdata.objects.create(
             username=user_instance,
@@ -291,7 +291,7 @@ class CurrentUserRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView):
     permission_classes = (authentication_level,)
 
     def get_object(self):
-        user = self.request.user
+        user = self.request.user.id
         # Ensure Userdata instance exists for the user
         userdata_instance = get_object_or_404(Userdata, username=user)
         return userdata_instance
@@ -305,6 +305,7 @@ class CurrentUserRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView):
             field_value = request.data.get(field_name)
             if field_value is not None:
                 setattr(userdata_instance, field_name, field_value)
+        setattr(userdata_instance, 'inviteurl', f"https://www.localhost:8000/inviteurl/{request.user.id}")
 
         # Save the changes to the user_instance
         userdata_instance.save()

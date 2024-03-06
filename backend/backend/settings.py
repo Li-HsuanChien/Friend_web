@@ -158,3 +158,8 @@ CSRF_TRUSTED_ORIGINS = [ "http://127.0.0.1", "http://localhost",'http://127.0.0.
 SIMPLE_JWT = {"ACCESS_TOKEN_LIFETIME": timedelta(minutes=30), \
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),}
 
+# Actual directory user files go to
+MEDIA_ROOT = os.path.join(os.path.dirname(BASE_DIR), 'mediafiles')
+
+# URL used to access the media
+MEDIA_URL = '/media/'
