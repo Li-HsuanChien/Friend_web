@@ -27,6 +27,7 @@ class MaxAccessPermission(permissions.BasePermission):
                 connection_list = Connection.objects.filter(Q(inviter = user)|Q(invitee=user)).values()
                 if connection_list:
                     for row in connection_list:
+                        allowed_userdata_id.add(row["inviter_id"])
                         allowed_userdata_id.add(row["invitee_id"])
                         allowed_connection_id.add(row["id"])
         print(allowed_connection_id)

@@ -36,17 +36,12 @@ function calcpos(
   startposx: number,
   startposy: number,
   main: boolean): LinePos[] {
-  console.log('main', main);
-  console.log('items', itemcount)
   const split = 2 * Math.PI / (itemcount);
-  console.log('split', split)
   const res: LinePos[] = []
   for (let i = 0; i <= itemcount; i++) {
     if(main && i === 0) continue;
     const unit = i % 2 === 0 ? evenunit : oddunit;
-    console.log('parentangle',i, parent_angle)
-    const Angle = ((parent_angle)) + split * i;
-    console.log(Angle)
+    const Angle = ((parent_angle + Math.PI)) + split * i;
     const YDiffPx = unit * Math.sin(Angle);
     const XDiffPx = unit * Math.cos(Angle);
     res.push({

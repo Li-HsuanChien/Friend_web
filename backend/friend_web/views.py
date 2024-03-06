@@ -299,7 +299,7 @@ class CurrentUserRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView):
     def put(self, request, *args, **kwargs):
         userdata_instance = self.get_object()
         fields_to_update = ['bio', 'headshot', 'gender', 'date_of_birth', 'show_horoscope',
-                    'instagram_link', 'facebook_link', 'snapchat_link', 'inviteurl']
+                    'instagram_link', 'facebook_link', 'snapchat_link']
 
         for field_name in fields_to_update:
             field_value = request.data.get(field_name)
