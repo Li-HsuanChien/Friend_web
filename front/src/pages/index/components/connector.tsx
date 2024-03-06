@@ -13,7 +13,7 @@ const LineBox = styled.svg<{ fullPosdata?: fullPosdata }>`
   z-index: -1;
 
   line{ 
-    stroke: gray;
+    stroke: white;
     stroke-width: 3px;
     
   }
