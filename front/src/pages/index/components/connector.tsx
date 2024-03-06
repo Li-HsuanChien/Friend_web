@@ -94,7 +94,7 @@ const Connection: React.FC<Props> = (props) => {
       height: Math.abs(startPosy - endPosy),
       width:  Math.abs(startPosx - endPosx),
     })
-    if((endPosy < startPosy && endPosx > startPosx) || (endPosy > startPosy && endPosx < endPosx)){
+    if((endPosy < startPosy && endPosx > startPosx) || (endPosy > startPosy && endPosx < startPosx)){
       setLineData({
                   x1: 0,
                   y1 : 100,

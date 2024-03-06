@@ -34,12 +34,19 @@ function calcpos(
   evenunit: number,
   oddunit: number,
   startposx: number,
-  startposy: number): LinePos[] {
-  const split = 2 * Math.PI / itemcount;
+  startposy: number,
+  main: boolean): LinePos[] {
+  console.log('main', main);
+  console.log('items', itemcount)
+  const split = 2 * Math.PI / (itemcount);
+  console.log('split', split)
   const res: LinePos[] = []
-  for (let i = 0; i < itemcount; i++) {
+  for (let i = 0; i <= itemcount; i++) {
+    if(main && i === 0) continue;
     const unit = i % 2 === 0 ? evenunit : oddunit;
+    console.log('parentangle',i, parent_angle)
     const Angle = ((parent_angle + Math.PI)) + split * i;
+    console.log(Angle)
     const YDiffPx = unit * Math.sin(Angle);
     const XDiffPx = unit * Math.cos(Angle);
     res.push({
@@ -57,15 +64,15 @@ type Combinearr = Connectiontype & LinePos;
 const UserNode: React.FC<{ user_id: number, posData: LinePos,
                            connectionState: boolean, nodeSize:number,}>
                             = ({ user_id, posData, connectionState, nodeSize}) => {
-  const { dispatch, jwt } = useContext(AppContext);
+  const { dispatch, jwt, current_user_id } = useContext(AppContext);
   const navigate = useNavigate();
   const [data, setData] = useState<SuccessUserData>();
   const [connections, setConnections] = useState<Connectiontype[]>();
   const [endposarr, setEndPosArr] = useState<LinePos[]>([]);
   const [combineArr, setCombineArr] = useState<Combinearr[]>([]);
   const [showConnection, setShowConnection] = useState<boolean>(connectionState);
-
   useEffect(() => {
+    console.log(user_id, 'started');
     if (user_id && jwt) {
       getUserData(user_id, jwt)
         .then((result) => {
@@ -90,15 +97,16 @@ const UserNode: React.FC<{ user_id: number, posData: LinePos,
     }
   }, [user_id, jwt]);
   useEffect(() => {
-    if(user_id === 10)
     if (connections && connections.length > 0) {
+      const main = (user_id === current_user_id)
       const calculatedPos = calcpos(
         posData.angle,
         connections.length,
-        100,
-        120,
+        140,
+        180,
         posData.posx,
-        posData.posy
+        posData.posy,
+        main
       );
       setEndPosArr(calculatedPos);
     }
