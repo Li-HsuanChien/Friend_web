@@ -1,5 +1,5 @@
 /* eslint-disable node/no-unpublished-import */
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useEffect, useState, useContext, Dispatch  } from 'react';
 import { styled } from 'styled-components';
 import { AppContext } from '../../../AppContext';
 import {clickedUser} from  '../../../actions';
@@ -57,8 +57,9 @@ function calcpos(
 type Combinearr = Connectiontype & LinePos;
 
 const UserNode: React.FC<{ user_id: number, posData: LinePos,
-                           connectionState: boolean, nodesize:number, parent_id?:number}>
-                            = ({ user_id, posData, connectionState, nodesize, parent_id}) => {
+                           connectionState: boolean, nodesize:number,
+                           parent_id?:number, setchildName?:Dispatch<string>}>
+                            = ({ user_id, posData, connectionState, nodesize, parent_id, setchildName}) => {
   const { dispatch, jwt, current_user_id } = useContext(AppContext);
   const navigate = useNavigate();
   const [data, setData] = useState<SuccessUserData>();
@@ -71,6 +72,10 @@ const UserNode: React.FC<{ user_id: number, posData: LinePos,
       getUserData(user_id, jwt)
         .then((result) => {
           setData(result);
+          if(setchildName && data){
+            console.log(data.username, 'should be added')
+            setchildName(data.username);
+          }
         })
         .catch((error) => {
           console.error('Failed to get user data:', error);
@@ -133,7 +138,7 @@ const UserNode: React.FC<{ user_id: number, posData: LinePos,
             combineArr?.map((connection) => <Connection
               key={connection.id}
               data={connection}
-              parent_id={user_id}
+              parent={{id: user_id, username: data.username}}
               nodesize = {nodesize}
               startposdata={posData}
               endposdata={{ posx: connection.posx, posy: connection.posy, angle:connection.angle }}

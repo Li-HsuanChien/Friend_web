@@ -45,9 +45,13 @@ interface fullPosdata{
   height: number,
   width:  number
 }
+interface parent{
+  id: number,
+  username: string
+}
 interface Props {
   data: ConnectionProps;
-  parent_id: number,
+  parent: parent,
   nodesize: number,
   startposdata: Posdata;
   endposdata: LinePos;
@@ -69,9 +73,13 @@ const Connection: React.FC<Props> = (props) => {
     inviter,
     invitee
   } = props.data;
-  const parent_id = props.parent_id;
+  const parent_id = props.parent.id;
+  const parent_username = props.parent.username;
+  const inviterIsParent = inviter === parent_id;
+  const child_id = inviterIsParent? invitee: inviter;
   const { dispatch } = useContext(AppContext)
   const [childNodeSize, setChildNodeSize] = useState<number>(80);
+  const [childName, setchildName] = useState<string>("");
   // known start and finish
   const [lineData, setLineData] = useState<LineData>({
     x1: 0,
@@ -139,14 +147,17 @@ const Connection: React.FC<Props> = (props) => {
             y2={`${lineData.y2}%`}
             onClick={handleLineCLick}
           />
-          <title>{`Connection ID: ${id}\nDate Established: ${date_established}\nCloseness: ${closeness}`}</title>
+          <title>{`Connection ID: ${id}\nDate Established: ${date_established}\nCloseness: ${closeness}\n`}
+                  {nicknameparenttochild && `${parent_username}'s Nick Name to ${childName}is ${nicknameparenttochild}\n`}
+                  {nicknamechildtoparent && `${childName}'s Nick Name to ${parent_username} is ${nicknamechildtoparent}\n`}</title>
         </g>
       </LineBox>
-      <UserNode user_id = {inviter === parent_id? invitee: inviter}
+      <UserNode user_id = {child_id}
                 posData={props.endposdata}
                 connectionState = {false}
                 nodesize={childNodeSize}
                 parent_id={parent_id}
+                setchildName={setchildName}
                 ></UserNode>
     </>
   );

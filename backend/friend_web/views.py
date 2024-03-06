@@ -79,7 +79,7 @@ class TargetUser(APIView):
                 }
     """
     serializer_class = UserSerializer
-    permission_classes = (MaxAccessPermission,)
+    permission_classes = (IsAuthenticated,)
 
     def post(self, request):
         username = request.data.get('username')
