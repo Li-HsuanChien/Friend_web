@@ -10,6 +10,9 @@ const LineBox = styled.svg<{ fullPosdata?: fullPosdata }>`
   ${props => props.fullPosdata ? `left: ${props.fullPosdata.left}vw` : '0'};
   ${props => props.fullPosdata ? `width: ${props.fullPosdata.width}vw` : '0'};
   ${props => props.fullPosdata ? `height: ${props.fullPosdata.height}vh` : '0'};
+  .hover-effect:hover {
+    stroke: green; /* Change stroke color to green on hover */
+  }
 `
 interface ConnectionProps {
   id: number;
@@ -119,14 +122,18 @@ const Connection: React.FC<Props> = (props) => {
   return (
     <>
       <LineBox fullPosdata={fullPosdata} height={fullPosdata.height} width={fullPosdata.width} id={`connection ${id}`}>
-        <line
-          x1={`${lineData.x1}%`}
-          y1={`${lineData.y1}%`}
-          x2={`${lineData.x2}%`}
-          y2={`${lineData.y2}%`}
-          style={{ stroke: 'white', strokeWidth: 2 }}
-          onClick={handleLineCLick}
-        />
+        <g onMouseOver={(e) => e.stopPropagation()}
+            className="hover-effect">
+          <line
+            x1={`${lineData.x1}%`}
+            y1={`${lineData.y1}%`}
+            x2={`${lineData.x2}%`}
+            y2={`${lineData.y2}%`}
+            style={{ stroke: 'white', strokeWidth: 2 }}
+            onClick={handleLineCLick}
+          />
+          <title>{`Connection ID: ${id}\nDate Established: ${date_established}\nCloseness: ${closeness}`}</title>
+        </g>
       </LineBox>
       <UserNode user_id = {inviter === parent_id? invitee: inviter}
                 posData={props.endposdata}
