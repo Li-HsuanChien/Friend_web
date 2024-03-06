@@ -1,6 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import styled from 'styled-components';
 import UserNode from './node';
+import { AppContext } from '../../../AppContext';
+import { clickedConnection } from '../../../actions';
 
 const LineBox = styled.svg<{ fullPosdata?: fullPosdata }>`
   position: fixed;
@@ -22,6 +24,9 @@ interface Posdata {
   posx: number;
   posy: number;
 }
+interface LinePos extends Posdata{
+  angle: number,
+}
 
 interface fullPosdata{
   top: number,
@@ -34,7 +39,7 @@ interface Props {
   parent_id: number,
   nodeSize: number,
   startposdata: Posdata;
-  endposdata: Posdata;
+  endposdata: LinePos;
 }
 interface LineData{
   x1: number,
@@ -54,6 +59,7 @@ const Connection: React.FC<Props> = (props) => {
     invitee
   } = props.data;
   const parent_id = props.parent_id;
+  const { dispatch } = useContext(AppContext)
   const [childNodeSize, setChildNodeSize] = useState<number>(80);
   // known start and finish
   const [lineData, setLineData] = useState<LineData>({
@@ -81,7 +87,7 @@ const Connection: React.FC<Props> = (props) => {
     const startPosy = props.startposdata.posy;
     const endPosx = props.endposdata.posx;
     const endPosy = props.endposdata.posy;
-    console.log(`line ${id} sx ${startPosx} sy${startPosy} ex${endPosx} ey${endPosy} `)
+    //console.log(`line ${id} sx ${startPosx} sy${startPosy} ex${endPosx} ey${endPosy} `)
     SetFullPosData({
       top: Math.min(startPosy, endPosy),
       left: Math.min(startPosx, endPosx),
@@ -104,6 +110,10 @@ const Connection: React.FC<Props> = (props) => {
       })
     }
   }, [window.innerHeight, window.innerWidth])
+  const handleLineCLick = (e:any) =>{
+    e.stopPropagation();
+    dispatch(clickedConnection(id));
+  }
 
 
   return (
@@ -115,6 +125,7 @@ const Connection: React.FC<Props> = (props) => {
           x2={`${lineData.x2}%`}
           y2={`${lineData.y2}%`}
           style={{ stroke: 'white', strokeWidth: 2 }}
+          onClick={handleLineCLick}
         />
       </LineBox>
       <UserNode user_id = {inviter === parent_id? invitee: inviter}

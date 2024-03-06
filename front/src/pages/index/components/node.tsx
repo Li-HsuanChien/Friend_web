@@ -14,6 +14,9 @@ interface Posdata {
   posx: number,
   posy: number
 }
+interface LinePos extends Posdata{
+  angle: number,
+}
 const NodeStyle = styled.div<{ posdata: Posdata, nodeSize:number }>`
   position: fixed;
   ${props => props.nodeSize ? `width: ${props.nodeSize}px` : '80px'};
@@ -25,37 +28,40 @@ const NodeStyle = styled.div<{ posdata: Posdata, nodeSize:number }>`
 `;
 
 
-function calcpos(itemcount: number,
+function calcpos(
+  parent_angle:number,
+  itemcount: number,
   evenunit: number,
   oddunit: number,
   startposx: number,
-  startposy: number): Posdata[] {
+  startposy: number): LinePos[] {
   const split = 2 * Math.PI / itemcount;
-  const res: Posdata[] = []
+  const res: LinePos[] = []
   for (let i = 0; i < itemcount; i++) {
     const unit = i % 2 === 0 ? evenunit : oddunit;
-    const Angle = (Math.PI / 4) + split * i;
+    const Angle = ((parent_angle + Math.PI)) + split * i;
     const YDiffPx = unit * Math.sin(Angle);
     const XDiffPx = unit * Math.cos(Angle);
     res.push({
       posy: startposy - pxToVH(YDiffPx),
-      posx: startposx + pxToVW(XDiffPx)
+      posx: startposx + pxToVW(XDiffPx),
+      angle: Angle
     });
   }
   return res;
 }
 //TBD unit change function
 
-type Combinearr = Connectiontype & Posdata;
+type Combinearr = Connectiontype & LinePos;
 
-const UserNode: React.FC<{ user_id: number, posData: Posdata,
-                           connectionState: boolean, nodeSize:number}>
+const UserNode: React.FC<{ user_id: number, posData: LinePos,
+                           connectionState: boolean, nodeSize:number,}>
                             = ({ user_id, posData, connectionState, nodeSize}) => {
   const { dispatch, jwt } = useContext(AppContext);
   const navigate = useNavigate();
   const [data, setData] = useState<SuccessUserData>();
   const [connections, setConnections] = useState<Connectiontype[]>();
-  const [endposarr, setEndPosArr] = useState<Posdata[]>([]);
+  const [endposarr, setEndPosArr] = useState<LinePos[]>([]);
   const [combineArr, setCombineArr] = useState<Combinearr[]>([]);
   const [showConnection, setShowConnection] = useState<boolean>(connectionState);
 
@@ -84,9 +90,10 @@ const UserNode: React.FC<{ user_id: number, posData: Posdata,
     }
   }, [user_id, jwt]);
   useEffect(() => {
-    if(user_id === 10) console.log(posData)
+    if(user_id === 10)
     if (connections && connections.length > 0) {
       const calculatedPos = calcpos(
+        posData.angle,
         connections.length,
         100,
         120,
@@ -126,7 +133,7 @@ const UserNode: React.FC<{ user_id: number, posData: Posdata,
               parent_id={user_id}
               nodeSize = {nodeSize}
               startposdata={posData}
-              endposdata={{ posx: connection.posx, posy: connection.posy }}
+              endposdata={{ posx: connection.posx, posy: connection.posy, angle:connection.angle }}
               />)}
         </NodeStyle>): ''}
     </>

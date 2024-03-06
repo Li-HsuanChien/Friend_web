@@ -81,7 +81,7 @@ const Workspace: React.FC = () => {
           {/* childrens */}
           <UserNode
             user_id = {current_user_id as number}
-            posData={{posx: 50, posy:50}}
+            posData={{posx: 50, posy:50, angle:(5 * Math.PI/4)}}
             connectionState = {true}
             nodeSize={80}
             ></UserNode>

@@ -7,6 +7,7 @@ interface ContextState {
   jwt: string | null;
   csrf: string | null;
   clickeduser: number | null;
+  clickeconnection: number | null;
 }
 
 // Define the action types
@@ -15,7 +16,8 @@ type Action =
   | { type: 'SET_JWT', payload: string }
   | { type: 'SET_USER_NAME', payload: string }
   | { type: 'SET_CSRF_TOKEN', payload: string }
-  | { type : 'SET_CLICKED_USER', payload: number};
+  | { type : 'SET_CLICKED_USER', payload: number}
+  | { type: 'SET_CLICKED_CONNECTION', payload: number };
 
 // Define the reducer function
 export const AppReducer = (state: ContextState, action: Action): ContextState => {
@@ -44,6 +46,11 @@ export const AppReducer = (state: ContextState, action: Action): ContextState =>
       return{
         ...state,
         clickeduser: action.payload as number | null,
+      }
+    case 'SET_CLICKED_CONNECTION':
+      return{
+        ...state,
+        clickeconnection: action.payload as number | null,
       }
     default:
       return state;
@@ -77,7 +84,8 @@ const initialState: ContextState = {
   current_user_name: null,
   jwt: null,
   csrf: null, // Initialize CSRF token as null initially
-  clickeduser:null
+  clickeduser:null,
+  clickeconnection:null
 };
 
 export const AppContext = createContext<AppContextValue>({} as AppContextValue);
