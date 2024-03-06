@@ -15,8 +15,8 @@ const AddPageStyle = styled.div`
   background-color: #080710;
 
   .background {
-    width: 430px;
-    height: 460px;
+    width: 500px;
+    height: 600px;
     position: absolute;
     transform: translate(-50%, -50%);
     left: 50%;
@@ -46,7 +46,7 @@ const AddPageStyle = styled.div`
   }
 
   form {
-    height: 460px;
+    height: 540px;
     width: 400px;
     background-color: rgba(255, 255, 255, 0.13);
     position: absolute;
@@ -80,7 +80,7 @@ const AddPageStyle = styled.div`
   }
 
   form select{
-  display: block;
+    display: block;
     height: 50px;
     width: 100%;
     background-color: rgba(255, 255, 255, 0.07);
@@ -118,6 +118,26 @@ const AddPageStyle = styled.div`
     margin-top: 8px;
     font-size: 14px;
     font-weight: 300;
+  }
+
+  input[type='file'] {
+    height: 50px;
+    width: 100%;
+    background-color: rgba(255, 255, 255, 0.07);
+    border-radius: 3px;
+    padding: 0px;
+    margin-top: 8px;
+    font-size: 22px;
+    font-weight: 300;
+    vertical-align : middle;
+    
+  }
+
+  input::file-selector-button {
+    font-family: 'Poppins', sans-serif;
+    padding: 0.5em;
+    border: thin solid grey;
+    border-radius: 3px;
   }
 
   input {
@@ -175,12 +195,22 @@ async function postData(gender: string, date_of_birth: string, show_horoscope: b
   }
 }
 
+interface imageData{
+  title: string,
+  description: string,
+  image_url: string,
+}
 
 const Add = () => {
   const navigate = useNavigate();
   const [horoscopeState, setHoroscopeState] = useState<boolean>(false);
   const [date, setDate] = useState<string>('');
   const [gender, setGender] = useState<string>('');
+  const [image, setImage] = useState<imageData>({
+        title: '',
+        description: '',
+        image_url: '',
+    })
   const {jwt} = useContext(AppContext);
 
   const handleSubmit = async(e: React.FormEvent<HTMLFormElement>) =>{
@@ -196,6 +226,12 @@ const Add = () => {
     }
   }
 
+  const handleImageChange = (e: any) => {
+        const newData = { ...image };
+        newData['image_url'] = e.target.files[0];
+        setImage(newData);
+  };
+
   return (
     <>
       <AddPageStyle>
@@ -206,6 +242,16 @@ const Add = () => {
 
         <form onSubmit={handleSubmit}>
           <h3>Who are you?</h3>
+
+          <label htmlFor='Image'>headshoot</label>
+          <input
+            type='file'
+            id='Image'
+            name='Image_url'
+            accept="image/jpeg,image/png,image/gif"
+            onChange={(e) => {
+              handleImageChange(e);
+            }}/>
 
           <label htmlFor="Gender">Gender</label>
           <select id="Gender" name="Gender" onChange={(e)=>setGender(e.target.value)}>

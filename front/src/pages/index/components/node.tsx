@@ -17,14 +17,14 @@ interface Posdata {
 interface LinePos extends Posdata{
   angle: number,
 }
-const NodeStyle = styled.div<{ posdata: Posdata, nodeSize:number }>`
+const NodeStyle = styled.div<{ posdata: Posdata, nodesize:number }>`
   position: fixed;
-  ${props => props.nodeSize ? `width: ${props.nodeSize}px` : '80px'};
-  ${props => props.nodeSize ? `height: ${props.nodeSize}px` : '80px'};
+  ${props => props.nodesize ? `width: ${props.nodesize}px` : '80px'};
+  ${props => props.nodesize ? `height: ${props.nodesize}px` : '80px'};
   background-color: white;
   border-radius: 50%;
-  ${props => props.posdata ? `top: ${props.posdata.posy - (pxToVH(props.nodeSize)/2)}vh` : '0'};
-  ${props => props.posdata ? `left: ${props.posdata.posx -(pxToVW(props.nodeSize)/2)}vw` : '0'};
+  ${props => props.posdata ? `top: ${props.posdata.posy - (pxToVH(props.nodesize)/2)}vh` : '0'};
+  ${props => props.posdata ? `left: ${props.posdata.posx -(pxToVW(props.nodesize)/2)}vw` : '0'};
 `;
 
 
@@ -57,8 +57,8 @@ function calcpos(
 type Combinearr = Connectiontype & LinePos;
 
 const UserNode: React.FC<{ user_id: number, posData: LinePos,
-                           connectionState: boolean, nodeSize:number, parent_id?:number}>
-                            = ({ user_id, posData, connectionState, nodeSize, parent_id}) => {
+                           connectionState: boolean, nodesize:number, parent_id?:number}>
+                            = ({ user_id, posData, connectionState, nodesize, parent_id}) => {
   const { dispatch, jwt, current_user_id } = useContext(AppContext);
   const navigate = useNavigate();
   const [data, setData] = useState<SuccessUserData>();
@@ -67,7 +67,6 @@ const UserNode: React.FC<{ user_id: number, posData: LinePos,
   const [combineArr, setCombineArr] = useState<Combinearr[]>([]);
   const [showConnection, setShowConnection] = useState<boolean>(connectionState);
   useEffect(() => {
-    console.log(user_id, 'started');
     if (user_id && jwt) {
       getUserData(user_id, jwt)
         .then((result) => {
@@ -128,14 +127,14 @@ const UserNode: React.FC<{ user_id: number, posData: LinePos,
       {data?(<NodeStyle
           title={`${data.username}`}
           posdata={posData}
-          nodeSize={nodeSize}
+          nodesize={nodesize}
           onClick={handleNodeClick}>
           {showConnection &&
             combineArr?.map((connection) => <Connection
               key={connection.id}
               data={connection}
               parent_id={user_id}
-              nodeSize = {nodeSize}
+              nodesize = {nodesize}
               startposdata={posData}
               endposdata={{ posx: connection.posx, posy: connection.posy, angle:connection.angle }}
               />)}

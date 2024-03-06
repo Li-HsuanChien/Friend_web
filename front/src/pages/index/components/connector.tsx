@@ -4,12 +4,12 @@ import UserNode from './node';
 import { AppContext } from '../../../AppContext';
 import { clickedConnection } from '../../../actions';
 
-const LineBox = styled.svg<{ fullPosdata?: fullPosdata }>`
+const LineBox = styled.svg<{ fullposdata?: fullPosdata }>`
   position: fixed;
-  ${props => props.fullPosdata ? `top: ${props.fullPosdata.top}vh` : '0'};
-  ${props => props.fullPosdata ? `left: ${props.fullPosdata.left}vw` : '0'};
-  ${props => props.fullPosdata ? `width: ${props.fullPosdata.width}vw` : '0'};
-  ${props => props.fullPosdata ? `height: ${props.fullPosdata.height}vh` : '0'};
+  ${props => props.fullposdata ? `top: ${props.fullposdata.top}vh` : '0'};
+  ${props => props.fullposdata ? `left: ${props.fullposdata.left}vw` : '0'};
+  ${props => props.fullposdata ? `width: ${props.fullposdata.width}vw` : '0'};
+  ${props => props.fullposdata ? `height: ${props.fullposdata.height}vh` : '0'};
   z-index: -1;
 
   line{ 
@@ -48,7 +48,7 @@ interface fullPosdata{
 interface Props {
   data: ConnectionProps;
   parent_id: number,
-  nodeSize: number,
+  nodesize: number,
   startposdata: Posdata;
   endposdata: LinePos;
 }
@@ -86,13 +86,13 @@ const Connection: React.FC<Props> = (props) => {
     width: 0,
   })
   useEffect(() => {
-    const nodeSize = props.nodeSize;
+    const nodesize = props.nodesize;
     if(closeness === 'friend'){
-      setChildNodeSize(nodeSize - 15);
+      setChildNodeSize(nodesize - 15);
     } else if(closeness === 'closefriend'){
-      setChildNodeSize(nodeSize - 10);
+      setChildNodeSize(nodesize - 10);
     } else{
-      setChildNodeSize(nodeSize - 5);
+      setChildNodeSize(nodesize - 5);
     }
     const startPosx = props.startposdata.posx;
     const startPosy = props.startposdata.posy;
@@ -129,7 +129,7 @@ const Connection: React.FC<Props> = (props) => {
 
   return (
     <>
-      <LineBox fullPosdata={fullPosdata} height={fullPosdata.height} width={fullPosdata.width} id={`connection ${id}`}>
+      <LineBox fullposdata={fullPosdata} height={fullPosdata.height} width={fullPosdata.width} id={`connection ${id}`}>
         <g onMouseOver={(e) => e.stopPropagation()}>
           <line
             className="hover-effect"
@@ -145,7 +145,7 @@ const Connection: React.FC<Props> = (props) => {
       <UserNode user_id = {inviter === parent_id? invitee: inviter}
                 posData={props.endposdata}
                 connectionState = {false}
-                nodeSize={childNodeSize}
+                nodesize={childNodeSize}
                 parent_id={parent_id}
                 ></UserNode>
     </>

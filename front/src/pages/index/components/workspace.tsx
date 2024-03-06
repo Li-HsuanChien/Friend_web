@@ -2,7 +2,6 @@ import React, { useState, useContext } from 'react';
 import { styled } from 'styled-components';
 import { AppContext } from '../../../AppContext';
 import UserNode from './node';
-import { pxToVH, pxToVW } from '../../../lib/pxToVSize';
 
 const Wrapper = styled.div`
   #workspaceContainer {
@@ -83,7 +82,7 @@ const Workspace: React.FC = () => {
             user_id = {current_user_id as number}
             posData={{posx: 50, posy:50, angle:((5 * Math.PI)/4)}}
             connectionState = {true}
-            nodeSize={80}
+            nodesize={80}
             ></UserNode>
         </main>
         <button onClick={returnPos}>Back</button>
