@@ -45,7 +45,7 @@ function calcpos(
     if(main && i === 0) continue;
     const unit = i % 2 === 0 ? evenunit : oddunit;
     console.log('parentangle',i, parent_angle)
-    const Angle = ((parent_angle + Math.PI)) + split * i;
+    const Angle = ((parent_angle)) + split * i;
     console.log(Angle)
     const YDiffPx = unit * Math.sin(Angle);
     const XDiffPx = unit * Math.cos(Angle);
@@ -62,8 +62,8 @@ function calcpos(
 type Combinearr = Connectiontype & LinePos;
 
 const UserNode: React.FC<{ user_id: number, posData: LinePos,
-                           connectionState: boolean, nodeSize:number,}>
-                            = ({ user_id, posData, connectionState, nodeSize}) => {
+                           connectionState: boolean, nodeSize:number, parent_id?:number}>
+                            = ({ user_id, posData, connectionState, nodeSize, parent_id}) => {
   const { dispatch, jwt, current_user_id } = useContext(AppContext);
   const navigate = useNavigate();
   const [data, setData] = useState<SuccessUserData>();
@@ -113,10 +113,11 @@ const UserNode: React.FC<{ user_id: number, posData: LinePos,
   }, [connections]);
   useEffect(() => {
     if(connections){
-      const combinedData: Combinearr[] = connections.map((item, index) =>({
+      let combinedData: Combinearr[] = connections.map((item, index) =>({
         ...item,
         ...endposarr[index]
       }));
+      combinedData = combinedData.filter(connection => !(parent_id === (connection.invitee) || parent_id === (connection.inviter)));
       setCombineArr(combinedData);
     }
   }, [endposarr]);

@@ -132,6 +132,7 @@ const Connection: React.FC<Props> = (props) => {
                 posData={props.endposdata}
                 connectionState = {false}
                 nodeSize={childNodeSize}
+                parent_id={parent_id}
                 ></UserNode>
     </>
   );
