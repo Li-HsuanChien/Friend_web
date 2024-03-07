@@ -30,7 +30,6 @@ class MaxAccessPermission(permissions.BasePermission):
                         allowed_userdata_id.add(row["inviter_id"])
                         allowed_userdata_id.add(row["invitee_id"])
                         allowed_connection_id.add(row["id"])
-        print(allowed_connection_id)
         if(request_data_id and request_connection_id):
             return False
         if(request_data_id):

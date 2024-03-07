@@ -79,7 +79,7 @@ const Connection: React.FC<Props> = (props) => {
   const child_id = inviterIsParent? invitee: inviter;
   const { dispatch } = useContext(AppContext)
   const [childNodeSize, setChildNodeSize] = useState<number>(80);
-  const [childName, setchildName] = useState<string>("");
+  const [childName, setchildName] = useState<string>('');
   // known start and finish
   const [lineData, setLineData] = useState<LineData>({
     x1: 0,
@@ -128,7 +128,7 @@ const Connection: React.FC<Props> = (props) => {
         y2 : 100
       })
     }
-  }, [window.innerHeight, window.innerWidth])
+  }, [window.innerHeight, window.innerWidth, props])
   const handleLineCLick = (e:any) =>{
     e.stopPropagation();
     dispatch(clickedConnection(id));
@@ -148,8 +148,8 @@ const Connection: React.FC<Props> = (props) => {
             onClick={handleLineCLick}
           />
           <title>{`Connection ID: ${id}\nDate Established: ${date_established}\nCloseness: ${closeness}\n`}
-                  {nicknameparenttochild && `${parent_username}'s Nick Name to ${childName}is ${nicknameparenttochild}\n`}
-                  {nicknamechildtoparent && `${childName}'s Nick Name to ${parent_username} is ${nicknamechildtoparent}\n`}</title>
+                  {nicknameparenttochild && `${childName}'s Nick Name to ${parent_username}is ${nicknameparenttochild}\n`}
+                  {nicknamechildtoparent && `${parent_username}'s Nick Name to ${childName} is ${nicknamechildtoparent}\n`}</title>
         </g>
       </LineBox>
       <UserNode user_id = {child_id}
