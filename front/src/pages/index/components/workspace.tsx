@@ -1,7 +1,8 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { styled } from 'styled-components';
 import { AppContext } from '../../../AppContext';
 import UserNode from './node';
+import { vwToPx, vhToPx } from '../../../lib/px_V_UnitConversion';
 
 const Wrapper = styled.div`
   #workspaceContainer {
@@ -34,7 +35,7 @@ interface WorkspaceConf {
   movementY: number;
 }
 const Workspace: React.FC = () => {
-  const { current_user_id } = useContext(AppContext);
+  const { workspacepos, current_user_id } = useContext(AppContext);
   const [workspaceConf, setWorkspaceConf] = useState<WorkspaceConf>({
     movementX: 0,
     movementY: 0,
@@ -57,6 +58,14 @@ const Workspace: React.FC = () => {
     document.body.addEventListener('mousemove', move);
     document.body.addEventListener('mouseup', handleMouseUp, { once: true });
   };
+  useEffect(()=>{
+    const movementX = vwToPx(50 - (workspacepos?.posx as number))
+    const movementY = vhToPx(50 - (workspacepos?.posy as number))
+    setWorkspaceConf({
+      movementX: movementX,
+      movementY: movementY,
+    })
+  }, [workspacepos])
   const returnPos = () =>{
     setWorkspaceConf({
       movementX: 0,

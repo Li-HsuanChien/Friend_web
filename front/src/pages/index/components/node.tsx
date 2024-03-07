@@ -2,12 +2,12 @@
 import React, { useEffect, useState, useContext, Dispatch } from 'react';
 import { styled } from 'styled-components';
 import { AppContext } from '../../../AppContext';
-import { clickedUser } from '../../../actions';
+import { clickedUser, sendWorkSpacePos } from '../../../actions';
 import Connection from './connector';
 import { useNavigate } from 'react-router-dom';
 import getUserData, { SuccessUserData } from '../../../lib/getUserData';
 import getConnection, { Connectiontype } from '../../../lib/getConnection';
-import { pxToVH, pxToVW } from '../../../lib/pxToVSize';
+import { pxToVH, pxToVW } from '../../../lib/px_V_UnitConversion';
 import Resizer from 'react-image-file-resizer';
 
 const resizeFile = (file: File) =>
@@ -103,7 +103,6 @@ const UserNode: React.FC<{
         getUserData(user_id, jwt)
           .then((result) => {
             setData(result);
-            console.log(data);
             if (setchildName && data) {
               setchildName(result.username);
             }
@@ -162,6 +161,7 @@ const UserNode: React.FC<{
       e.stopPropagation()
       setShowConnection(!showConnection);
       dispatch(clickedUser(user_id));
+      dispatch(sendWorkSpacePos(posData))
     };
 
     return (

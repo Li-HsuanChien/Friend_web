@@ -1,5 +1,10 @@
 import React, { createContext, useReducer, ReactNode, useEffect } from 'react';
 
+
+interface Pos{
+  posx:number,
+  posy:number,
+}
 // Define the interface for the context state
 interface ContextState {
   current_user_id: number | null;
@@ -8,6 +13,7 @@ interface ContextState {
   csrf: string | null;
   clickeduser: number | null;
   clickeconnection: number | null;
+  workspacepos: Pos | null
 }
 
 // Define the action types
@@ -17,7 +23,8 @@ type Action =
   | { type: 'SET_USER_NAME', payload: string }
   | { type: 'SET_CSRF_TOKEN', payload: string }
   | { type : 'SET_CLICKED_USER', payload: number}
-  | { type: 'SET_CLICKED_CONNECTION', payload: number };
+  | { type: 'SET_CLICKED_CONNECTION', payload: number }
+  | { type: 'SET_WORKSPACE_POS', payload:Pos};
 
 // Define the reducer function
 export const AppReducer = (state: ContextState, action: Action): ContextState => {
@@ -52,6 +59,11 @@ export const AppReducer = (state: ContextState, action: Action): ContextState =>
         ...state,
         clickeconnection: action.payload as number | null,
       }
+    case 'SET_WORKSPACE_POS':
+      return{
+        ...state,
+        workspacepos: action.payload as Pos | null,
+      }
     default:
       return state;
   }
@@ -83,9 +95,10 @@ const initialState: ContextState = {
   current_user_id: null,
   current_user_name: null,
   jwt: null,
-  csrf: null, // Initialize CSRF token as null initially
+  csrf: null,
   clickeduser:null,
-  clickeconnection:null
+  clickeconnection:null,
+  workspacepos:null
 };
 
 export const AppContext = createContext<AppContextValue>({} as AppContextValue);
