@@ -3,8 +3,7 @@ import React, {useState, useContext} from 'react';
 import {styled} from 'styled-components';
 import { AppContext } from '../../AppContext';
 import { useNavigate } from 'react-router-dom';
-// import {ChangeEvent} from 'react';
-// import { Url } from 'url';
+import Resizer  from 'react-image-file-resizer';
 
 const AddPageStyle = styled.div`
   position: fixed;
@@ -171,6 +170,21 @@ const AddPageStyle = styled.div`
   }
 }`;
 
+const resizeFile = (file: File) =>
+  new Promise((resolve) => {
+    Resizer.imageFileResizer(
+      file,
+      80,
+      80,
+      'JPEG',
+      100,
+      0,
+      (uri) => {
+        resolve(uri);
+      },
+      'base64'
+    );
+  });
 
 // TBD add ping in every page! to check user!
 async function postData(gender: string, date_of_birth: string, show_horoscope: boolean, Token: string, image: File): Promise<void>{
@@ -180,7 +194,8 @@ async function postData(gender: string, date_of_birth: string, show_horoscope: b
     formData.append('show_horoscope', pythonBoolean);
     formData.append('gender', gender);
     formData.append('date_of_birth', date_of_birth);
-    formData.append('headshot', image);
+    const uploadImage = await(resizeFile(image))
+    formData.append('headshot', uploadImage as Blob);
 
     const response = await fetch('http://127.0.0.1:8000/api/userdatas/add', {
       method: 'POST',

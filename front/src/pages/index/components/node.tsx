@@ -1,67 +1,99 @@
-  /* eslint-disable node/no-unpublished-import */
-  import React, { useEffect, useState, useContext, Dispatch  } from 'react';
-  import { styled } from 'styled-components';
-  import { AppContext } from '../../../AppContext';
-  import {clickedUser} from  '../../../actions';
-  import Connection from './connector';
-  import { useNavigate } from 'react-router-dom';
-  import getUserData, { SuccessUserData } from '../../../lib/getUserData';
-  import getConnection, { Connectiontype } from '../../../lib/getConnection';
-  import { pxToVH, pxToVW } from '../../../lib/pxToVSize';
+/* eslint-disable node/no-unpublished-import */
+import React, { useEffect, useState, useContext, Dispatch } from 'react';
+import { styled } from 'styled-components';
+import { AppContext } from '../../../AppContext';
+import { clickedUser } from '../../../actions';
+import Connection from './connector';
+import { useNavigate } from 'react-router-dom';
+import getUserData, { SuccessUserData } from '../../../lib/getUserData';
+import getConnection, { Connectiontype } from '../../../lib/getConnection';
+import { pxToVH, pxToVW } from '../../../lib/pxToVSize';
+import Resizer from 'react-image-file-resizer';
 
-  // eslint-disable-next-line node/no-unsupported-features/node-builtins
-  interface Posdata {
-    posx: number,
-    posy: number
-  }
-  interface LinePos extends Posdata{
-    angle: number,
-  }
-  const NodeStyle = styled.div<{ posdata: Posdata, nodesize:number }>`
+const resizeFile = (file: File) =>
+  new Promise((resolve) => {
+    Resizer.imageFileResizer(
+      file,
+      80,
+      80,
+      'JPEG',
+      100,
+      0,
+      (uri) => {
+        resolve(uri);
+      },
+      'base64'
+    );
+  });
+// eslint-disable-next-line node/no-unsupported-features/node-builtins
+interface Posdata {
+  posx: number,
+  posy: number
+}
+interface LinePos extends Posdata {
+  angle: number,
+}
+const NodeStyle = styled.div<{ posdata: Posdata, nodesize: number }>`
+  position: fixed;
+  ${props => props.nodesize ? `width: ${props.nodesize}px` : '80px'};
+  ${props => props.nodesize ? `height: ${props.nodesize}px` : '80px'};
+  background-color: white;
+  border-radius: 50%;
+  ${props => props.posdata ? `top: ${props.posdata.posy - (pxToVH(props.nodesize) / 2)}vh` : '0'};
+  ${props => props.posdata ? `left: ${props.posdata.posx - (pxToVW(props.nodesize) / 2)}vw` : '0'};
+  img {
     position: fixed;
     ${props => props.nodesize ? `width: ${props.nodesize}px` : '80px'};
     ${props => props.nodesize ? `height: ${props.nodesize}px` : '80px'};
     background-color: white;
     border-radius: 50%;
-    ${props => props.posdata ? `top: ${props.posdata.posy - (pxToVH(props.nodesize)/2)}vh` : '0'};
-    ${props => props.posdata ? `left: ${props.posdata.posx -(pxToVW(props.nodesize)/2)}vw` : '0'};
-  `;
-
-
-  function calcpos(
-    parent_angle:number,
-    itemcount: number,
-    evenunit: number,
-    oddunit: number,
-    startposx: number,
-    startposy: number,): LinePos[] {
-    const split = 2 * Math.PI / (itemcount);
-    const res: LinePos[] = []
-    for (let i = 1; i <= itemcount; i++) {
-
-      const unit = i % 2 === 0 ? evenunit : oddunit;
-      const Angle = ((parent_angle + Math.PI)) + split * i;
-      const YDiffPx = unit * Math.sin(Angle);
-      const XDiffPx = unit * Math.cos(Angle);
-      res.push({
-        posy: startposy - pxToVH(YDiffPx),
-        posx: startposx + pxToVW(XDiffPx),
-        angle: Angle
-      });
-    }
-    return res;
+    border: none; /* add this line to remove the border by default */
+    ${props => props.posdata ? `top: ${props.posdata.posy - (pxToVH(props.nodesize) / 2)}vh` : '0'};
+    ${props => props.posdata ? `left: ${props.posdata.posx - (pxToVW(props.nodesize) / 2)}vw` : '0'};
+    transition: border-color 0.3s; /* add transition for smooth effect */
   }
-  //TBD unit change function
+  img:hover {
+    border: 2px solid white; /* add border and change its properties on hover */
+  }
+`;
 
-  type Combinearr = Connectiontype & LinePos;
 
-  const UserNode: React.FC<{ user_id: number, posData: LinePos,
-                            connectionState: boolean, nodesize:number,
-                            parent_id?:number, setchildName?:Dispatch<string>}>
-                              = ({ user_id, posData, connectionState, nodesize, parent_id, setchildName}) => {
-    const { dispatch, jwt, current_user_id } = useContext(AppContext);
+function calcpos(
+  parent_angle: number,
+  itemcount: number,
+  evenunit: number,
+  oddunit: number,
+  startposx: number,
+  startposy: number,): LinePos[] {
+  const split = 2 * Math.PI / (itemcount);
+  const res: LinePos[] = []
+  for (let i = 1; i <= itemcount; i++) {
+
+    const unit = i % 2 === 0 ? evenunit : oddunit;
+    const Angle = ((parent_angle + Math.PI)) + split * i;
+    const YDiffPx = unit * Math.sin(Angle);
+    const XDiffPx = unit * Math.cos(Angle);
+    res.push({
+      posy: startposy - pxToVH(YDiffPx),
+      posx: startposx + pxToVW(XDiffPx),
+      angle: Angle
+    });
+  }
+  return res;
+}
+//TBD unit change function
+
+type Combinearr = Connectiontype & LinePos;
+
+const UserNode: React.FC<{
+  user_id: number, posData: LinePos,
+  connectionState: boolean, nodesize: number,
+  parent_id?: number, setchildName?: Dispatch<string>
+}>
+  = ({ user_id, posData, connectionState, nodesize, parent_id, setchildName }) => {
+    const { dispatch, jwt } = useContext(AppContext);
     const navigate = useNavigate();
-    const [data, setData] = useState<SuccessUserData|null>(null);
+    const [data, setData] = useState<SuccessUserData | null>(null);
     const [connections, setConnections] = useState<Connectiontype[]>();
     const [endposarr, setEndPosArr] = useState<LinePos[]>([]);
     const [combineArr, setCombineArr] = useState<Combinearr[]>([]);
@@ -71,8 +103,8 @@
         getUserData(user_id, jwt)
           .then((result) => {
             setData(result);
-            if(setchildName && data){
-              console.log(result.username)
+            console.log(data);
+            if (setchildName && data) {
               setchildName(result.username);
             }
           })
@@ -95,9 +127,9 @@
       }
     }, [user_id]);
     useEffect(() => {
-      if(setchildName){
+      if (setchildName) {
         if (data?.username) {
-          const username:string = data.username
+          const username: string = data.username
           setchildName(username as string);
         }
       }
@@ -114,19 +146,19 @@
         );
         setEndPosArr(calculatedPos);
       }
-    }, [connections]);
+    }, [connections, window.innerHeight, window.innerWidth]);
     useEffect(() => {
-      if(connections){
-        let combinedData: Combinearr[] = connections.map((item, index) =>({
+      if (connections) {
+        let combinedData: Combinearr[] = connections.map((item, index) => ({
           ...item,
           ...endposarr[index]
         }));
         combinedData = combinedData.filter(connection => !(parent_id === (connection.invitee) || parent_id === (connection.inviter)));
         setCombineArr(combinedData);
       }
-    }, [endposarr]);
+    }, [endposarr, window.innerHeight, window.innerWidth]);
 
-    const handleNodeClick = (e:any)=>{
+    const handleNodeClick = (e: any) => {
       e.stopPropagation()
       setShowConnection(!showConnection);
       dispatch(clickedUser(user_id));
@@ -134,23 +166,27 @@
 
     return (
       <>
-        {data?(<NodeStyle
-            title={`${data.username}`}
-            posdata={posData}
-            nodesize={nodesize}
-            onClick={handleNodeClick}>
-            {showConnection &&
-              combineArr?.map((connection) => <Connection
-                key={connection.id}
-                data={connection}
-                parent={{id: user_id, username: data.username}}
-                nodesize = {nodesize}
-                startposdata={posData}
-                endposdata={{ posx: connection.posx, posy: connection.posy, angle:connection.angle }}
-                />)}
-          </NodeStyle>): ''}
+        {data ? (<NodeStyle
+          posdata={posData}
+          nodesize={nodesize}
+          onClick={handleNodeClick}>
+          {showConnection &&
+            combineArr?.map((connection) => <Connection
+              key={connection.id}
+              data={connection}
+              parent={{ id: user_id, username: data.username }}
+              nodesize={nodesize}
+              startposdata={posData}
+              endposdata={{ posx: connection.posx, posy: connection.posy, angle: connection.angle }}
+            />)}
+          <img
+            src={`http://127.0.0.1:8000/${data.headshot}`}
+            alt="Headshot"
+            title={`${data.username}`}/>
+        </NodeStyle>
+        ) : ''}
       </>
     );
   };
 
-  export default UserNode;
+export default UserNode;
