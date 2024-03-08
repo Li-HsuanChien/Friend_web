@@ -6,6 +6,10 @@ import styled from 'styled-components';
 import { AppContext } from '../../AppContext';
 import { sendCurrentId, sendCurrentUsername } from '../../actions';
 import MenuIcon from './components/menuIcon';
+import MainMenu from './mainmenu';
+import NodeMenu from './nodemenu';
+import Connection from './components/mainconnector';
+import ConnectionMenu from './connectionmenu';
 
 const Topright = styled.div`
   position: fixed;
@@ -59,7 +63,7 @@ async function PingServer(Token: string): Promise<pingSuccessResponse> {
 
 
 function Main() {
-  const { jwt, dispatch } = useContext(AppContext);
+  const { jwt, dispatch, menustate, clickedconnection, clickeduser } = useContext(AppContext);
   const navigate = useNavigate();
   useEffect(()=>{
     const JWTToken = window.localStorage.getItem('JWTToken');
@@ -96,6 +100,9 @@ function Main() {
       <Topright>
           <MenuIcon/>
       </Topright>
+      {menustate && <MainMenu/>}
+      {clickeduser && <NodeMenu/>}
+      {clickedconnection && <ConnectionMenu/>}
     </>
   )
   ;

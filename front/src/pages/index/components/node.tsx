@@ -8,7 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import getUserData, { SuccessUserData } from '../../../lib/getUserData';
 import getConnection, { Connectiontype } from '../../../lib/getConnection';
 import { pxToVH, pxToVW } from '../../../lib/px_V_UnitConversion';
-import MainConnection from './MainConnector';
+import MainConnection from './mainconnector';
 // eslint-disable-next-line node/no-unsupported-features/node-builtins
 interface Posdata {
   posx: number,

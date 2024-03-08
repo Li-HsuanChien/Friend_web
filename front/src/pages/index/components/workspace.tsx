@@ -82,7 +82,6 @@ const Workspace: React.FC = () => {
       <div
         id='workspaceContainer'
         onMouseDown={handleMouseDown}
-        onClick={handleClick}
         onDoubleClick={handleClick}
         style={{ height: '100vh' }}
       >
