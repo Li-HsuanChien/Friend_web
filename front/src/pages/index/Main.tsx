@@ -8,13 +8,10 @@ import { AppContext } from '../../AppContext';
 import { sendCurrentId, sendCurrentUsername } from '../../actions';
 
 const Topright = styled.div`
-  {
-    opacity: 0;
-    position: absolute;
-    left: 1600px;
-    top: 50px;
-  }
-`
+  position: fixed;
+  top: 2vh;  
+  right: 3vw; 
+`;
 const StyleDiv = styled.div`
   position: fixed;
   top: 0;
@@ -94,11 +91,11 @@ function Main() {
   return (
     <>
       <StyleDiv>
-        {/* <Topright>
-          <Menu/>
-        </Topright> */}
-        <WorkspaceComponent />
+        <WorkspaceComponent/>
       </StyleDiv>
+      <Topright>
+          <Menu/>
+      </Topright>
     </>
   )
   ;

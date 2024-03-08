@@ -63,7 +63,7 @@ interface LineData{
   y2: number,
 }
 
-const MainConnection: React.FC<Props> = (props) => {
+const Connection: React.FC<Props> = (props) => {
   const {
     id,
     date_established,
@@ -80,6 +80,7 @@ const MainConnection: React.FC<Props> = (props) => {
   const { dispatch } = useContext(AppContext)
   const [childNodeSize, setChildNodeSize] = useState<number>(80);
   const [childName, setchildName] = useState<string>('');
+  // known start and finish
   const [lineData, setLineData] = useState<LineData>({
     x1: 0,
     x2: 0,
@@ -162,4 +163,4 @@ const MainConnection: React.FC<Props> = (props) => {
   );
 };
 
-export default MainConnection;
+export default Connection;
