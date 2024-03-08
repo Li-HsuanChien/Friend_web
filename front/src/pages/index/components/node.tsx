@@ -8,23 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import getUserData, { SuccessUserData } from '../../../lib/getUserData';
 import getConnection, { Connectiontype } from '../../../lib/getConnection';
 import { pxToVH, pxToVW } from '../../../lib/px_V_UnitConversion';
-import Resizer from 'react-image-file-resizer';
-
-const resizeFile = (file: File) =>
-  new Promise((resolve) => {
-    Resizer.imageFileResizer(
-      file,
-      80,
-      80,
-      'JPEG',
-      100,
-      0,
-      (uri) => {
-        resolve(uri);
-      },
-      'base64'
-    );
-  });
+import MainConnection from './MainConnector';
 // eslint-disable-next-line node/no-unsupported-features/node-builtins
 interface Posdata {
   posx: number,
@@ -91,7 +75,7 @@ const UserNode: React.FC<{
   parent_id?: number, setchildName?: Dispatch<string>
 }>
   = ({ user_id, posData, connectionState, nodesize, parent_id, setchildName }) => {
-    const { dispatch, jwt } = useContext(AppContext);
+    const { dispatch, jwt, current_user_id } = useContext(AppContext);
     const navigate = useNavigate();
     const [data, setData] = useState<SuccessUserData | null>(null);
     const [connections, setConnections] = useState<Connectiontype[]>();
@@ -171,14 +155,21 @@ const UserNode: React.FC<{
           nodesize={nodesize}
           onClick={handleNodeClick}>
           {showConnection &&
-            combineArr?.map((connection) => <Connection
+            (user_id===current_user_id?(combineArr?.map((connection) => <MainConnection
               key={connection.id}
               data={connection}
               parent={{ id: user_id, username: data.username }}
               nodesize={nodesize}
               startposdata={posData}
               endposdata={{ posx: connection.posx, posy: connection.posy, angle: connection.angle }}
-            />)}
+            />)): (combineArr?.map((connection) => <Connection
+            key={connection.id}
+            data={connection}
+            parent={{ id: user_id, username: data.username }}
+            nodesize={nodesize}
+            startposdata={posData}
+            endposdata={{ posx: connection.posx, posy: connection.posy, angle: connection.angle }}
+          />)))}
           <img
             src={`http://127.0.0.1:8000/${data.headshot}`}
             alt="Headshot"

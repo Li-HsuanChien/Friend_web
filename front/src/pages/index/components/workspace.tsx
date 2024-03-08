@@ -3,6 +3,7 @@ import { styled } from 'styled-components';
 import { AppContext } from '../../../AppContext';
 import UserNode from './node';
 import { vwToPx, vhToPx } from '../../../lib/px_V_UnitConversion';
+import { closeMenu } from '../../../actions';
 
 const Wrapper = styled.div`
   #workspaceContainer {
@@ -35,7 +36,7 @@ interface WorkspaceConf {
   movementY: number;
 }
 const Workspace: React.FC = () => {
-  const { workspacepos, current_user_id } = useContext(AppContext);
+  const { dispatch, workspacepos, current_user_id } = useContext(AppContext);
   const [workspaceConf, setWorkspaceConf] = useState<WorkspaceConf>({
     movementX: 0,
     movementY: 0,
@@ -72,12 +73,17 @@ const Workspace: React.FC = () => {
       movementY: 0,
     })
   }
+  const handleClick = () =>{
+    dispatch(closeMenu());
+  }
 
   return (
     <Wrapper>
       <div
         id='workspaceContainer'
         onMouseDown={handleMouseDown}
+        onClick={handleClick}
+        onDoubleClick={handleClick}
         style={{ height: '100vh' }}
       >
         <main

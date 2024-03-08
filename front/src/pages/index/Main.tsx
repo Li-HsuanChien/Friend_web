@@ -2,10 +2,10 @@
 import React, { useContext, useEffect } from 'react';
 import {useNavigate} from 'react-router-dom';
 import WorkspaceComponent from './components/workspace';
-import Menu from './components/menu';
 import styled from 'styled-components';
 import { AppContext } from '../../AppContext';
 import { sendCurrentId, sendCurrentUsername } from '../../actions';
+import MenuIcon from './components/menuIcon';
 
 const Topright = styled.div`
   position: fixed;
@@ -94,7 +94,7 @@ function Main() {
         <WorkspaceComponent/>
       </StyleDiv>
       <Topright>
-          <Menu/>
+          <MenuIcon/>
       </Topright>
     </>
   )

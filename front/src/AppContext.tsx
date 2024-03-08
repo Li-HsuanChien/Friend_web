@@ -1,5 +1,5 @@
 import React, { createContext, useReducer, ReactNode, useEffect } from 'react';
-
+import { Action } from './actions';
 
 interface Pos{
   posx:number,
@@ -7,24 +7,16 @@ interface Pos{
 }
 // Define the interface for the context state
 interface ContextState {
-  current_user_id: number | null;
-  current_user_name: string | null;
-  jwt: string | null;
-  csrf: string | null;
-  clickeduser: number | null;
-  clickeconnection: number | null;
-  workspacepos: Pos | null
+  current_user_id: number | null,
+  current_user_name: string | null,
+  jwt: string | null,
+  csrf: string | null,
+  clickeduser: number | null,
+  clickedconnection: number | null,
+  workspacepos: Pos | null,
+  menustate: boolean | null
 }
 
-// Define the action types
-type Action =
-  | { type: 'SET_USER_ID', payload: number }
-  | { type: 'SET_JWT', payload: string }
-  | { type: 'SET_USER_NAME', payload: string }
-  | { type: 'SET_CSRF_TOKEN', payload: string }
-  | { type : 'SET_CLICKED_USER', payload: number}
-  | { type: 'SET_CLICKED_CONNECTION', payload: number }
-  | { type: 'SET_WORKSPACE_POS', payload:Pos};
 
 // Define the reducer function
 export const AppReducer = (state: ContextState, action: Action): ContextState => {
@@ -47,23 +39,43 @@ export const AppReducer = (state: ContextState, action: Action): ContextState =>
     case 'SET_CSRF_TOKEN':
       return{
         ...state,
-        csrf: action.payload as string | null,
+        csrf: action.payload,
       }
     case 'SET_CLICKED_USER':
+      //console.log('User Clicked', action.payload)
       return{
         ...state,
-        clickeduser: action.payload as number | null,
+        clickeduser: action.payload,
+        clickedconnection: null
       }
     case 'SET_CLICKED_CONNECTION':
+      // console.log('Connection Clicked', action.payload)
       return{
         ...state,
-        clickeconnection: action.payload as number | null,
+        clickedconnection: action.payload,
+        clickeduser: null
       }
     case 'SET_WORKSPACE_POS':
       return{
         ...state,
-        workspacepos: action.payload as Pos | null,
+        workspacepos: action.payload,
       }
+    case 'OPEN_MENU':
+      // console.log('Open Menu')
+      return{
+        ...state,
+        menustate: true,
+        clickedconnection: null,
+        clickeduser: null,
+      }
+      case 'CLOSE_MENU':
+      // console.log('Close Menu')
+        return{
+          ...state,
+          menustate: false,
+          clickedconnection: null,
+          clickeduser: null,
+        }
     default:
       return state;
   }
@@ -97,8 +109,9 @@ const initialState: ContextState = {
   jwt: null,
   csrf: null,
   clickeduser:null,
-  clickeconnection:null,
-  workspacepos:null
+  clickedconnection:null,
+  workspacepos:{posx:50, posy:50},
+  menustate: null
 };
 
 export const AppContext = createContext<AppContextValue>({} as AppContextValue);
