@@ -1,18 +1,14 @@
 import React, { createContext, useReducer, ReactNode, useEffect } from 'react';
-import { Action } from './actions';
+import {SuccessUserData, ConnectionData, Pos, Action} from './lib/Types'
 
-interface Pos{
-  posx:number,
-  posy:number,
-}
 // Define the interface for the context state
 interface ContextState {
   current_user_id: number | null,
   current_user_name: string | null,
   jwt: string | null,
   csrf: string | null,
-  clickeduser: number | null,
-  clickedconnection: number | null,
+  clickeduser: SuccessUserData | null,
+  clickedconnection: ConnectionData | null,
   workspacepos: Pos | null,
   menustate: boolean | null
 }

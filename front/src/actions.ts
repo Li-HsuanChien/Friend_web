@@ -1,18 +1,7 @@
-interface Pos{
-  posx:number,
-  posy:number,
-}
+import { SuccessUserData, ConnectionData, Pos, Action } from './lib/Types'
 
-export type Action =
-  | { type: 'SET_USER_ID', payload: number }
-  | { type: 'SET_JWT', payload: string }
-  | { type: 'SET_USER_NAME', payload: string }
-  | { type: 'SET_CLICKED_USER', payload: number}
-  | { type: 'SET_CLICKED_CONNECTION', payload: number }
-  | { type: 'SET_CSRF_TOKEN', payload: string}
-  | { type: 'SET_WORKSPACE_POS', payload:Pos}
-  | { type: 'OPEN_MENU'}
-  | { type: 'CLOSE_MENU'}
+
+
 
 
 export const sendCurrentId = (id: number):Action  =>{
@@ -36,14 +25,14 @@ export const sendJWT = (JWT: string): Action =>{
   })
 }
 
-export const clickedUser = (user_id: number): Action => {
+export const clickedUser = (data: SuccessUserData): Action => {
   return({
     type: 'SET_CLICKED_USER',
-    payload: user_id
+    payload: data
   })
 }
 
-export const clickedConnection = (connection_id: number): Action => {
+export const clickedConnection = (connection_id: ConnectionData): Action => {
   return({
     type: 'SET_CLICKED_CONNECTION',
     payload: connection_id

@@ -131,7 +131,7 @@ const Connection: React.FC<Props> = (props) => {
   }, [window.innerHeight, window.innerWidth, props])
   const handleLineCLick = (e:any) =>{
     e.stopPropagation();
-    dispatch(clickedConnection(id));
+    dispatch(clickedConnection(props.data));
   }
 
 

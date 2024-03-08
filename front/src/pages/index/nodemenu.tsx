@@ -4,6 +4,7 @@ import styled from 'styled-components';
 const MenuStyle = styled.div`
   background-color: grey;
   position: absolute;
+  border-radius: 5%;
   width: 20vw;
   height: 95vh;
   right: 3vw;

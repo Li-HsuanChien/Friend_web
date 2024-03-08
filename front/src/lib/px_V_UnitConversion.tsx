@@ -1,5 +1,4 @@
 
-
 export function pxToVW(length: number){
   return (length/ window.innerWidth) * 100;
 }

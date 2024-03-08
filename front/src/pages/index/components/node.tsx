@@ -5,19 +5,17 @@ import { AppContext } from '../../../AppContext';
 import { clickedUser, sendWorkSpacePos } from '../../../actions';
 import Connection from './connector';
 import { useNavigate } from 'react-router-dom';
-import getUserData, { SuccessUserData } from '../../../lib/getUserData';
-import getConnection, { Connectiontype } from '../../../lib/getConnection';
+import getUserData from '../../../lib/getUserData';
+import getConnection from '../../../lib/getConnection';
 import { pxToVH, pxToVW } from '../../../lib/px_V_UnitConversion';
 import MainConnection from './mainconnector';
+import {SuccessUserData, ConnectionData, Pos} from '../../../lib/Types'
 // eslint-disable-next-line node/no-unsupported-features/node-builtins
-interface Posdata {
-  posx: number,
-  posy: number
-}
-interface LinePos extends Posdata {
+
+interface LinePos extends Pos {
   angle: number,
 }
-const NodeStyle = styled.div<{ posdata: Posdata, nodesize: number }>`
+const NodeStyle = styled.div<{ posdata: Pos, nodesize: number }>`
   position: fixed;
   ${props => props.nodesize ? `width: ${props.nodesize}px` : '80px'};
   ${props => props.nodesize ? `height: ${props.nodesize}px` : '80px'};
@@ -67,7 +65,7 @@ function calcpos(
 }
 //TBD unit change function
 
-type Combinearr = Connectiontype & LinePos;
+type Combinearr = ConnectionData & LinePos;
 
 const UserNode: React.FC<{
   user_id: number, posData: LinePos,
@@ -78,7 +76,7 @@ const UserNode: React.FC<{
     const { dispatch, jwt, current_user_id } = useContext(AppContext);
     const navigate = useNavigate();
     const [data, setData] = useState<SuccessUserData | null>(null);
-    const [connections, setConnections] = useState<Connectiontype[]>();
+    const [connections, setConnections] = useState<ConnectionData[]>();
     const [endposarr, setEndPosArr] = useState<LinePos[]>([]);
     const [combineArr, setCombineArr] = useState<Combinearr[]>([]);
     const [showConnection, setShowConnection] = useState<boolean>(connectionState);
@@ -144,7 +142,12 @@ const UserNode: React.FC<{
     const handleNodeClick = (e: any) => {
       e.stopPropagation()
       setShowConnection(!showConnection);
-      dispatch(clickedUser(user_id));
+    };
+
+    const handleNodeDBClick = (e: any) => {
+      e.stopPropagation()
+      setShowConnection(!showConnection);
+      dispatch(clickedUser(data as SuccessUserData));
       dispatch(sendWorkSpacePos(posData))
     };
 
@@ -153,7 +156,8 @@ const UserNode: React.FC<{
         {data ? (<NodeStyle
           posdata={posData}
           nodesize={nodesize}
-          onClick={handleNodeClick}>
+          onClick={handleNodeClick}
+          onDoubleClick={handleNodeDBClick}>
           {showConnection &&
             (user_id===current_user_id?(combineArr?.map((connection) => <MainConnection
               key={connection.id}

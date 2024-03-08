@@ -1,13 +1,6 @@
-export interface Connectiontype {
-  id: number,
-  date_established: string,
-  closeness: string,
-  nicknamechildtoparent?: string,
-  nicknameparenttochild?: string,
-  inviter: number,
-  invitee: number,
-}
-export default async function getConnection(user_id: number, Token: string): Promise<Connectiontype[]> {
+import {ConnectionData} from './Types'
+
+export default async function getConnection(user_id: number, Token: string): Promise<ConnectionData[]> {
   try {
     const response = await fetch('http://127.0.0.1:8000/api/connections', {
       credentials: 'include',
@@ -21,7 +14,7 @@ export default async function getConnection(user_id: number, Token: string): Pro
     if (!response.ok) {
       throw new Error('Failed to get user connection')
     }
-    const connections: Connectiontype[] = await response.json();
+    const connections: ConnectionData[] = await response.json();
     return connections;
   } catch (error) {
     console.error('Get User data error:', error);
