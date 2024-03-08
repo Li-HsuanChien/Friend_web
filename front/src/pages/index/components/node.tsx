@@ -49,10 +49,10 @@ function calcpos(
   startposy: number,): LinePos[] {
   const split = 2 * Math.PI / (itemcount);
   const res: LinePos[] = []
-  for (let i = 1; i <= itemcount; i++) {
+  for (let i = 0; i < itemcount; i++) {
 
     const unit = i % 2 === 0 ? evenunit : oddunit;
-    const Angle = ((parent_angle + Math.PI)) + split * i;
+    const Angle = ((parent_angle - Math.PI)) + split * i;
     const YDiffPx = unit * Math.sin(Angle);
     const XDiffPx = unit * Math.cos(Angle);
     res.push({
@@ -141,6 +141,7 @@ const UserNode: React.FC<{
 
     const handleNodeClick = (e: any) => {
       e.stopPropagation()
+      if(data?.username === 'U3') console.log(posData.angle);
       setShowConnection(!showConnection);
     };
 

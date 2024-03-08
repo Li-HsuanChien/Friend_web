@@ -6,10 +6,10 @@ import styled from 'styled-components';
 import { AppContext } from '../../AppContext';
 import { sendCurrentId, sendCurrentUsername } from '../../actions';
 import MenuIcon from './components/menuIcon';
-import MainMenu from './mainmenu';
-import NodeMenu from './nodemenu';
+import MainMenu from './components/mainmenu';
+import NodeMenu from './components/nodemenu';
 import Connection from './components/mainconnector';
-import ConnectionMenu from './connectionmenu';
+import ConnectionMenu from './components/connectionmenu';
 
 const Topright = styled.div`
   position: fixed;
