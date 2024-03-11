@@ -3,7 +3,7 @@ import { styled } from 'styled-components';
 import { AppContext } from '../../../AppContext';
 import UserNode from './node';
 import { vwToPx, vhToPx } from '../../../lib/px_V_UnitConversion';
-import { closeMenu } from '../../../actions';
+import { closeMenu, addShowedUser } from '../../../actions';
 
 const Wrapper = styled.div`
   #workspaceContainer {
@@ -59,6 +59,11 @@ const Workspace: React.FC = () => {
     document.body.addEventListener('mousemove', move);
     document.body.addEventListener('mouseup', handleMouseUp, { once: true });
   };
+
+  useEffect(() => {
+    dispatch(addShowedUser([current_user_id as number]));
+  },[])
+
   useEffect(()=>{
     const movementX = vwToPx(50 - (workspacepos?.posx as number))
     const movementY = vhToPx(50 - (workspacepos?.posy as number))
@@ -67,6 +72,7 @@ const Workspace: React.FC = () => {
       movementY: movementY,
     })
   }, [workspacepos])
+
   const returnPos = () =>{
     setWorkspaceConf({
       movementX: 0,
@@ -91,7 +97,6 @@ const Workspace: React.FC = () => {
             transform: `translate(${workspaceConf.movementX}px, ${workspaceConf.movementY}px)`,
           }}
         >
-          {/* childrens */}
           <UserNode
             user_id = {current_user_id as number}
             posData={{posx: 50, posy:50, angle:((5 * Math.PI)/4)}}

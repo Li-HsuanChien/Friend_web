@@ -40,3 +40,5 @@ export type Action =
 | { type: 'SET_WORKSPACE_POS', payload:Pos}
 | { type: 'OPEN_MENU'}
 | { type: 'CLOSE_MENU'}
+| { type: 'ADD_SHOWED_USER', payload: number[]}
+| { type: 'REMOVE_SHOWED_USER', payload: number[]}

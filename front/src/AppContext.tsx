@@ -10,7 +10,8 @@ interface ContextState {
   clickeduser: SuccessUserData | null,
   clickedconnection: ConnectionData | null,
   workspacepos: Pos | null,
-  menustate: boolean | null
+  menustate: boolean | null,
+  shownuserstate: Set<number> | null,
 }
 
 
@@ -72,6 +73,26 @@ export const AppReducer = (state: ContextState, action: Action): ContextState =>
           clickedconnection: null,
           clickeduser: null,
         }
+      case 'ADD_SHOWED_USER':{
+        const newShownUserState = new Set<number>(state.shownuserstate);
+        console.log('add oringinal', newShownUserState)
+        action.payload.forEach((item) => newShownUserState.add(item));
+        console.log('add result', newShownUserState)
+        return{
+          ...state,
+          shownuserstate: newShownUserState,
+        }
+      }
+      case 'REMOVE_SHOWED_USER':{
+        const newShownUserState = new Set<number>(state.shownuserstate);
+        console.log('remove oringinal', newShownUserState)
+        action.payload.forEach((item) => newShownUserState.delete(item));
+        console.log('remove result', newShownUserState)
+        return{
+          ...state,
+          shownuserstate: newShownUserState,
+        }
+      }
     default:
       return state;
   }
@@ -107,7 +128,8 @@ const initialState: ContextState = {
   clickeduser:null,
   clickedconnection:null,
   workspacepos:{posx:50, posy:50},
-  menustate: null
+  menustate: null,
+  shownuserstate: null,
 };
 
 export const AppContext = createContext<AppContextValue>({} as AppContextValue);

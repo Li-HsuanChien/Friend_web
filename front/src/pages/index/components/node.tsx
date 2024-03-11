@@ -2,7 +2,7 @@
 import React, { useEffect, useState, useContext, Dispatch } from 'react';
 import { styled } from 'styled-components';
 import { AppContext } from '../../../AppContext';
-import { clickedUser, sendWorkSpacePos } from '../../../actions';
+import { clickedUser, sendWorkSpacePos, addShowedUser, removeShowedUser } from '../../../actions';
 import Connection from './connector';
 import { useNavigate } from 'react-router-dom';
 import getUserData from '../../../lib/getUserData';
@@ -143,16 +143,14 @@ const UserNode: React.FC<{
     }, [endposarr, window.innerHeight, window.innerWidth]);
 
     const handleNodeClick = (e: any) => {
-      e.stopPropagation()
-      if(data?.username === 'U3') console.log(posData.angle);
+      e.stopPropagation();
       setShowConnection(!showConnection);
     };
 
     const handleNodeDBClick = (e: any) => {
-      e.stopPropagation()
-      setShowConnection(!showConnection);
+      e.stopPropagation();
       dispatch(clickedUser(data as SuccessUserData));
-      dispatch(sendWorkSpacePos(posData))
+      dispatch(sendWorkSpacePos(posData));
     };
 
     return (

@@ -6,10 +6,10 @@ import { clickedConnection } from '../../../actions';
 
 const LineBox = styled.svg<{ fullposdata?: fullPosdata }>`
   position: fixed;
-  ${props => props.fullposdata ? `top: ${props.fullposdata.top}vh` : '0'};
-  ${props => props.fullposdata ? `left: ${props.fullposdata.left}vw` : '0'};
-  ${props => props.fullposdata ? `width: ${props.fullposdata.width}vw` : '0'};
-  ${props => props.fullposdata ? `height: ${props.fullposdata.height}vh` : '0'};
+  ${({ fullposdata }) => fullposdata ? `top: ${fullposdata.top}vh;` : '0'};
+  ${({ fullposdata }) => fullposdata ? `left: ${fullposdata.left}vh;` : '0'};
+  ${({ fullposdata }) => fullposdata ? `width: ${fullposdata.width}vh;` : '0'};
+  ${({ fullposdata }) => fullposdata ? `height: ${fullposdata.height}vh;` : '0'};
   z-index: -1;
 
   line{ 
