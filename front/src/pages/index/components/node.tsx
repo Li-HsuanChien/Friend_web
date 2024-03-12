@@ -46,12 +46,10 @@ function calcpos(
   evenunit: number,
   oddunit: number,
   startposx: number,
-  startposy: number,
-  main: boolean): LinePos[] {
-  itemcount = main? itemcount: itemcount+1;
+  startposy: number,): LinePos[] {
   const split = 2 * Math.PI / (itemcount);
   const res: LinePos[] = []
-  for (let i = 1; i <= itemcount; i++) {
+  for (let i = 0; i < itemcount; i++) {
 
     const unit = i % 2 === 0 ? evenunit : oddunit;
     const Angle = ((parent_angle - Math.PI)) + split * i;
@@ -98,8 +96,7 @@ const UserNode: React.FC<{
           });
         getConnection(user_id, jwt)
           .then((result) => {
-            const combinedData = result.filter(connection => !(parent_id === (connection.invitee) || parent_id === (connection.inviter)));
-            setConnections(combinedData);
+            setConnections(result);
           })
           .catch((error) => {
             console.error('Failed to get user connections:', error);
@@ -127,17 +124,17 @@ const UserNode: React.FC<{
           180,
           posData.posx,
           posData.posy,
-          user_id===current_user_id
         );
         setEndPosArr(calculatedPos);
       }
     }, [connections, window.innerHeight, window.innerWidth]);
     useEffect(() => {
       if (connections) {
-        const combinedData: Combinearr[] = connections.map((item, index) => ({
+        let combinedData: Combinearr[] = connections.map((item, index) => ({
           ...item,
           ...endposarr[index]
         }));
+        combinedData = combinedData.filter(connection => !(parent_id === (connection.invitee) || parent_id === (connection.inviter)));
         setCombineArr(combinedData);
       }
     }, [endposarr, window.innerHeight, window.innerWidth]);
