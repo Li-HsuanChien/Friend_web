@@ -203,8 +203,8 @@ const Login = () => {
       if ('refresh' in response) {
         const {refresh , access} = response;
         //debug
-        console.log(refresh);
-        console.log(access);
+        // console.log(refresh);
+        // console.log(access);
         window.localStorage.setItem('JWTToken', access);
         dispatch(sendJWT(access));
         PingServer(response.access)

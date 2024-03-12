@@ -75,9 +75,9 @@ export const AppReducer = (state: ContextState, action: Action): ContextState =>
         }
       case 'ADD_SHOWED_USER':{
         const newShownUserState = new Set<number>(state.shownuserstate);
-        console.log('add oringinal', newShownUserState)
+        // console.log('add oringinal', newShownUserState)
         newShownUserState.add(action.payload);
-        console.log('add result', newShownUserState)
+        // console.log('add result', newShownUserState)
         return{
           ...state,
           shownuserstate: newShownUserState,
@@ -85,9 +85,9 @@ export const AppReducer = (state: ContextState, action: Action): ContextState =>
       }
       case 'REMOVE_SHOWED_USER':{
         const newShownUserState = new Set<number>(state.shownuserstate);
-        console.log('remove oringinal', newShownUserState)
+        // console.log('remove oringinal', newShownUserState)
         newShownUserState.delete(action.payload);
-        console.log('remove result', newShownUserState)
+        // console.log('remove result', newShownUserState)
         return{
           ...state,
           shownuserstate: newShownUserState,

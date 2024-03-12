@@ -2,7 +2,7 @@
 import React, { useEffect, useState, useContext, Dispatch } from 'react';
 import { styled } from 'styled-components';
 import { AppContext } from '../../../AppContext';
-import { clickedUser, sendWorkSpacePos } from '../../../actions';
+import { clickedUser, sendWorkSpacePos, addShowedUser, removeShowedUser } from '../../../actions';
 import Connection from './connector';
 import { useNavigate } from 'react-router-dom';
 import getUserData from '../../../lib/getUserData';
@@ -74,13 +74,19 @@ const UserNode: React.FC<{
   parent_id?: number, setchildName?: Dispatch<string>
 }>
   = ({ user_id, posData, connectionState, nodesize, parent_id, setchildName }) => {
-    const { dispatch, jwt, current_user_id } = useContext(AppContext);
+    const { dispatch, jwt, current_user_id, shownuserstate } = useContext(AppContext);
     const navigate = useNavigate();
     const [data, setData] = useState<SuccessUserData | null>(null);
     const [connections, setConnections] = useState<ConnectionData[]>();
     const [endposarr, setEndPosArr] = useState<LinePos[]>([]);
     const [combineArr, setCombineArr] = useState<Combinearr[]>([]);
     const [showConnection, setShowConnection] = useState<boolean>(connectionState);
+    useEffect(() => {
+      dispatch(addShowedUser(user_id));
+      return () => {
+        dispatch(removeShowedUser(user_id));
+      };
+    }, []);
     useEffect(() => {
       if (user_id && jwt) {
         getUserData(user_id, jwt)
@@ -97,8 +103,15 @@ const UserNode: React.FC<{
           });
         getConnection(user_id, jwt)
           .then((result) => {
-            const combinedData = result.filter(connection => !(parent_id === (connection.invitee) || parent_id === (connection.inviter)));
-            setConnections(combinedData);
+            console.log('state', shownuserstate)
+            const connectionsArr = result.filter((connection) => {
+              if(user_id === connection.inviter){
+                return !(shownuserstate?.has(connection.invitee));
+              } else {
+                return !(shownuserstate?.has(connection.inviter));
+              }
+            });
+            setConnections(connectionsArr);
           })
           .catch((error) => {
             console.error('Failed to get user connections:', error);
@@ -108,7 +121,17 @@ const UserNode: React.FC<{
         console.error('You have no credentials!');
         navigate('/login');
       }
-    }, [user_id]);
+    }, [user_id, shownuserstate]);
+    useEffect(() =>{
+      const connectionsArr = connections?.filter((connection) => {
+        if(user_id === connection.inviter){
+          return !(shownuserstate?.has(connection.invitee));
+        } else {
+          return !(shownuserstate?.has(connection.inviter));
+        }
+      });
+      setConnections(connectionsArr);
+    }, [shownuserstate])
     useEffect(() => {
       if (setchildName) {
         if (data?.username) {
@@ -178,7 +201,7 @@ const UserNode: React.FC<{
           <img
             src={`http://127.0.0.1:8000/${data.headshot}`}
             alt="Headshot"
-            title={`${data.username}`}/>
+            title={`${data.username} ${user_id}`}/>
         </NodeStyle>
         ) : ''}
       </>
