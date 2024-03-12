@@ -65,7 +65,6 @@ function calcpos(
   }
   return res;
 }
-//TBD unit change function
 
 type Combinearr = ConnectionData & LinePos;
 
@@ -144,13 +143,11 @@ const UserNode: React.FC<{
 
     const handleNodeClick = (e: any) => {
       e.stopPropagation()
-      if(data?.username === 'U3') console.log(posData.angle);
       setShowConnection(!showConnection);
     };
 
     const handleNodeDBClick = (e: any) => {
       e.stopPropagation()
-      setShowConnection(!showConnection);
       dispatch(clickedUser(data as SuccessUserData));
       dispatch(sendWorkSpacePos(posData))
     };

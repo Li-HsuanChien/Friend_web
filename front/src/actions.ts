@@ -58,3 +58,17 @@ export const closeMenu = (): Action =>{
     type: 'CLOSE_MENU',
   })
 }
+
+export const addShowedUser = (User: number): Action =>{
+  return({
+    type: 'ADD_SHOWED_USER',
+    payload: User,
+  })
+}
+
+export const removeShowedUser = (User: number): Action =>{
+  return({
+    type: 'REMOVE_SHOWED_USER',
+    payload: User,
+  })
+}
