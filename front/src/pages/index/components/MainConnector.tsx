@@ -129,7 +129,10 @@ const Connection: React.FC<Props> = (props) => {
       })
     }
   }, [window.innerHeight, window.innerWidth, props])
-  const handleLineCLick = (e:any) =>{
+  const handleLineCLick = (e: any) =>{
+    e.stopPropagation();
+  }
+  const handledbLineCLick = (e:any) =>{
     e.stopPropagation();
     dispatch(clickedConnection(props.data));
   }
@@ -137,7 +140,12 @@ const Connection: React.FC<Props> = (props) => {
 
   return (
     <>
-      <LineBox fullposdata={fullPosdata} height={fullPosdata.height} width={fullPosdata.width} id={`connection ${id}`}>
+      <LineBox
+        fullposdata={fullPosdata}
+        height={fullPosdata.height}
+        width={fullPosdata.width}
+        id={`connection ${id}`}
+        onClick={handleLineCLick}>
         <g onMouseOver={(e) => e.stopPropagation()}>
           <line
             className="hover-effect"
@@ -146,6 +154,7 @@ const Connection: React.FC<Props> = (props) => {
             x2={`${lineData.x2}%`}
             y2={`${lineData.y2}%`}
             onClick={handleLineCLick}
+            onDoubleClick={handledbLineCLick}
           />
           <title>{`Connection ID: ${id}\nDate Established: ${date_established}\nCloseness: ${closeness}\n`}
                   {nicknameparenttochild && `${childName}'s Nick Name to ${parent_username}is ${nicknameparenttochild}\n`}
