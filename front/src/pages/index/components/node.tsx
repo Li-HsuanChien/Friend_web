@@ -103,7 +103,7 @@ const UserNode: React.FC<{
           });
         getConnection(user_id, jwt)
           .then((result) => {
-            console.log('state', shownuserstate)
+            shownuserstate;
             const connectionsArr = result.filter((connection) => {
               if(user_id === connection.inviter){
                 return !(shownuserstate?.has(connection.invitee));
@@ -201,7 +201,7 @@ const UserNode: React.FC<{
           <img
             src={`http://127.0.0.1:8000/${data.headshot}`}
             alt="Headshot"
-            title={`${data.username} ${user_id}`}/>
+            title={`${data.username} ${data.username_id}`}/>
         </NodeStyle>
         ) : ''}
       </>

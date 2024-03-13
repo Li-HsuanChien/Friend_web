@@ -14,14 +14,15 @@ export type Gender = 'M' | 'F' | 'N' | 'NA';
 // Define the SuccessUserData interface
 export interface SuccessUserData {
   username: string;
+  username_id: number;
   bio: string | null;
   headshot: Url | null;
   gender: Gender;
   date_of_birth: string;
   show_horoscope: boolean;
-  instagram_link: Url | null;
-  facebook_link: Url | null;
-  snapchat_link: Url | null;
+  instagram_link: string | null;
+  facebook_link: string | null;
+  snapchat_link: string | null;
   inviteurl: Url;
   created_time: string;
 }

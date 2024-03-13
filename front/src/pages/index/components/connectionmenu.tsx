@@ -6,11 +6,12 @@ import { AppContext } from '../../../AppContext';
 const MenuStyle = styled.div`
   background-color: grey;
   position: absolute;
+  border-radius: 5%;
   width: 20vw;
   height: 95vh;
-  right: 3vw;
+  right: 2vw;
   top: 2vh;
-}
+  padding: 0 2% 0;
 `
 const ConnectionMenu = () =>{
   const { clickedconnection } = useContext(AppContext);
