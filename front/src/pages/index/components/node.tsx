@@ -104,13 +104,14 @@ const UserNode: React.FC<{
         getConnection(user_id, jwt)
           .then((result) => {
             shownuserstate;
-            const connectionsArr = result.filter((connection) => {
+            let connectionsArr = result.filter((connection) => {
               if(user_id === connection.inviter){
                 return !(shownuserstate?.has(connection.invitee));
               } else {
                 return !(shownuserstate?.has(connection.inviter));
               }
             });
+            connectionsArr = result.filter((connection) => connection.activated);
             setConnections(connectionsArr);
           })
           .catch((error) => {

@@ -8,6 +8,7 @@ export interface ConnectionData {
   nicknameparenttochild?: string,
   inviter: number,
   invitee: number,
+  activated: boolean,
 }
 
 export type Gender = 'M' | 'F' | 'N' | 'NA';
