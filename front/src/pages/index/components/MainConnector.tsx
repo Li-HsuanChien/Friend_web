@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import UserNode from './node';
 import { AppContext } from '../../../AppContext';
 import { clickedConnection } from '../../../actions';
+import { ConnectionData, Pos } from '../../../lib/Types';
 
 const LineBox = styled.svg<{ fullposdata?: fullPosdata }>`
   position: fixed;
@@ -22,23 +23,9 @@ const LineBox = styled.svg<{ fullposdata?: fullPosdata }>`
     stroke-width: 6px; 
   }
 `
-interface ConnectionProps {
-  id: number;
-  date_established: string;
-  closeness: string;
-  nicknamechildtoparent?: string;
-  nicknameparenttochild?: string;
-  inviter: number;
-  invitee: number;
-}
-interface Posdata {
-  posx: number;
-  posy: number;
-}
-interface LinePos extends Posdata{
+interface LinePos extends Pos{
   angle: number,
 }
-
 interface fullPosdata{
   top: number,
   left: number,
@@ -50,10 +37,10 @@ interface parent{
   username: string
 }
 interface Props {
-  data: ConnectionProps;
+  data: ConnectionData;
   parent: parent,
   nodesize: number,
-  startposdata: Posdata;
+  startposdata: Pos;
   endposdata: LinePos;
 }
 interface LineData{

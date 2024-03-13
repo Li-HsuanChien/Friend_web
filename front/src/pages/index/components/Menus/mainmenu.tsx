@@ -37,7 +37,7 @@ const MainMenu = () =>{
           <button onClick={()=>setConnectMenuState(!connectMenuState)}>Connect</button>
         </ItemStyle>
         <ItemStyle>
-          Feature
+          My connection
         </ItemStyle>
         <ItemStyle>
           Feature

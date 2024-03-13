@@ -18,7 +18,7 @@ class UserAdmin(admin.ModelAdmin):
 
 class ConnectionAdmin(admin.ModelAdmin):
 
-    list_display = ('inviter', 'invitee', 'id', 'date_established', 'closeness', 'nicknamechildtoparent', 'nicknameparenttochild')
+    list_display = ('inviter', 'invitee', 'id', 'date_established', 'closeness', 'nicknamechildtoparent', 'nicknameparenttochild', 'activated')
     pass
 
 admin.site.register(Connection, ConnectionAdmin)

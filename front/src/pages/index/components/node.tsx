@@ -111,7 +111,7 @@ const UserNode: React.FC<{
                 return !(shownuserstate?.has(connection.inviter));
               }
             });
-            connectionsArr = result.filter((connection) => connection.activated);
+            connectionsArr = connectionsArr.filter((connection) => connection.activated);
             setConnections(connectionsArr);
           })
           .catch((error) => {
