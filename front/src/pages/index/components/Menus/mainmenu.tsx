@@ -1,5 +1,6 @@
-import React from 'react';
+import React , { useState } from 'react';
 import styled from 'styled-components';
+import ConnectFeature from './MainMenuFeatures/connectfeature';
 
 const MenuStyle = styled.div`
   background-color: grey;
@@ -26,13 +27,14 @@ const ItemStyle = styled.div`
 `;
 
 const MainMenu = () =>{
-
-
+  const [connectMenuState, setConnectMenuState] = useState<boolean>(false);
   return(
     <>
       <MenuStyle>
+        {connectMenuState? <ConnectFeature setChild={setConnectMenuState}/>:
+        <>
         <ItemStyle>
-          Connect
+          <button onClick={()=>setConnectMenuState(!connectMenuState)}>Connect</button>
         </ItemStyle>
         <ItemStyle>
           Feature
@@ -57,9 +59,8 @@ const MainMenu = () =>{
         </ItemStyle>
         <ItemStyle>
           Share Website!
-        </ItemStyle>
+        </ItemStyle></>}
       </MenuStyle>
-
     </>
   )
 }

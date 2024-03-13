@@ -5,11 +5,11 @@ import WorkspaceComponent from './components/workspace';
 import styled from 'styled-components';
 import { AppContext } from '../../AppContext';
 import { sendCurrentId, sendCurrentUsername } from '../../actions';
-import MenuIcon from './components/menuIcon';
-import MainMenu from './components/mainmenu';
-import NodeMenu from './components/nodemenu';
+import MenuIcon from './components/Menus/menuIcon';
+import MainMenu from './components/Menus/mainmenu';
+import NodeMenu from './components/Menus/nodemenu';
 import Connection from './components/mainconnector';
-import ConnectionMenu from './components/connectionmenu';
+import ConnectionMenu from './components/Menus/connectionmenu';
 
 const Topright = styled.div`
   position: fixed;

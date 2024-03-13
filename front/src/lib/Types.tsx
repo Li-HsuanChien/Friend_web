@@ -44,3 +44,8 @@ export type Action =
 | { type: 'ADD_SHOWED_USER', payload: number}
 | { type: 'REMOVE_SHOWED_USER', payload: number}
 
+export interface SearchedUser{
+  username: string,
+  headshot: Url,
+  username_id: number
+}

@@ -1,10 +1,10 @@
 import React, { useContext, useState } from 'react';
 import styled from 'styled-components';
-import { AppContext } from '../../../AppContext';
+import { AppContext } from '../../../../AppContext';
 import { FaFacebookSquare } from 'react-icons/fa';
 import { CiInstagram } from 'react-icons/ci';
 import { FaSnapchat } from 'react-icons/fa6';
-import { determineHoroscope } from '../../../lib/determineHoroscope'
+import { determineHoroscope } from '../../../../lib/determineHoroscope'
 
 // interface SuccessUserData {
 //   username: string;

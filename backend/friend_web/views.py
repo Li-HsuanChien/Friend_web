@@ -328,8 +328,8 @@ class ConnectionCreate(CreateAPIView):
         "inviter(id)": (request.user.id)
         "invitee(id)": (request.data.get('invitee_id'))
         example: {"closeness": "bestfriend",
-        		  "invitee_id:"10"
-            	}
+                  "invitee_id:"10"
+                }
     Returns:
         example:{
                 "id": 4,
@@ -422,20 +422,20 @@ class ConnectionRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView, ):
         current_user_id = self.request.user.id
         connection_instance = self.get_object()
         connection_instance.activated = True
+        closeness = self.request.data.get('closeness')
+        activated = self.request.data.get('activated')
+        if closeness:
+                connection_instance.closeness = closeness
+        if activated:
+            connection_instance.activated = activated
         if connection_instance.inviter_id == current_user_id:
             nicknameparenttochild = self.request.data.get('nickname')
-            closeness = self.request.data.get('closeness')
             if nicknameparenttochild:
                 connection_instance.nicknameparenttochild = nicknameparenttochild
-            if closeness:
-                connection_instance.closeness = closeness
         elif connection_instance.invitee_id == current_user_id:
             nicknamechildtoparent = self.request.data.get('nickname')
-            closeness = self.request.data.get('closeness')
             if nicknamechildtoparent:
                 connection_instance.nicknamechildtoparent = nicknamechildtoparent
-            if closeness:
-                connection_instance.closeness = closeness
         else:
             return Response({'message': 'user not part of connection'}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -450,7 +450,7 @@ class ConnectionRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView, ):
     def destroy(self, request, *args, **kwargs):
         connection_instance = self.get_object()
         self.perform_destroy(connection_instance)
-    	  # This will update the instance
+          # This will update the instance
         return Response({"message": "connection deleted!"}, status=status.HTTP_204_NO_CONTENT)
 
 
