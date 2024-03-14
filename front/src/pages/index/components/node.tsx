@@ -5,8 +5,8 @@ import { AppContext } from '../../../AppContext';
 import { clickedUser, sendWorkSpacePos, addShowedUser, removeShowedUser } from '../../../actions';
 import Connection from './connector';
 import { useNavigate } from 'react-router-dom';
-import getUserData from '../../../lib/getUserData';
-import getConnection from '../../../lib/getConnection';
+import { getUserData } from '../../../lib/UserDataFunctions';
+import { getConnection } from '../../../lib/ConnectionFunctions';
 import { pxToVH, pxToVW } from '../../../lib/px_V_UnitConversion';
 import MainConnection from './mainconnector';
 import {SuccessUserData, ConnectionData, Pos} from '../../../lib/Types'

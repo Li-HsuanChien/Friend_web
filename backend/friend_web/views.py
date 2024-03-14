@@ -10,7 +10,7 @@ from rest_framework.permissions import AllowAny
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework_simplejwt.tokens import RefreshToken
-from .permission import MaxAccessPermission
+from .permission import MaxAccessPermission, SelfConnectionPermission
 from django.db.models import Q
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.contrib.auth.models import User
@@ -367,7 +367,6 @@ class ConnectionCreate(CreateAPIView):
             )
         serializer = ConnectionSerializer(userdata_instance)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
-
 class ConnectionRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView, ):
     """_summary_
         edits single self connection,
@@ -411,7 +410,7 @@ class ConnectionRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView, ):
         }
     """
     serializer_class = ConnectionSerializer
-    permission_classes = (MaxAccessPermission,)
+    permission_classes = (SelfConnectionPermission,)
     def get_object(self):
         connection_id = self.request.data.get('connection_id')
         # Ensure Userdata instance exists for the user

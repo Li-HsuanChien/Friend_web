@@ -5,7 +5,6 @@ import { SearchedUser } from '../../../../../lib/Types';
 import { IoIosCloseCircleOutline } from 'react-icons/io';
 import { AppContext } from '../../../../../AppContext';
 import { ChangeEvent } from 'react';
-import { stringify } from 'querystring';
 
 const Close = styled.div`
   position: absolute;

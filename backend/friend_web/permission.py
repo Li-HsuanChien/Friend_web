@@ -36,3 +36,27 @@ class MaxAccessPermission(permissions.BasePermission):
             return int(request_data_id) in allowed_userdata_id
         elif(request_connection_id):
             return int(request_connection_id) in allowed_connection_id
+
+class SelfConnectionPermission(permissions.BasePermission):
+    """
+        Takes curren_user_id
+        Takes requested connection id
+        returns if request data in loop
+    Args:
+        current_user_id
+    Returns:
+        Boolean
+    """
+    message = 'You can\'t edit connection that is not yours'
+    def has_permission(self, request):
+        current_user_id = request.user.id
+        request_connection_id = request.data.get("connection_id")
+        connection_list = Connection.objects.filter(Q(inviter=current_user_id) | Q(invitee=current_user_id))
+
+        # Check if request_connection_id exists in connection_list
+        if connection_list.filter(id=request_connection_id).exists():
+            return True
+
+        # If request_connection_id does not exist in connection_list
+        return False
+
