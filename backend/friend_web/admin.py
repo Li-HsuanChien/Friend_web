@@ -12,7 +12,7 @@ from friend_web.models import *
 class UserAdmin(admin.ModelAdmin):
     list_display = ["username", "bio", "headshot", "created_time",\
         "date_of_birth", "show_horoscope", "instagram_link", "facebook_link", "snapchat_link",\
-            "inviteurl"]
+            "inviteurl", "username_id"]
     # inlines = [GenderTypeInline]
 
 

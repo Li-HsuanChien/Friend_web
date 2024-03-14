@@ -48,7 +48,7 @@ class SelfConnectionPermission(permissions.BasePermission):
         Boolean
     """
     message = 'You can\'t edit connection that is not yours'
-    def has_permission(self, request):
+    def has_permission(self, request, view):
         current_user_id = request.user.id
         request_connection_id = request.data.get("connection_id")
         connection_list = Connection.objects.filter(Q(inviter=current_user_id) | Q(invitee=current_user_id))

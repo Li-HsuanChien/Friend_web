@@ -378,6 +378,7 @@ class ConnectionRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView, ):
             ('closefriend', 'Close Friend')
             ('bestfriend', 'Best Friend')
         self.request.data.get('nickname')
+        self.request.data.get('activated')
         Example1(PUT): {"connection_id": "2"}
         Example2(PUT):{"connection_id": "2",
                     "nickname": "edited nick name",
@@ -406,7 +407,7 @@ class ConnectionRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView, ):
                 "invitee": 10
             }
         Example3: {
-
+			"message": "connection deleted!"
         }
     """
     serializer_class = ConnectionSerializer

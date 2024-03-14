@@ -1,9 +1,11 @@
 import { Url } from 'url';
 
+export type Closeness= 'friend' | 'closefriend' | 'bestfriend'
+
 export interface ConnectionData {
   id: number,
   date_established: string,
-  closeness: string,
+  closeness: Closeness,
   nicknamechildtoparent?: string,
   nicknameparenttochild?: string,
   inviter: number,
@@ -49,4 +51,8 @@ export interface SearchedUser{
   username: string,
   headshot: Url,
   username_id: number
+}
+
+export interface Message{
+  message: string;
 }

@@ -5,7 +5,7 @@ import {useNavigate, Link} from 'react-router-dom';
 import {ChangeEvent} from 'react';
 import { AppContext } from '../../AppContext';
 import { sendCurrentId, sendJWT, sendCurrentUsername } from '../../actions';
-import getUserData from '../../lib/UserDataFunctions';
+import { getUserData } from '../../lib/UserDataFunctions';
 
 const LoginStyle = styled.div`
 
