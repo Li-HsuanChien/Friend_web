@@ -1,8 +1,29 @@
 import {ConnectionData, Message, Closeness} from './Types'
-//TBD connection activated and unactivated endpoint
-export async function getConnection(user_id: number, Token: string): Promise<ConnectionData[]> {
+export async function getActivatedConnection(user_id: number, Token: string): Promise<ConnectionData[]> {
   try {
-    const response = await fetch('http://127.0.0.1:8000/api/connections', {
+    const response = await fetch('http://127.0.0.1:8000/api/connections/activated', {
+      credentials: 'include',
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${Token}`
+      },
+      body: JSON.stringify({ user_id: user_id }),
+    });
+    if (!response.ok) {
+      throw new Error('Failed to get user connection')
+    }
+    const connections: ConnectionData[] = await response.json();
+    return connections;
+  } catch (error) {
+    console.error('Get connection error:', error);
+    throw error;
+  }
+}
+
+export async function getPendingConnection(user_id: number, Token: string): Promise<ConnectionData[]> {
+  try {
+    const response = await fetch('http://127.0.0.1:8000/api/connections/pending', {
       credentials: 'include',
       method: 'POST',
       headers: {

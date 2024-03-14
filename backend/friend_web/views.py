@@ -149,9 +149,9 @@ class SearchUserName(ListAPIView):
         else:
             return Response({"message": "No search query provided"}, status=status.HTTP_400_BAD_REQUEST)
 
-class ConnectionList(APIView):
+class ConnectionListActivated(APIView):
     """
-    Takes input user id and returns target user's child connections.
+    Takes input user id and returns target user's activated child connections.
     """
 
     permission_classes = (MaxAccessPermission,)
@@ -160,6 +160,21 @@ class ConnectionList(APIView):
         user_id = request.data.get('user_id')
         if user_id is None:
             return Response({'error': 'user_id parameter is required'}, status=400)
+
+        query = Connection.objects.filter(Q(inviter=user_id) | Q(invitee=user_id)).filter(activated=True)
+        serializer = ConnectionSerializer(query, many=True)
+        return Response(serializer.data)
+class ConnectionListPending(APIView):
+    """
+    Takes input user id and returns target user's pending (activated: false )child connections.
+    """
+
+    permission_classes = (MaxAccessPermission,)
+
+    def post(self, request, *args, **kwargs):
+        user_id = request.data.get('user_id')
+        if user_id is None:
+            return Response({'error': 'user_id parameter is required'}, status=400).filter(activated=False)
 
         query = Connection.objects.filter(Q(inviter=user_id) | Q(invitee=user_id))
         serializer = ConnectionSerializer(query, many=True)

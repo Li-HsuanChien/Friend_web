@@ -6,7 +6,7 @@ import { clickedUser, sendWorkSpacePos, addShowedUser, removeShowedUser } from '
 import Connection from './connector';
 import { useNavigate } from 'react-router-dom';
 import { getUserData } from '../../../lib/UserDataFunctions';
-import { getConnection } from '../../../lib/ConnectionFunctions';
+import { getActivatedConnection } from '../../../lib/ConnectionFunctions';
 import { pxToVH, pxToVW } from '../../../lib/px_V_UnitConversion';
 import MainConnection from './mainconnector';
 import {SuccessUserData, ConnectionData, Pos} from '../../../lib/Types'
@@ -101,7 +101,7 @@ const UserNode: React.FC<{
             // Handle error appropriately, e.g., show a toast message
             navigate('/add');
           });
-        getConnection(user_id, jwt)
+        getActivatedConnection(user_id, jwt)
           .then((result) => {
             shownuserstate;
             let connectionsArr = result.filter((connection) => {

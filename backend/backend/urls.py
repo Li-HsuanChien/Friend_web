@@ -39,8 +39,10 @@ urlpatterns = [
     #update current user userdata
     path('api/userdatas/update', friend_web.views.CurrentUserRetrieveUpdateDestroy.as_view()),
 
-    #takes 'user_id' and get user's connections
-    path('api/connections', friend_web.views.ConnectionList.as_view()),
+    #takes 'user_id' and get user's activated connections
+    path('api/connections/activated', friend_web.views.ConnectionListActivated.as_view()),
+	#takes 'user_id' and get user's pending(activated False) connections
+    path('api/connections/pending', friend_web.views.ConnectionListPending.as_view()),
     #adds connection by getting "closeness, "inviter(id)", inviter is the current user
     path('api/connections/add', friend_web.views.ConnectionCreate.as_view()),
     #edits(takes nickname and closeness) single self connection or destroy
