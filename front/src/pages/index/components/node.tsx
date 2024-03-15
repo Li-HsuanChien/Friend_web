@@ -201,7 +201,7 @@ const UserNode: React.FC<{
           />)))}
           <img
             src={`http://127.0.0.1:8000/${data.headshot}`}
-            alt="Headshot"
+            alt={`${data.username_id}`}
             title={`${data.username} ${data.username_id}`}/>
         </NodeStyle>
         ) : ''}

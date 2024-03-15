@@ -16,7 +16,7 @@ class Userdata(models.Model):
     Gender_CHOICES = {
         "M": "Cis Gender Male",
         "F": "Cis Gender Female",
-        "N": "NonBinary",
+        "N": "Non Binary",
         "NA": "Prefer Not To Say"
     }
     username = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete = models.CASCADE, primary_key=True)
