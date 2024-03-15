@@ -1,6 +1,7 @@
 import React , { useState } from 'react';
 import styled from 'styled-components';
-import ConnectFeature from './MainMenuFeatures/connectfeature';
+import ConnectSearchFeature from './MainMenuFeatures/connectsearch';
+import ConnectPendingFeature from './MainMenuFeatures/connectpending';
 
 const MenuStyle = styled.div`
   background-color: grey;
@@ -26,44 +27,65 @@ const ItemStyle = styled.div`
   border-radius: 5%;
 `;
 
-const MainMenu = () =>{
-  const [connectMenuState, setConnectMenuState] = useState<boolean>(false);
-  return(
+const MainMenu = () => {
+  const [connectSearchState, setConnectSearchState] = useState(false);
+  const [connectionPendingState, setConnectionPendingState] = useState(false);
+  const [feature1State, setFeature1State] = useState(false);
+  const [feature2State, setFeature2State] = useState(false);
+  const [feature3State, setFeature3State] = useState(false);
+  // Add more feature states as needed
+
+  let componentToRender;
+
+  switch (true) {
+    case connectSearchState:
+      componentToRender = <ConnectSearchFeature setChild={setConnectSearchState} />;
+      break;
+    case connectionPendingState:
+      componentToRender = <ConnectPendingFeature setChild={setConnectionPendingState} />;
+      break;
+    // case feature1State:
+    //   componentToRender = <Feature1 />;
+    //   break;
+    // case feature2State:
+    //   componentToRender = <Feature2 />;
+    //   break;
+    // case feature3State:
+    //   componentToRender = <Feature3 />;
+    //   break;
+    default:
+      componentToRender = (
+        <>
+          <ItemStyle>
+            <button onClick={() => setConnectSearchState(!connectSearchState)}>Connect</button>
+          </ItemStyle>
+          <ItemStyle>
+            <button onClick={() => setConnectionPendingState(!connectionPendingState)}>Pending Connection</button>
+          </ItemStyle>
+          <ItemStyle>
+            <button onClick={() => setFeature1State(!feature1State)}>Feature 1</button>
+          </ItemStyle>
+          <ItemStyle>
+            <button onClick={() => setFeature2State(!feature2State)}>Feature 2</button>
+          </ItemStyle>
+          <ItemStyle>
+            <button onClick={() => setFeature3State(!feature3State)}>Feature 3</button>
+          </ItemStyle>
+          <ItemStyle>
+            Share Website!
+            {/* copy clipboard url */}
+          </ItemStyle>
+        </>
+      );
+  }
+
+  return (
     <>
       <MenuStyle>
-        {connectMenuState? <ConnectFeature setChild={setConnectMenuState}/>:
-        <>
-        <ItemStyle>
-          <button onClick={()=>setConnectMenuState(!connectMenuState)}>Connect</button>
-        </ItemStyle>
-        <ItemStyle>
-          My connection
-        </ItemStyle>
-        <ItemStyle>
-          Feature
-        </ItemStyle>
-        <ItemStyle>
-          Feature
-        </ItemStyle>
-        <ItemStyle>
-          Feature
-        </ItemStyle>
-        <ItemStyle>
-          Feature
-        </ItemStyle>
-        <ItemStyle>
-          Feature
-        </ItemStyle>
-        <ItemStyle>
-          Feature
-        </ItemStyle>
-        <ItemStyle>
-          Share Website!
-        </ItemStyle></>}
+        {componentToRender}
       </MenuStyle>
     </>
-  )
-}
-
+  );
+};
 
 export default MainMenu;

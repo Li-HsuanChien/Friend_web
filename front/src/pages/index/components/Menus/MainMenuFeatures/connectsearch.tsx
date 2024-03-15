@@ -1,6 +1,7 @@
 import React , { useState, Dispatch, useContext } from 'react';
 import styled from 'styled-components';
 import { searchUser } from '../../../../../lib/searchUser'
+import { ConnectionCreate } from '../../../../../lib/ConnectionFunctions';
 import { SearchedUser } from '../../../../../lib/Types';
 import { IoIosCloseCircleOutline } from 'react-icons/io';
 import { AppContext } from '../../../../../AppContext';
@@ -30,7 +31,7 @@ const QueryItems = styled.div`
   justify-content: space-between;
 `
 
-const ConnectFeature: React.FC<{setChild:Dispatch<boolean>}>  = ( {setChild} ) =>{
+const ConnectSearchFeature: React.FC<{setChild:Dispatch<boolean>}>  = ( {setChild} ) =>{
   const { jwt } = useContext(AppContext);
   const [searchQuery, setSearchQuery] = useState<SearchedUser[]>([]);
   const [search, setSearch] = useState<string>('')
@@ -39,6 +40,12 @@ const ConnectFeature: React.FC<{setChild:Dispatch<boolean>}>  = ( {setChild} ) =
     e.preventDefault();
     searchUser(search, jwt as string)
     .then((result) => setSearchQuery(result));
+  }
+
+  const  submitConnectRequest = (invitee_id: number)=>{
+    ConnectionCreate(jwt as string, invitee_id)
+    .then(result=> console.log(result));
+    //User Visual
   }
 
   return(
@@ -68,7 +75,7 @@ const ConnectFeature: React.FC<{setChild:Dispatch<boolean>}>  = ( {setChild} ) =
               style={{ height: '100%' }}
             />
             <div>{item.username}</div>
-            <button>connect</button>
+            <button onClick={() => submitConnectRequest(item.username_id)}>connect</button>
           </QueryItems>
         )) : <p>No items</p>}
       </Query>
@@ -77,4 +84,4 @@ const ConnectFeature: React.FC<{setChild:Dispatch<boolean>}>  = ( {setChild} ) =
 }
 
 
-export default ConnectFeature;
+export default ConnectSearchFeature;

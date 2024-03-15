@@ -146,7 +146,7 @@ const UserNode: React.FC<{
         const calculatedPos = calcpos(
           posData.angle,
           connections.length,
-          140,
+          180,
           180,
           posData.posx,
           posData.posy,

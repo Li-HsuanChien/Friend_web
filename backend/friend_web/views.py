@@ -174,9 +174,9 @@ class ConnectionListPending(APIView):
     def post(self, request, *args, **kwargs):
         user_id = request.data.get('user_id')
         if user_id is None:
-            return Response({'error': 'user_id parameter is required'}, status=400).filter(activated=False)
+            return Response({'error': 'user_id parameter is required'}, status=400)
 
-        query = Connection.objects.filter(Q(inviter=user_id) | Q(invitee=user_id))
+        query = Connection.objects.filter(invitee=user_id).filter(activated=False)
         serializer = ConnectionSerializer(query, many=True)
         return Response(serializer.data)
 
@@ -332,24 +332,21 @@ class CurrentUserRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 class ConnectionCreate(CreateAPIView):
     """_summary_
-    takes current user as invitee, get inviter id and closeness
+    takes current user as invitee, get inviter id
     from request
+    closeness default "friend"
     returns successful connection add
     Args:
-        "closeness:(request.data.get('closeness'))
-            ('friend', 'Friend'),
-            ('closefriend', 'Close Friend'),
-            ('bestfriend', 'Best Friend'),"
         "inviter(id)": (request.user.id)
         "invitee(id)": (request.data.get('invitee_id'))
-        example: {"closeness": "bestfriend",
+        example: {
                   "invitee_id:"10"
                 }
     Returns:
         example:{
                 "id": 4,
                 "date_established": "2024-02-22T00:44:30.241799Z",
-                "closeness": "bestfriend",
+                "closeness": "friend",
                 "nicknamechildtoparent": null,
                 "nicknameparenttochild": null,
                 "inviter": 9,
@@ -361,7 +358,7 @@ class ConnectionCreate(CreateAPIView):
     permission_classes = (authentication_level,)
     def create(self, request, *args, **kwargs):
         current_user_id = request.user.id
-        closness = request.data.get('closeness')
+        closness = "friend"
         invitee_id = request.data.get('invitee_id')
         inviter_instance = Userdata.objects.get(username=current_user_id)
         invitee_instance = Userdata.objects.get(username=invitee_id)
