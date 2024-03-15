@@ -21,7 +21,7 @@ class Userdata(models.Model):
     }
     username = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete = models.CASCADE, primary_key=True)
     bio = models.TextField(max_length=150, null=True)
-    headshot = models.ImageField(upload_to='static/img/headshots/', null=True)
+    headshot = models.ImageField(upload_to='static/img/headshots/', null=True, default='default.png')
     created_time = models.DateTimeField(auto_now_add=True)
     #hard coded gender customizable gender TBD
     gender = models.CharField(choices=Gender_CHOICES)

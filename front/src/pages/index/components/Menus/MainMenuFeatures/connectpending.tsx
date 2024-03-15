@@ -59,6 +59,7 @@ const ConnectPendingFeature: React.FC<{setChild:Dispatch<boolean>}>  = ( {setChi
     ConnectionUpdate(connection_id, jwt as string)
     .then(result=> console.log(result));
     //User Visual
+    //delete target
   }
 
   const  rejectConnectRequest = (connection_id: number)=>{
