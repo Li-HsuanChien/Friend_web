@@ -51,7 +51,7 @@ function Main() {
         .catch(() =>{
           navigate('/add');
         })
-  })
+  }, [])
   return (
     <>
       <StyleDiv>

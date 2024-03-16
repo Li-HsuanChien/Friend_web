@@ -3,9 +3,6 @@ import {SuccessUserData, ConnectionData, Pos, Action} from './lib/Types'
 
 // Define the interface for the context state
 interface ContextState {
-  // current_user_id: number | null,
-  // current_user_name: string | null,
-  // jwt: string | null,
   csrf: string | null,
   clickeduser: SuccessUserData | null,
   clickedconnection: ConnectionData | null,
@@ -18,35 +15,18 @@ interface ContextState {
 // Define the reducer function
 export const AppReducer = (state: ContextState, action: Action): ContextState => {
   switch (action.type) {
-    // case 'SET_USER_ID':
-    //   return {
-    //     ...state,
-    //     current_user_id: action.payload,
-    //   };
-    // case 'SET_JWT':
-    //   return {
-    //     ...state,
-    //     jwt: action.payload,
-    //   };
-    // case 'SET_USER_NAME':
-    //   return {
-    //     ...state,
-    //     current_user_name: action.payload,
-    //   };
     case 'SET_CSRF_TOKEN':
       return{
         ...state,
         csrf: action.payload,
       }
     case 'SET_CLICKED_USER':
-      //console.log('User Clicked', action.payload)
       return{
         ...state,
         clickeduser: action.payload,
         clickedconnection: null
       }
     case 'SET_CLICKED_CONNECTION':
-      // console.log('Connection Clicked', action.payload)
       return{
         ...state,
         clickedconnection: action.payload,
@@ -58,7 +38,6 @@ export const AppReducer = (state: ContextState, action: Action): ContextState =>
         workspacepos: action.payload,
       }
     case 'OPEN_MENU':
-      // console.log('Open Menu')
       return{
         ...state,
         menustate: true,
@@ -66,7 +45,6 @@ export const AppReducer = (state: ContextState, action: Action): ContextState =>
         clickeduser: null,
       }
       case 'CLOSE_MENU':
-      // console.log('Close Menu')
         return{
           ...state,
           menustate: false,
@@ -75,9 +53,7 @@ export const AppReducer = (state: ContextState, action: Action): ContextState =>
         }
       case 'ADD_SHOWED_USER':{
         const newShownUserState = new Set<number>(state.shownuserstate);
-        // console.log('add oringinal', newShownUserState)
         newShownUserState.add(action.payload);
-        // console.log('add result', newShownUserState)
         return{
           ...state,
           shownuserstate: newShownUserState,
@@ -85,9 +61,7 @@ export const AppReducer = (state: ContextState, action: Action): ContextState =>
       }
       case 'REMOVE_SHOWED_USER':{
         const newShownUserState = new Set<number>(state.shownuserstate);
-        // console.log('remove oringinal', newShownUserState)
         newShownUserState.delete(action.payload);
-        // console.log('remove result', newShownUserState)
         return{
           ...state,
           shownuserstate: newShownUserState,
@@ -121,9 +95,6 @@ interface AppContextValue extends ContextState {
 }
 
 const initialState: ContextState = {
-  // current_user_id: null,
-  // current_user_name: null,
-  // jwt: (window.localStorage.getItem('JWTToken'))? (window.localStorage.getItem('JWTToken')) : null,
   csrf: null,
   clickeduser:null,
   clickedconnection:null,

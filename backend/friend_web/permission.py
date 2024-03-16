@@ -16,7 +16,7 @@ class MaxAccessPermission(permissions.BasePermission):
     """
     message = 'You have reached out of your authorization'
     def has_permission(self, request, view):
-        MAX_BREADTH = 3
+        MAX_BREADTH = 4
         current_user_id = request.user.id
         allowed_userdata_id = set([current_user_id])
         allowed_connection_id = set()

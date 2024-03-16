@@ -39,7 +39,7 @@ interface WorkspaceConf {
 const Workspace: React.FC = () => {
   const user = useUser();
   const current_user_id = user.user_id;
-  const { dispatch, workspacepos,  } = useContext(AppContext);
+  const { dispatch, workspacepos } = useContext(AppContext);
   const [workspaceConf, setWorkspaceConf] = useState<WorkspaceConf>({
     movementX: 0,
     movementY: 0,
@@ -94,7 +94,6 @@ const Workspace: React.FC = () => {
             transform: `translate(${workspaceConf.movementX}px, ${workspaceConf.movementY}px)`,
           }}
         >
-          {/* childrens */}
           <UserNode
             user_id = {current_user_id as number}
             posData={{posx: 50, posy:50, angle:((5 * Math.PI)/4)}}

@@ -88,13 +88,7 @@ const UserNode: React.FC<{
     const [showConnection, setShowConnection] = useState<boolean>(connectionState);
     useEffect(() => {
       dispatch(addShowedUser(user_id));
-      return () => {
-        dispatch(removeShowedUser(user_id));
-      };
-    }, []);
-    useEffect(() => {
-      if (user_id && jwt) {
-        getUserData(user_id, jwt)
+      getUserData(user_id, jwt)
           .then((result) => {
             setData(result);
             if (setchildName && data) {
@@ -123,11 +117,10 @@ const UserNode: React.FC<{
             console.error('Failed to get user connections:', error);
             // Handle error appropriately, e.g., show a toast message
           });
-      } else {
-        console.error('You have no credentials!');
-        navigate('/login');
-      }
-    }, [user_id, shownuserstate]);
+      return () => {
+        dispatch(removeShowedUser(user_id));
+      };
+    }, []);
     useEffect(() =>{
       const connectionsArr = connections?.filter((connection) => {
         if(user_id === connection.inviter){
