@@ -4,7 +4,7 @@ import { searchUser } from '../../../../../lib/searchUser'
 import { ConnectionCreate } from '../../../../../lib/ConnectionFunctions';
 import { SearchedUser } from '../../../../../lib/Types';
 import { IoIosCloseCircleOutline } from 'react-icons/io';
-import { AppContext } from '../../../../../AppContext';
+import { useToken } from '../../../../../lib/hooks/useToken';
 import { ChangeEvent } from 'react';
 
 const Close = styled.div`
@@ -21,7 +21,7 @@ const Query = styled.div`
   top: 10%;
   height: 88%;
   width: 95%;
-  overflow: scroll;
+  overflow: auto;
 `
 const QueryItems = styled.div`
   width: 100%;
@@ -32,7 +32,7 @@ const QueryItems = styled.div`
 `
 
 const ConnectSearchFeature: React.FC<{setChild:Dispatch<boolean>}>  = ( {setChild} ) =>{
-  const { jwt } = useContext(AppContext);
+  const [jwt] = useToken();
   const [searchQuery, setSearchQuery] = useState<SearchedUser[]>([]);
   const [search, setSearch] = useState<string>('')
 

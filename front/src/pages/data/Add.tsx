@@ -4,6 +4,7 @@ import {styled} from 'styled-components';
 import { AppContext } from '../../AppContext';
 import { useNavigate } from 'react-router-dom';
 import { UserCreate } from '../../lib/UserDataFunctions';
+import { useToken } from '../../lib/hooks/useToken';
 
 const AddPageStyle = styled.div`
   position: fixed;
@@ -179,12 +180,12 @@ const Add = () => {
   const [date, setDate] = useState<string>('');
   const [gender, setGender] = useState<string>('');
   const [image, setImage] = useState<File>();
-  const {jwt} = useContext(AppContext);
+  const [jwt] = useToken();
 
   const handleSubmit = async(e: React.FormEvent<HTMLFormElement>) =>{
     e.preventDefault();
     try{
-        if(gender && date && horoscopeState && jwt && image){
+        if(gender && date && horoscopeState && jwt){
           await UserCreate(gender, date, horoscopeState, jwt, image);
           navigate('/');
         }

@@ -1,9 +1,9 @@
 import React, {useContext, useState, Dispatch } from 'react';
 import { UserUpdate } from '../../../../../lib/UserDataFunctions';
-import { AppContext } from '../../../../../AppContext';
+import { useToken } from '../../../../../lib/hooks/useToken';
 
 const EditNodeMenu: React.FC<{setEditState: Dispatch<boolean>, editState: boolean}> = ({setEditState, editState}) =>{
-  const {jwt, clickeduser} = useContext(AppContext);
+  const [jwt] = useToken();
   const [bio, setBio] = useState<string>();
   const [horoscopeState, setHoroscopeState] = useState<boolean>(false);
   const [date, setDate] = useState<string>();

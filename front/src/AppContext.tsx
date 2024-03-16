@@ -3,9 +3,9 @@ import {SuccessUserData, ConnectionData, Pos, Action} from './lib/Types'
 
 // Define the interface for the context state
 interface ContextState {
-  current_user_id: number | null,
-  current_user_name: string | null,
-  jwt: string | null,
+  // current_user_id: number | null,
+  // current_user_name: string | null,
+  // jwt: string | null,
   csrf: string | null,
   clickeduser: SuccessUserData | null,
   clickedconnection: ConnectionData | null,
@@ -18,21 +18,21 @@ interface ContextState {
 // Define the reducer function
 export const AppReducer = (state: ContextState, action: Action): ContextState => {
   switch (action.type) {
-    case 'SET_USER_ID':
-      return {
-        ...state,
-        current_user_id: action.payload,
-      };
-    case 'SET_JWT':
-      return {
-        ...state,
-        jwt: action.payload,
-      };
-    case 'SET_USER_NAME':
-      return {
-        ...state,
-        current_user_name: action.payload,
-      };
+    // case 'SET_USER_ID':
+    //   return {
+    //     ...state,
+    //     current_user_id: action.payload,
+    //   };
+    // case 'SET_JWT':
+    //   return {
+    //     ...state,
+    //     jwt: action.payload,
+    //   };
+    // case 'SET_USER_NAME':
+    //   return {
+    //     ...state,
+    //     current_user_name: action.payload,
+    //   };
     case 'SET_CSRF_TOKEN':
       return{
         ...state,
@@ -121,9 +121,9 @@ interface AppContextValue extends ContextState {
 }
 
 const initialState: ContextState = {
-  current_user_id: null,
-  current_user_name: null,
-  jwt: null,
+  // current_user_id: null,
+  // current_user_name: null,
+  // jwt: (window.localStorage.getItem('JWTToken'))? (window.localStorage.getItem('JWTToken')) : null,
   csrf: null,
   clickeduser:null,
   clickedconnection:null,

@@ -10,6 +10,8 @@ import { getActivatedConnection } from '../../../lib/ConnectionFunctions';
 import { pxToVH, pxToVW } from '../../../lib/px_V_UnitConversion';
 import MainConnection from './mainconnector';
 import {SuccessUserData, ConnectionData, Pos} from '../../../lib/Types'
+import { useToken } from '../../../lib/hooks/useToken';
+import { useUser } from '../../../lib/hooks/useUser';
 // eslint-disable-next-line node/no-unsupported-features/node-builtins
 
 interface LinePos extends Pos {
@@ -74,7 +76,10 @@ const UserNode: React.FC<{
   parent_id?: number, setchildName?: Dispatch<string>
 }>
   = ({ user_id, posData, connectionState, nodesize, parent_id, setchildName }) => {
-    const { dispatch, jwt, current_user_id, shownuserstate } = useContext(AppContext);
+    const [jwt] = useToken();
+    const user = useUser();
+    const current_user_id = user.user_id
+    const { dispatch, shownuserstate } = useContext(AppContext);
     const navigate = useNavigate();
     const [data, setData] = useState<SuccessUserData | null>(null);
     const [connections, setConnections] = useState<ConnectionData[]>();

@@ -1,12 +1,12 @@
 /* eslint-disable node/no-unpublished-import */
 import React, {useState, useContext} from 'react';
 import { styled } from 'styled-components';
-import {useNavigate, Link} from 'react-router-dom';
+import {useNavigate, Link, } from 'react-router-dom';
 import {ChangeEvent} from 'react';
-import { AppContext } from '../../AppContext';
-import { sendCurrentId, sendJWT, sendCurrentUsername } from '../../actions';
-import { getUserData } from '../../lib/UserDataFunctions';
-
+// import { AppContext } from '../../AppContext';
+// import { sendCurrentId, sendJWT, sendCurrentUsername } from '../../actions';
+import { useToken } from '../../lib/hooks/useToken';
+import { useUser } from '../../lib/hooks/useUser';
 const LoginStyle = styled.div`
 
   position: fixed;
@@ -162,33 +162,11 @@ async function LoginApi(credentials: Credentials) {
     throw error; // Rethrow the error to be caught by the caller
   }
 }
-interface pingSuccessResponse{
-  username:string,
-  id: number
-}
-async function PingServer(Token: string): Promise<pingSuccessResponse> {
-  try {
-    const response = await fetch('http://127.0.0.1:8000/api/currentuser', {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${Token}`
-      },
-    });
-    if (!response.ok) {
-      throw new Error('Failed to ping server');
-    }
-    return response.json();
-  } catch (error) {
-    // Handle error
-    console.error('Ping server error:', error);
-    throw error; // Rethrow the error to be caught by the caller
-  }
-}
 
 const Login = () => {
   const navigate = useNavigate();
-  const {dispatch} = useContext(AppContext);
+  const [token, setToken] = useToken();
+  const user = useUser();
   const [username, setUsername] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [loginState, setLoginState] = useState<string | null>(null);
@@ -202,27 +180,9 @@ const Login = () => {
       });
       if ('refresh' in response) {
         const {refresh , access} = response;
-        //debug
-        // console.log(refresh);
-        // console.log(access);
-        window.localStorage.setItem('JWTToken', access);
-        dispatch(sendJWT(access));
-        PingServer(response.access)
-          .then((result) => {
-            const { username, id } = result;
-            // console.log(`got id ${id}`);
-            // console.log(`got username ${username}`);
-            dispatch(sendCurrentId(id));
-            dispatch(sendCurrentUsername(username));
-            setLoginState('Welcome!');
-            getUserData(id, access as string)
-            .then(() => {
-              navigate('/');
-            })
-            .catch(() =>{
-              navigate('/add');
-            })
-          })
+        setToken(access as string);
+        setLoginState('Welcome!');
+        navigate('/');
       } else {
         setLoginState(response.detail);
       }

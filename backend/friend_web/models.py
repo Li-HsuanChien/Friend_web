@@ -20,17 +20,18 @@ class Userdata(models.Model):
         "NA": "Prefer Not To Say"
     }
     username = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete = models.CASCADE, primary_key=True)
-    bio = models.TextField(max_length=150, null=True)
-    headshot = models.ImageField(upload_to='static/img/headshots/', null=True, default='default.png')
+    bio = models.TextField(max_length=150, null=True, blank=True)
+    headshot = models.ImageField(upload_to='static/img/headshots/', null=True, default='static/img/headshots/default.png')
     created_time = models.DateTimeField(auto_now_add=True)
+    updated_time = models.DateTimeField(auto_now=True)
     #hard coded gender customizable gender TBD
     gender = models.CharField(choices=Gender_CHOICES)
     date_of_birth = models.DateField()
     show_horoscope = models.BooleanField(default=True)
     #social media links
-    instagram_link = models.URLField(null=True)
-    facebook_link = models.URLField(null=True)
-    snapchat_link = models.URLField(null=True)
+    instagram_link = models.URLField(null=True, blank=True)
+    facebook_link = models.URLField(null=True, blank=True)
+    snapchat_link = models.URLField(null=True, blank=True)
 
     inviteurl = models.URLField()
 
@@ -43,6 +44,7 @@ class Connection(models.Model):
 	#invitee user id
     invitee = models.ForeignKey(Userdata, related_name='invitee_connections', on_delete=models.CASCADE)
     date_established = models.DateTimeField(auto_now_add=True)
+    updated_time = models.DateTimeField(auto_now=True)
 	#hard coded closeness level
     closeness = models.CharField(max_length=20, choices=[
         ('friend', 'Friend'),

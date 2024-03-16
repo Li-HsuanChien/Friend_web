@@ -3,8 +3,8 @@ import styled from 'styled-components';
 import { getPendingConnection, ConnectionUpdate, ConnectionDelete } from '../../../../../lib/ConnectionFunctions';
 import { getUserData } from '../../../../../lib/UserDataFunctions';
 import { IoIosCloseCircleOutline } from 'react-icons/io';
-import { AppContext } from '../../../../../AppContext';
-import { ChangeEvent } from 'react';
+import { useUser } from '../../../../../lib/hooks/useUser';
+import { useToken } from '../../../../../lib/hooks/useToken';
 import { ConnectionData, SuccessUserData } from '../../../../../lib/Types';
 
 const Close = styled.div`
@@ -32,7 +32,9 @@ interface ConnectionUserItem extends SuccessUserData{
 }
 
 const ConnectPendingFeature: React.FC<{setChild:Dispatch<boolean>}>  = ( {setChild} ) =>{
-  const { jwt, current_user_id } = useContext(AppContext);
+  const [jwt] = useToken();
+  const user = useUser();
+  const current_user_id = user.user_id
   const [userConnectionDatas, setUserConnectionDatas] = useState<ConnectionUserItem[]>([]);
   const [Connections, setConnections] = useState<ConnectionData[]>([]);
 

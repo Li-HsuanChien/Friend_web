@@ -1,6 +1,6 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 // eslint-disable-next-line node/no-unpublished-import
-import {useNavigate, Link} from 'react-router-dom';
+import {useNavigate, Link } from 'react-router-dom';
 import {ChangeEvent} from 'react';
 import {styled} from 'styled-components';
 
@@ -67,7 +67,7 @@ const RegisterStyle = styled.div`
 
   form p {
     font-family: 'Poppins', sans-serif;
-    color: #ffffff;
+    color: red;
     text-align: center;
     margin-top: 15px;
   }
@@ -107,7 +107,7 @@ const RegisterStyle = styled.div`
   }
 
   button {
-    margin-top: 50px;
+    margin-top: 5px;
     width: 100%;
     background-color: #ffffff;
     color: #080710;
@@ -174,6 +174,18 @@ const Register = () => {
       setRegistrationState(`Something went Wrong! Try again ${error}`);
       return;}
   };
+  useEffect(() => {
+    if(!username){
+      setRegistrationState('Username is empty!');
+    } else if (!password){
+      setRegistrationState('Password is empty!');
+    } else if (!password2){
+      setRegistrationState('Comfirmation password is empty!');
+    } else if (password !== password2){
+      setRegistrationState('Passwords do not match!');
+    }
+
+  }, [password, password2, username])
 
   return (
     <>
@@ -222,8 +234,8 @@ const Register = () => {
           {registrationState !== null && <p>{registrationState}</p>}
 
           <button
+            disabled={!password || !password2 || password !== password2}
             type="submit"
-            style={{marginTop: registrationState ? '5px' : '50px'}}
           >
             Register
           </button>

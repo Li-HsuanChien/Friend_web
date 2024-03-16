@@ -24,15 +24,14 @@ export async function getUserData(user_id: number, Token: string): Promise<Succe
 }
 
 
-export async function UserCreate(gender: string, date_of_birth: string, show_horoscope: boolean, Token: string, image: File): Promise<void>{
+export async function UserCreate(gender: string, date_of_birth: string, show_horoscope: boolean, Token: string, image?: File): Promise<void>{
   try{
     const formData = new FormData();
     const pythonBoolean = show_horoscope ? 'True': 'False';
     formData.append('show_horoscope', pythonBoolean);
     formData.append('gender', gender);
     formData.append('date_of_birth', date_of_birth);
-    formData.append('headshot', image);
-
+    if(image)formData.append('headshot', image);
     const response = await fetch('http://127.0.0.1:8000/api/userdatas/add', {
       method: 'POST',
       headers: {

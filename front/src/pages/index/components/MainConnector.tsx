@@ -50,7 +50,7 @@ interface LineData{
   y2: number,
 }
 
-const Connection: React.FC<Props> = (props) => {
+const MainConnection: React.FC<Props> = (props) => {
   const {
     id,
     date_established,
@@ -159,4 +159,4 @@ const Connection: React.FC<Props> = (props) => {
   );
 };
 
-export default Connection;
+export default MainConnection;

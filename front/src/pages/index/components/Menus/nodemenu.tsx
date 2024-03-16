@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { AppContext } from '../../../../AppContext';
 import DefaultNodeMenu from './NodeMenuComponents/defaultnodemenu';
 import MainNodeMenu from './NodeMenuComponents/mainnodemenu';
+import { useUser } from '../../../../lib/hooks/useUser';
 
 const MenuStyle = styled.div`
   background-color: grey;
@@ -31,7 +32,9 @@ const MenuStyle = styled.div`
   }
 `
 const NodeMenu = () =>{
-  const { clickeduser, current_user_id } = useContext(AppContext);
+  const user = useUser();
+  const current_user_id = user.user_id
+  const { clickeduser } = useContext(AppContext);
 
   return(
       <MenuStyle>

@@ -1,7 +1,7 @@
 import React, { useContext, useState } from 'react';
 import styled from 'styled-components';
 import { AppContext } from '../../../../AppContext';
-import { Dispatch } from 'redux';
+import { useUser } from '../../../../lib/hooks/useUser';
 
 
 const MenuStyle = styled.div`
@@ -23,7 +23,9 @@ const MenuStyle = styled.div`
 `
 
 const ConnectionMenu= () =>{
-  const { clickedconnection, current_user_id } = useContext(AppContext);
+  const user = useUser();
+  const current_user_id = user.user_id
+  const { clickedconnection } = useContext(AppContext);
   const [editState, setEditState] = useState<boolean>(false);
 
   return(

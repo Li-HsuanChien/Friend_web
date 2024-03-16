@@ -4,6 +4,7 @@ import { AppContext } from '../../../AppContext';
 import UserNode from './node';
 import { vwToPx, vhToPx } from '../../../lib/px_V_UnitConversion';
 import { closeMenu } from '../../../actions';
+import { useUser } from '../../../lib/hooks/useUser';
 
 const Wrapper = styled.div`
   #workspaceContainer {
@@ -36,7 +37,9 @@ interface WorkspaceConf {
   movementY: number;
 }
 const Workspace: React.FC = () => {
-  const { dispatch, workspacepos, current_user_id } = useContext(AppContext);
+  const user = useUser();
+  const current_user_id = user.user_id;
+  const { dispatch, workspacepos,  } = useContext(AppContext);
   const [workspaceConf, setWorkspaceConf] = useState<WorkspaceConf>({
     movementX: 0,
     movementY: 0,

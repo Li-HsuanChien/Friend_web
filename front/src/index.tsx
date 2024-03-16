@@ -8,7 +8,7 @@ import reportWebVitals from './reportWebVitals';
 import { AppProvider } from './AppContext';
 // eslint-disable-next-line node/no-unpublished-import
 import {BrowserRouter, Routes, Route} from 'react-router-dom';
-import Layout from './Layout';
+import PrivateRoutes  from './auth/privateroutes';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -17,12 +17,12 @@ root.render(
   <AppProvider>
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Layout />}>
-          <Route index element={<Main />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
+        <Route element={<PrivateRoutes/>}>
+          <Route path ="/" element={<Main />} />
           <Route path="/add" element={<Add />} />
         </Route>
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
       </Routes>
     </BrowserRouter>
   </AppProvider>
