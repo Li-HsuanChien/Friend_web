@@ -38,7 +38,6 @@ const NodeMenu = () =>{
 
   return(
       <MenuStyle>
-
         {clickeduser?.username_id===current_user_id
             ? <MainNodeMenu/>
             : <DefaultNodeMenu/>}

@@ -17,8 +17,10 @@ const EditNodeMenu: React.FC<{setEditState: Dispatch<boolean>, editState: boolea
     e.preventDefault();
     setEditState(!editState);
     try{
-      UserUpdate(jwt as string, bio, gender, date, horoscopeState, instagram, facebook, snapchat, image)
-      .then((result) => console.log(result));
+      if(bio || gender || date || horoscopeState || instagram || facebook || snapchat || image){
+        UserUpdate(jwt as string, bio, gender, date, horoscopeState, instagram, facebook, snapchat, image)
+        .then((result) => console.log(result));
+      }
       //TBD visuals
     } catch(error)  {
       console.error(error)

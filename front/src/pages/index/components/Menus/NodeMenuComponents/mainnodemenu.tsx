@@ -3,14 +3,14 @@ import DefaultNodeMenu from './defaultnodemenu';
 import EditNodeMenu from './editnodemenu';
 
 
-const MainNodeMenu: React.FC = () =>{
+const MainNodeMenu = () =>{
 
   const [editState, setEditState] = useState<boolean>(false);
 
   return(
     <>
       {editState ? <EditNodeMenu setEditState={setEditState} editState={editState}/>: <DefaultNodeMenu/>}
-      {editState ? '': <button onClick={()=>setEditState(!editState)}>edit</button> }
+      {editState ? '': <button onClick={()=>{setEditState(!editState);}}>edit</button> }
     </>
   )
 }

@@ -88,6 +88,12 @@ const UserNode: React.FC<{
     const [showConnection, setShowConnection] = useState<boolean>(connectionState);
     useEffect(() => {
       dispatch(addShowedUser(user_id));
+      return () => {
+        dispatch(removeShowedUser(user_id));
+      };
+    }, []);
+
+    useEffect(() =>{
       getUserData(user_id, jwt)
           .then((result) => {
             setData(result);
@@ -117,10 +123,7 @@ const UserNode: React.FC<{
             console.error('Failed to get user connections:', error);
             // Handle error appropriately, e.g., show a toast message
           });
-      return () => {
-        dispatch(removeShowedUser(user_id));
-      };
-    }, []);
+    }, [showConnection])
     useEffect(() =>{
       const connectionsArr = connections?.filter((connection) => {
         if(user_id === connection.inviter){

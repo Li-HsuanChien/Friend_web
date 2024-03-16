@@ -2,7 +2,8 @@ import React, { useContext, useState } from 'react';
 import styled from 'styled-components';
 import { AppContext } from '../../../../AppContext';
 import { useUser } from '../../../../lib/hooks/useUser';
-
+import MainConnectionMenu from './ConnectionMenuFeature/mainconnectionmenu';
+import DefaultConnectionMenu from './ConnectionMenuFeature/defaultnodemenu';
 
 const MenuStyle = styled.div`
   background-color: grey;
@@ -26,26 +27,16 @@ const ConnectionMenu= () =>{
   const user = useUser();
   const current_user_id = user.user_id
   const { clickedconnection } = useContext(AppContext);
-  const [editState, setEditState] = useState<boolean>(false);
 
   return(
     <>
       <MenuStyle>
-        <p>@{clickedconnection?.id}</p>
-        <span>closeness:</span>
-        <p>{clickedconnection?.closeness}</p>
-        <span>nicknamechildtoparent: </span>
-        <p>{clickedconnection?.nicknamechildtoparent}</p>
-        <span>nicknameparenttochild: </span>
-        <p>{clickedconnection?.nicknameparenttochild}</p>
         {clickedconnection?.inviter===current_user_id || clickedconnection?.invitee===current_user_id
-          ? <button onClick={()=>setEditState(!editState)}>edit</button>
-          : ''}
+          ? <MainConnectionMenu/>
+          : <DefaultConnectionMenu/>}
       </MenuStyle>
 
     </>
   )
 }
-
-
 export default ConnectionMenu;
