@@ -9,8 +9,8 @@ const MainNodeMenu: React.FC = () =>{
 
   return(
     <>
-      {editState ? <EditNodeMenu/>: <DefaultNodeMenu/>}
-      <button onClick={()=>setEditState(!editState)}>{editState? 'edit': 'save'}</button>
+      {editState ? <EditNodeMenu setEditState={setEditState} editState={editState}/>: <DefaultNodeMenu/>}
+      {editState ? '': <button onClick={()=>setEditState(!editState)}>edit</button> }
     </>
   )
 }

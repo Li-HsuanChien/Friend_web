@@ -249,7 +249,7 @@ const Add = () => {
             </label>
           </div>
 
-          <button type="submit">Comfirm</button>
+          <button type="submit">Confirm</button>
         </form>
       </AddPageStyle>
     </>
