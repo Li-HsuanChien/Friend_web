@@ -14,8 +14,10 @@ const EditConnectionMenu: React.FC<{setEditState: Dispatch<boolean>, editState: 
     e.preventDefault();
     setEditState(!editState);
     try{
-      ConnectionUpdate(clickedconnection?.id as number, jwt, closeness, nickname)
-      .then((result) => console.log(result));
+      if(closeness || nickname){
+        ConnectionUpdate(clickedconnection?.id as number, jwt, closeness, nickname)
+        .then((result) => console.log(result));
+      }
       //TBD visuals
     } catch(error)  {
       console.error(error)
@@ -38,10 +40,10 @@ const EditConnectionMenu: React.FC<{setEditState: Dispatch<boolean>, editState: 
           <input type="radio" id="friend" name="closeness" value="friend" onClick={() => setCloseness('friend')}/>
           <label htmlFor="friend">friend</label>
 
-          <input type="radio" id="close_friend" name="fav_language" value="closefriend" onClick={() => setCloseness('closefriend')}/>
+          <input type="radio" id="close_friend" name="closeness" value="closefriend" onClick={() => setCloseness('closefriend')}/>
           <label htmlFor="close_friend">close friend</label>
 
-          <input type="radio" id="best_friend" name="fav_language" value="bestfriend" onClick={() => setCloseness('bestfriend')}/>
+          <input type="radio" id="best_friend" name="closeness" value="bestfriend" onClick={() => setCloseness('bestfriend')}/>
           <label htmlFor="best_friend">Best Friend!</label>
 
 
