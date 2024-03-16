@@ -6,7 +6,7 @@ import {ChangeEvent} from 'react';
 // import { AppContext } from '../../AppContext';
 // import { sendCurrentId, sendJWT, sendCurrentUsername } from '../../actions';
 import { useToken } from '../../lib/hooks/useToken';
-import { useUser } from '../../lib/hooks/useUser';
+import { useRefreshToken } from '../../lib/hooks/useRefreshToken';
 const LoginStyle = styled.div`
 
   position: fixed;
@@ -165,8 +165,8 @@ async function LoginApi(credentials: Credentials) {
 
 const Login = () => {
   const navigate = useNavigate();
-  const [token, setToken] = useToken();
-  const user = useUser();
+  const [, setToken] = useToken();
+  const [, setRefreshToken] = useRefreshToken();
   const [username, setUsername] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [loginState, setLoginState] = useState<string | null>(null);
@@ -181,6 +181,7 @@ const Login = () => {
       if ('refresh' in response) {
         const {refresh , access} = response;
         setToken(access as string);
+        setRefreshToken(refresh)
         setLoginState('Welcome!');
         navigate('/');
       } else {

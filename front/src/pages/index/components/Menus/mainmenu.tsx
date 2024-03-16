@@ -2,6 +2,7 @@ import React , { useState } from 'react';
 import styled from 'styled-components';
 import ConnectSearchFeature from './MainMenuFeatures/connectsearch';
 import ConnectPendingFeature from './MainMenuFeatures/connectpending';
+import Logout from './MainMenuFeatures/logout';
 
 const MenuStyle = styled.div`
   background-color: grey;
@@ -30,7 +31,7 @@ const ItemStyle = styled.div`
 const MainMenu = () => {
   const [connectSearchState, setConnectSearchState] = useState(false);
   const [connectionPendingState, setConnectionPendingState] = useState(false);
-  const [feature1State, setFeature1State] = useState(false);
+  const [logoutState, setLogoutState] = useState(false);
   const [feature2State, setFeature2State] = useState(false);
   const [feature3State, setFeature3State] = useState(false);
   // Add more feature states as needed
@@ -44,9 +45,9 @@ const MainMenu = () => {
     case connectionPendingState:
       componentToRender = <ConnectPendingFeature setChild={setConnectionPendingState} />;
       break;
-    // case feature1State:
-    //   componentToRender = <Feature1 />;
-    //   break;
+    case logoutState:
+      componentToRender = <Logout setChild={setLogoutState}/>;
+    break;
     // case feature2State:
     //   componentToRender = <Feature2 />;
     //   break;
@@ -63,7 +64,7 @@ const MainMenu = () => {
             <button onClick={() => setConnectionPendingState(!connectionPendingState)}>Pending Connection</button>
           </ItemStyle>
           <ItemStyle>
-            <button onClick={() => setFeature1State(!feature1State)}>Feature 1</button>
+            <button onClick={() => setLogoutState(!logoutState)}>Logout</button>
           </ItemStyle>
           <ItemStyle>
             <button onClick={() => setFeature2State(!feature2State)}>Feature 2</button>

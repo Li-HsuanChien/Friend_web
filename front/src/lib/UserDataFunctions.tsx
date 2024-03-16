@@ -43,7 +43,7 @@ export async function UserCreate(gender: string, date_of_birth: string, show_hor
 
     if(!response.ok){
       console.log('user not added! something went wrong')
-    } else console.log('probably added');
+    }
     return;
   } catch (error) {
     console.error('Add User data error:', error);
