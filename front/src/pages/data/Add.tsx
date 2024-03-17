@@ -103,7 +103,7 @@ const AddPageStyle = styled.div`
   }
 
   input[type='checkbox'] {
-  display: inline-block;
+    display: inline-block;
     margin-right: 30px;
     width: 18px; 
     height: 18px; 
@@ -151,8 +151,6 @@ const AddPageStyle = styled.div`
     font-size: 14px;
     font-weight: 300;
   }
-
-
 
   ::placeholder {
     color: #e5e5e5;

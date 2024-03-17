@@ -37,11 +37,11 @@ const NodeMenu = () =>{
   const { clickeduser } = useContext(AppContext);
 
   return(
-      <MenuStyle>
+      <>
         {clickeduser?.username_id===current_user_id
             ? <MainNodeMenu/>
-            : <DefaultNodeMenu/>}
-      </MenuStyle>
+            : <MenuStyle><DefaultNodeMenu/></MenuStyle>}
+      </>
   )
 }
 
