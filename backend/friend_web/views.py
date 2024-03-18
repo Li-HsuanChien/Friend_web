@@ -14,7 +14,7 @@ from .permission import MaxAccessPermission, SelfConnectionPermission
 from django.db.models import Q
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.contrib.auth.models import User
-from friend_web.models import Userdata, Connection
+from friend_web.models import Userdata, Connection, CustomUser
 from .serializers import UserDataSerializer, UserSerializer, ConnectionSerializer, \
     TokenObtainPairSerializer, RegisterSerializer, ChangePasswordSerializer, PublicUserDataSerializer
 
@@ -473,7 +473,7 @@ class ObtainTokenPairView(TokenObtainPairView):
     serializer_class = TokenObtainPairSerializer
 
 class RegisterView(CreateAPIView):
-    queryset = User.objects.all()
+    queryset = CustomUser.objects.all()
     permission_classes = (AllowAny,)
     serializer_class = RegisterSerializer
 
@@ -484,7 +484,7 @@ class RegisterView(CreateAPIView):
             return Response({'message': 'Action Failed!' }, 406)
 
 class ChangePasswordView(UpdateAPIView):
-    queryset = User.objects.all()
+    queryset = CustomUser.objects.all()
     permission_classes = (IsAuthenticated,)
     serializer_class = ChangePasswordSerializer
 
@@ -507,3 +507,5 @@ class LogoutView(APIView):
             return Response(status=status.HTTP_205_RESET_CONTENT)
         except Exception as e:
             return Response(status=status.HTTP_400_BAD_REQUEST)
+
+

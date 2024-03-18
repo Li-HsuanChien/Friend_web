@@ -1,5 +1,62 @@
 from django.db import models
 from django.conf import settings
+from uuid import uuid4
+from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.base_user import BaseUserManager
+
+class CustomUserManager(BaseUserManager):
+    def create_user(self, email, name, password, **extra_fields):
+        if not email:
+            raise ValueError(('The Email must be set'))
+        if not name:
+            raise ValueError(('The Name must be set'))
+
+        email = self.normalize_email(email)
+        user = self.model(email=email, name=name, **extra_fields)
+        user.set_password(password)
+        user.save()
+        return user
+
+    def create_superuser(self, email, name, password, **extra_fields):
+        extra_fields.setdefault('is_staff', True)
+        extra_fields.setdefault('is_superuser', True)
+        extra_fields.setdefault('is_active', True)
+
+        if not email:
+            raise ValueError(('The Email must be set'))
+        if not name:
+            raise ValueError(('The Name must be set'))
+
+        email = self.normalize_email(email)
+        user = self.model(email=email, name=name, **extra_fields)
+        user.set_password(password)
+        user.save()
+        return user
+
+
+class CustomUser(AbstractUser):
+    id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    email = models.EmailField(unique=True)
+    email_is_verified = models.BooleanField(default=False)
+    username = models.CharField(max_length=50, unique=True)
+
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS=[]
+    objects = CustomUserManager()
+
+
+    def __str__(self):
+        return self.email
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+
+class EmailComfirmationToken(models.Model):
+
+    id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
 
 
 class Userdata(models.Model):
@@ -19,7 +76,7 @@ class Userdata(models.Model):
         "N": "Non Binary",
         "NA": "Prefer Not To Say"
     }
-    username = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete = models.CASCADE, primary_key=True)
+    username = models.OneToOneField(CustomUser, on_delete = models.CASCADE, primary_key=True)
     bio = models.TextField(max_length=150, null=True, blank=True)
     headshot = models.ImageField(upload_to='static/img/headshots/', null=True, default='static/img/headshots/default.png')
     created_time = models.DateTimeField(auto_now_add=True)
@@ -41,11 +98,11 @@ class Userdata(models.Model):
 class Connection(models.Model):
     #inviter user id
     inviter = models.ForeignKey(Userdata, related_name='inviter_connections', on_delete=models.CASCADE)
-	#invitee user id
+    #invitee user id
     invitee = models.ForeignKey(Userdata, related_name='invitee_connections', on_delete=models.CASCADE)
     date_established = models.DateTimeField(auto_now_add=True)
     updated_time = models.DateTimeField(auto_now=True)
-	#hard coded closeness level
+    #hard coded closeness level
     closeness = models.CharField(max_length=20, choices=[
         ('friend', 'Friend'),
         ('closefriend', 'Close Friend'),
