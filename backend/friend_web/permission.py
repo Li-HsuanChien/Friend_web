@@ -1,5 +1,5 @@
 from rest_framework import permissions
-from .models import Connection
+from .models import Connection, CustomUser
 from django.db.models import Q
 
 class MaxAccessPermission(permissions.BasePermission):
@@ -37,6 +37,21 @@ class MaxAccessPermission(permissions.BasePermission):
         elif(request_connection_id):
             return int(request_connection_id) in allowed_connection_id
 
+class EmailVeridiedPermission(permissions.BasePermission):
+    """
+        Takes curren_user_id
+        Takes requested connection id
+        returns if request data in loop
+    Args:
+        current_user_id
+    Returns:
+        Boolean
+    """
+    message = 'You are not '
+    def has_permission(self, request, view):
+        current_user = request.user
+        return current_user.is_email_confirmed
+
 class SelfConnectionPermission(permissions.BasePermission):
     """
         Takes curren_user_id
@@ -59,4 +74,3 @@ class SelfConnectionPermission(permissions.BasePermission):
 
         # If request_connection_id does not exist in connection_list
         return False
-

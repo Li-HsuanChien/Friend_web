@@ -1,5 +1,5 @@
 from django.contrib.auth.models import User
-from friend_web.models import Userdata, Connection #GenderType
+from friend_web.models import Userdata, Connection, CustomUser #GenderType
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework.validators import UniqueValidator
@@ -8,8 +8,8 @@ from django.contrib.auth.password_validation import validate_password
 class UserSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
-        model = User
-        fields = ['username', 'id']
+        model = CustomUser
+        fields = ['username', 'id', 'email']
 
 class UserDataSerializer(serializers.HyperlinkedModelSerializer):
     Gender_CHOICES = {
@@ -63,8 +63,8 @@ class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, required=True, validators=[validate_password])
     password2 = serializers.CharField(write_only=True, required=True)
     class Meta:
-        model = User
-        fields = ('username', 'password', 'password2')
+        model = CustomUser
+        fields = ('username', 'email', 'password', 'password2')
 
     def validate(self, attrs):
         if attrs['password'] != attrs['password2']:
@@ -73,7 +73,8 @@ class RegisterSerializer(serializers.ModelSerializer):
         return attrs
 
     def create(self, validated_data):
-        user = User.objects.create(
+        user = CustomUser.objects.create(
+            email=validated_data['email'],
             username=validated_data['username'],
         )
         user.set_password(validated_data['password'])
@@ -87,7 +88,7 @@ class ChangePasswordSerializer(serializers.ModelSerializer):
     old_password = serializers.CharField(write_only=True, required=True)
 
     class Meta:
-        model = User
+        model = CustomUser
         fields = ('old_password', 'password', 'password2')
 
     def validate(self, attrs):

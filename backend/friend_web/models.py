@@ -5,30 +5,30 @@ from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.base_user import BaseUserManager
 
 class CustomUserManager(BaseUserManager):
-    def create_user(self, email, name, password, **extra_fields):
+    def create_user(self, email, username, password, **extra_fields):
         if not email:
-            raise ValueError(('The Email must be set'))
-        if not name:
-            raise ValueError(('The Name must be set'))
+            raise ValueError('The Email must be set')
+        if not username:
+            raise ValueError('The Name must be set')
 
         email = self.normalize_email(email)
-        user = self.model(email=email, name=name, **extra_fields)
+        user = self.model(email=email, username=username, **extra_fields)
         user.set_password(password)
         user.save()
         return user
 
-    def create_superuser(self, email, name, password, **extra_fields):
+    def create_superuser(self, email, username, password, **extra_fields):
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_superuser', True)
         extra_fields.setdefault('is_active', True)
 
         if not email:
-            raise ValueError(('The Email must be set'))
-        if not name:
-            raise ValueError(('The Name must be set'))
+            raise ValueError('The Email must be set')
+        if not username:
+            raise ValueError('The Name must be set')
 
         email = self.normalize_email(email)
-        user = self.model(email=email, name=name, **extra_fields)
+        user = self.model(email=email, username=username, **extra_fields)
         user.set_password(password)
         user.save()
         return user
@@ -39,10 +39,10 @@ class CustomUser(AbstractUser):
     created_at = models.DateTimeField(auto_now_add=True)
     email = models.EmailField(unique=True)
     email_is_verified = models.BooleanField(default=False)
-    username = models.CharField(max_length=50, unique=True)
+    username = models.CharField(max_length=50)
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS=[]
+    REQUIRED_FIELDS=['username']
     objects = CustomUserManager()
 
 
@@ -53,7 +53,6 @@ class CustomUser(AbstractUser):
         super().save(*args, **kwargs)
 
 class EmailComfirmationToken(models.Model):
-
     id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
     created_at = models.DateTimeField(auto_now_add=True)
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)

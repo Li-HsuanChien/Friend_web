@@ -14,9 +14,10 @@ from .permission import MaxAccessPermission, SelfConnectionPermission
 from django.db.models import Q
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.contrib.auth.models import User
-from friend_web.models import Userdata, Connection, CustomUser
+from friend_web.models import Userdata, Connection, CustomUser, EmailComfirmationToken
 from .serializers import UserDataSerializer, UserSerializer, ConnectionSerializer, \
     TokenObtainPairSerializer, RegisterSerializer, ChangePasswordSerializer, PublicUserDataSerializer
+from .utils import send_confirmation_email
 
 
 authentication_level = IsAuthenticated
@@ -419,7 +420,7 @@ class ConnectionRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView, ):
                 "invitee": 10
             }
         Example3: {
-			"message": "connection deleted!"
+            "message": "connection deleted!"
         }
     """
     serializer_class = ConnectionSerializer
@@ -481,7 +482,7 @@ class RegisterView(CreateAPIView):
         try:
             return super().post(request, *args, **kwargs)
         except:
-            return Response({'message': 'Action Failed!' }, 406)
+            return Response({'message': 'Action Failed!' }, status=status.HTTP_406_NOT_ACCEPTABLE)
 
 class ChangePasswordView(UpdateAPIView):
     queryset = CustomUser.objects.all()
@@ -508,4 +509,27 @@ class LogoutView(APIView):
         except Exception as e:
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
+class GetEmailConfirmationStatus(APIView):
+    permission_classes = [IsAuthenticated,]
 
+    def get(self, request):
+        try:
+            user = self.request.user
+            email = user.email
+            is_email_confirmed = user.is_email_confirmed
+            payload = {'email': email, 'is_email_confirmed': is_email_confirmed}
+            return Response(data=payload, status=status.HTTP_200_OK)
+        except:
+            return Response({'message': 'get confirmation error'}, status=status.HTTP_400_BAD_REQUEST)
+
+class SendEmailConfirmationToken(APIView):
+    permission_classes = [IsAuthenticated,]
+
+    def post(self, request):
+        try:
+            user = self.request.user
+            token = EmailComfirmationToken.objects.create(user=user)
+            send_confirmation_email(email=user.email, token_id=token.pk, user_id=user.pk)
+            return Response(data=None, status=status.HTTP_201_CREATED)
+        except:
+            return Response({'message': 'send email confirmation error'}, status=status.HTTP_400_BAD_REQUEST)

@@ -147,7 +147,9 @@ REST_FRAMEWORK = {
                                    'rest_framework.permissions.IsAuthenticated'],
     'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
     'DEFAULT_AUTHENTICATION_CLASSES': [
+        'friend_web.authentication_class.CustomAuthentication',
         'rest_framework_simplejwt.authentication.JWTAuthentication',
+
     ]
 }
 
