@@ -10,7 +10,7 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = get_user_model()
-        fields = ['username', 'id', 'email']
+        fields = ["username", "id", "email"]
 
 class UserDataSerializer(serializers.HyperlinkedModelSerializer):
     Gender_CHOICES = {
@@ -38,7 +38,7 @@ class UserNameSerializer(serializers.ModelSerializer):
     username = serializers.StringRelatedField()
     class Meta:
         model = Userdata
-        fields = ('username', 'username_id')
+        fields = ("username", "username_id")
 
 
 
@@ -46,49 +46,58 @@ class ConnectionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Connection
-        fields = '__all__'
+        fields = "__all__"
 
 
 #registration
-class TokenObtainPairSerializer(TokenObtainPairSerializer):
+class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
+    username = serializers.CharField(required=False)
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Make email field required
+        self.fields["email"].required = False
+
     def validate(self, attrs):
-        # Check if either email or username is provided
-        username = attrs.get("username")
-        email = attrs.get("email")
+        email=attrs.get("email")
+        password = attrs.get("password")
+        credentials = {
+            "email": email,
+            "password": password
+        }
 
-        if username:
-            credentials = {
-                "username": username,
-                "password": attrs.get("password")
-            }
-        elif email:
-            credentials = {
-                "email": email,
-                "password": attrs.get("password")
-            }
-        else:
-            raise serializers.ValidationError("Username or email is required for authentication.")
-
-        # Authenticate user
+        # Attempt to authenticate with username
         user = authenticate(**credentials)
 
-        if not user:
-            raise serializers.ValidationError("Unable to log in with provided credentials.")
+        if user is None:
+            # If authentication with username fails, attempt with email
+            username = attrs.get("username")  # Use username field as email
+            if username:
+                user = get_user_model().objects.filter(username=username).first()
+                if user:
+                    if user.check_password(password):
+                        attrs["user"] = user
+                    else:
+                        msg = "Unable to log in with provided credentials. wrong cridentials"
+                        raise serializers.ValidationError(msg)
+                else:
+                    msg = "User with this email address does not exist."
+                    raise serializers.ValidationError(msg)
+            else:
+                msg = "Unable to log in with provided credentials. no username caught"
+                raise serializers.ValidationError(msg)
 
         if not user.is_active:
-            raise serializers.ValidationError("User account is disabled.")
+            msg = "User account is disabled."
+            raise serializers.ValidationError(msg)
 
-        # Set authenticated user to serializer context
-        self.context["user"] = user
+        refresh = self.get_token(user)
 
-        return {}
+        data = {}
+        data["refresh"] = str(refresh)
+        data["access"] = str(refresh.access_token)
 
-    @classmethod
-    def get_token(cls, user):
-        token = super().get_token(user)
-        token['username'] = user.username
-        token['email'] = user.email
-        return token
+        return data
+
 
 class RegisterSerializer(serializers.ModelSerializer):
 
@@ -96,20 +105,20 @@ class RegisterSerializer(serializers.ModelSerializer):
     password2 = serializers.CharField(write_only=True, required=True)
     class Meta:
         model = CustomUser
-        fields = ('username', 'email', 'password', 'password2')
+        fields = ("username", "email", "password", "password2")
 
     def validate(self, attrs):
-        if attrs['password'] != attrs['password2']:
+        if attrs["password"] != attrs["password2"]:
             raise serializers.ValidationError({"password": "Password fields didn't match."})
 
         return attrs
 
     def create(self, validated_data):
         user = get_user_model().objects.create(
-            email=validated_data['email'],
-            username=validated_data['username'],
+            email=validated_data["email"],
+            username=validated_data["username"],
         )
-        user.set_password(validated_data['password'])
+        user.set_password(validated_data["password"])
         user.save()
 
         return user
@@ -121,23 +130,23 @@ class ChangePasswordSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CustomUser
-        fields = ('old_password', 'password', 'password2')
+        fields = ("old_password", "password", "password2")
 
     def validate(self, attrs):
-        if attrs['password'] != attrs['password2']:
+        if attrs["password"] != attrs["password2"]:
             raise serializers.ValidationError({"password": "Password fields didn't match."})
 
         return attrs
 
     def validate_old_password(self, value):
-        user = self.context['request'].user
+        user = self.context["request"].user
         if not user.check_password(value):
             raise serializers.ValidationError({"old_password": "Old password is not correct"})
         return value
 
     def update(self, instance, validated_data):
 
-        instance.set_password(validated_data['password'])
+        instance.set_password(validated_data["password"])
         instance.save()
 
         return instance
@@ -147,5 +156,5 @@ class ChangePasswordSerializer(serializers.ModelSerializer):
 # class GenderTypeSerializer(serializers.HyperlinkedModelSerializer):
 #     class Meta:
 #         model = GenderType
-#         fields = ['label',]
+#         fields = ["label",]
 

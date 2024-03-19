@@ -65,7 +65,7 @@ ROOT_URLCONF = 'backend.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [ os.path.join(BASE_DIR, 'friend_web', 'templates'),],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -147,13 +147,10 @@ REST_FRAMEWORK = {
                                    'rest_framework.permissions.IsAuthenticated'],
     'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'friend_web.authentication_class.CustomAuthentication',
         'rest_framework_simplejwt.authentication.JWTAuthentication',
 
     ]
 }
-
-AUTHENTICATION_BACKENDS = ['friend_web.authentication_class.CustomAuthentication']
 
 CORS_ORIGIN_ALLOW_ALL = True
 
