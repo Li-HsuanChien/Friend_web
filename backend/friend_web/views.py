@@ -13,7 +13,6 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from .permission import MaxAccessPermission, SelfConnectionPermission, EmailVeridiedPermission
 from django.db.models import Q
 from django.views.decorators.csrf import ensure_csrf_cookie
-from django.contrib.auth.models import User
 from friend_web.models import Userdata, Connection , EmailComfirmationToken
 from .serializers import UserDataSerializer, UserSerializer, ConnectionSerializer, \
     CustomTokenObtainPairSerializer, RegisterSerializer, ChangePasswordSerializer, PublicUserDataSerializer
@@ -21,7 +20,7 @@ from .utils import send_confirmation_email
 from django.contrib.auth import get_user_model
 
 
-authentication_level = IsAuthenticated
+authentication_level = [IsAuthenticated, EmailVeridiedPermission]
 #TBD serve front end, image redering, tests
 
 
@@ -40,13 +39,14 @@ class UserDataList(ListAPIView):
 class CurrentUser(APIView):
     """_summary_
         takes request user id
-        returns current logged-in user name and id
+        returns current logged-in user name and email and uuid
     Args:
         self.request.user.id
     Returns:
         JSON:{
                     "username": <string>,
-                    "id": <int>
+                    "email" <string>
+                    "id": <string>
                 }
         example: {
                     "username": "U2",
@@ -54,16 +54,16 @@ class CurrentUser(APIView):
                 }
     """
     serializer_class = UserSerializer
-    permission_classes = (authentication_level,)
+    permission_classes = authentication_level
 
     def get(self, request):
         user_id = request.user.id
         try:
-            user_instance = User.objects.get(id=user_id)
+            user_instance = get_user_model().objects.get(id=user_id)
             serializer = self.serializer_class(user_instance)
             return Response(serializer.data)
-        except User.DoesNotExist:
-            return Response({'message': 'User does not exist'}, status=status.HTTP_404_NOT_FOUND)
+        except get_user_model().DoesNotExist:
+            return Response({'message': 'get_user_model() does not exist'}, status=status.HTTP_404_NOT_FOUND)
 class TargetUser(APIView):
     """_summary_
         takes request data username
@@ -81,17 +81,17 @@ class TargetUser(APIView):
                 }
     """
     serializer_class = UserSerializer
-    permission_classes = (IsAuthenticated,)
+    permission_classes = authentication_level
 
     def post(self, request):
         username = request.data.get('username')
         try:
-            user_instance = User.objects.get(username=username)
+            user_instance = get_user_model().objects.get(username=username)
             userdata = Userdata.objects.filter(username=user_instance)
             serializer = self.serializer_class(user_instance)
             return Response(serializer.data, status=status.HTTP_200_OK)
-        except User.DoesNotExist or Userdata.DoesNotExist:
-            return Response({'message': 'User does not exist'}, status=status.HTTP_404_NOT_FOUND)
+        except get_user_model().DoesNotExist or Userdata.DoesNotExist:
+            return Response({'message': 'get_user_model() does not exist'}, status=status.HTTP_404_NOT_FOUND)
 
 class SearchUserName(ListAPIView):
     """_summary_
@@ -136,12 +136,12 @@ class SearchUserName(ListAPIView):
         ]
     """
     queryset = Userdata.objects.all()
-    permission_classes = (authentication_level,)
+    permission_classes = authentication_level
     def post(self, request, *args, **kwargs):
         search = request.data.get("search")
         if search:
             output = []
-            users = User.objects.filter(username__icontains=search)
+            users = get_user_model().objects.filter(username__icontains=search)
             for user in users:
                 userdata = Userdata.objects.filter(username=user)
                 if userdata.exists():
@@ -156,7 +156,7 @@ class ConnectionListActivated(APIView):
     Takes input user id and returns target user's activated child connections.
     """
 
-    permission_classes = (MaxAccessPermission,)
+    permission_classes = [IsAuthenticated, EmailVeridiedPermission, MaxAccessPermission]
 
     def post(self, request, *args, **kwargs):
         user_id = request.data.get('user_id')
@@ -171,7 +171,7 @@ class ConnectionListPending(APIView):
     Takes input user id and returns target user's pending (activated: false )child connections.
     """
 
-    permission_classes = (MaxAccessPermission,)
+    permission_classes = [IsAuthenticated, EmailVeridiedPermission, MaxAccessPermission]
 
     def post(self, request, *args, **kwargs):
         user_id = request.data.get('user_id')
@@ -204,7 +204,8 @@ class TargetUserData(APIView):
         }
     """
     serializer_class = UserDataSerializer
-    permission_classes = (MaxAccessPermission,)
+    permission_classes = [IsAuthenticated, EmailVeridiedPermission, MaxAccessPermission]
+
 
     def post(self, request):
         user_id = request.data.get('user_id')
@@ -212,8 +213,8 @@ class TargetUserData(APIView):
             user_instance = Userdata.objects.get(username_id=user_id)
             serializer = self.serializer_class(user_instance)
             return Response(serializer.data)
-        except User.DoesNotExist:
-            return Response({'message': 'User does not exist'}, status=status.HTTP_404_NOT_FOUND)
+        except get_user_model().DoesNotExist:
+            return Response({'message': 'get_user_model() does not exist'}, status=status.HTTP_404_NOT_FOUND)
 
 class UserCreate(CreateAPIView):
     """_summary_
@@ -241,10 +242,10 @@ class UserCreate(CreateAPIView):
     """
     queryset=Userdata.objects.all()
     serializer_class = UserDataSerializer
-    permission_classes = (authentication_level,)
+    permission_classes = authentication_level
     def create(self, request, *args, **kwargs):
         user_id = request.user.id
-        user_instance = User.objects.get(id=user_id)
+        user_instance = get_user_model().objects.get(id=user_id)
 
         # bio = request.data.get('bio')
         headshot = request.data.get('headshot')
@@ -305,7 +306,7 @@ class CurrentUserRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView):
     """
     queryset = Userdata.objects.all()
     serializer_class = UserDataSerializer
-    permission_classes = (authentication_level,)
+    permission_classes = authentication_level
 
     def get_object(self):
         user = self.request.user.id
@@ -357,7 +358,7 @@ class ConnectionCreate(CreateAPIView):
     """
     queryset=Connection.objects.all()
     serializer_class = ConnectionSerializer
-    permission_classes = (authentication_level,)
+    permission_classes = authentication_level
     def create(self, request, *args, **kwargs):
         current_user_id = request.user.id
         closness = "friend"
@@ -425,7 +426,7 @@ class ConnectionRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView, ):
         }
     """
     serializer_class = ConnectionSerializer
-    permission_classes = (SelfConnectionPermission,)
+    permission_classes = [SelfConnectionPermission, IsAuthenticated, EmailVeridiedPermission]
     def get_object(self):
         connection_id = self.request.data.get('connection_id')
         # Ensure Userdata instance exists for the user
@@ -468,7 +469,7 @@ class ConnectionRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView, ):
         return Response({"message": "connection deleted!"}, status=status.HTTP_204_NO_CONTENT)
 
 
-#User management
+#get_user_model() management
 
 class ObtainTokenPairView(TokenObtainPairView):
     """login view
@@ -481,12 +482,27 @@ class ObtainTokenPairView(TokenObtainPairView):
     serializer_class = CustomTokenObtainPairSerializer
 
 class RegisterView(CreateAPIView):
+    """register
+       takes email, username, password, password2
+
+    Args:
+        CreateAPIView (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """
     queryset = get_user_model().objects.all()
     permission_classes = (AllowAny,)
     serializer_class = RegisterSerializer
 
     def post(self, request, *args, **kwargs):
         try:
+            email = request.data.get("email")
+            username = request.data.get("username")
+            if get_user_model().objects.filter(email=email).exists():
+                return Response({'message': 'Account with email already exists' }, status=status.HTTP_409_CONFLICT)
+            elif get_user_model().objects.filter(username=username).exists():
+                return Response({'message': 'Account with username already exists' }, status=status.HTTP_409_CONFLICT)
             return super().post(request, *args, **kwargs)
         except:
             return Response({'message': 'Action Failed!' }, status=status.HTTP_406_NOT_ACCEPTABLE)
@@ -523,8 +539,8 @@ class GetEmailConfirmationStatus(APIView):
         try:
             user = request.user
             email = user.email
-            is_email_confirmed = user.is_email_confirmed
-            payload = {'email': email, 'is_email_confirmed': is_email_confirmed}
+            email_is_verified = user.email_is_verified
+            payload = {'email': email, 'email_is_verified': email_is_verified}
             return Response(data=payload, status=status.HTTP_200_OK)
         except:
             return Response({'message': 'get confirmation error'}, status=status.HTTP_400_BAD_REQUEST)
@@ -541,10 +557,10 @@ class SendEmailConfirmationToken(APIView):
         except:
             return Response({'message': 'send email confirmation error'}, status=status.HTTP_400_BAD_REQUEST)
 
-class confirm_email_view(APIView):
+class ConfirmEmailView(APIView):
+    permission_classes = [AllowAny,]
     def post(self, request):
-        token_id = request.data.get["token_id"]
-        user_id = request.data.get["user_id"]
+        token_id = request.data.get("token_id")
         try:
             token = EmailComfirmationToken.objects.get(pk=token_id)
             user = token.user

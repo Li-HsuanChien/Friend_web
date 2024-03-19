@@ -44,13 +44,17 @@ function Main() {
   const [jwt] = useToken();
   const user = useUser();
   useEffect(() => {
-    getUserData(user.user_id, jwt as string)
+    if(user){
+      getUserData(user.user_id as string, jwt as string)
         .then(() => {
           navigate('/');
         })
         .catch(() =>{
           navigate('/add');
         })
+    } else {
+      navigate('login');
+    }
   }, [])
   return (
     <>

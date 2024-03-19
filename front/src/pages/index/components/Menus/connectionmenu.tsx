@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext } from 'react';
 import styled from 'styled-components';
 import { AppContext } from '../../../../AppContext';
 import { useUser } from '../../../../lib/hooks/useUser';
@@ -25,7 +25,7 @@ const MenuStyle = styled.div`
 
 const ConnectionMenu= () =>{
   const user = useUser();
-  const current_user_id = user.user_id
+  const current_user_id = user ? user.user_id: null;
   const { clickedconnection } = useContext(AppContext);
 
   return(

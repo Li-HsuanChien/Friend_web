@@ -33,9 +33,9 @@ class MaxAccessPermission(permissions.BasePermission):
         if(request_data_id and request_connection_id):
             return False
         if(request_data_id):
-            return int(request_data_id) in allowed_userdata_id
+            return request_data_id in allowed_userdata_id
         elif(request_connection_id):
-            return int(request_connection_id) in allowed_connection_id
+            return request_connection_id in allowed_connection_id
 
 class EmailVeridiedPermission(permissions.BasePermission):
     """
@@ -47,10 +47,10 @@ class EmailVeridiedPermission(permissions.BasePermission):
     Returns:
         Boolean
     """
-    message = 'You are not '
+    message = 'You are not verified!'
     def has_permission(self, request, view):
         current_user = request.user
-        return current_user.is_email_confirmed
+        return current_user.email_is_verified
 
 class SelfConnectionPermission(permissions.BasePermission):
     """

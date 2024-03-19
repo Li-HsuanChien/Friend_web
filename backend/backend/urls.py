@@ -63,7 +63,7 @@ urlpatterns = [
     #send user confirmation email takes request.user
     path('api/send-verify-email', friend_web.views.SendEmailConfirmationToken.as_view(), name='send_email_confirmation_token'),
 	#verify account email takes token from body
-    path('api/confirm', friend_web.views.SendEmailConfirmationToken.as_view(), name='send_email_confirmation_token'),
+    path('api/confirm', friend_web.views.ConfirmEmailView.as_view(), name='send_email_confirmation_token'),
 
     #path('api/user/<str:username>/connections', friend_web.views.ConnectionDataList.as_view())
 

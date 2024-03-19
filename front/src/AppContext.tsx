@@ -8,7 +8,7 @@ interface ContextState {
   clickedconnection: ConnectionData | null,
   workspacepos: Pos | null,
   menustate: boolean | null,
-  shownuserstate: Set<number> | null,
+  shownuserstate: Set<string> | null,
 }
 
 
@@ -52,7 +52,7 @@ export const AppReducer = (state: ContextState, action: Action): ContextState =>
           clickeduser: null,
         }
       case 'ADD_SHOWED_USER':{
-        const newShownUserState = new Set<number>(state.shownuserstate);
+        const newShownUserState = new Set<string>(state.shownuserstate);
         newShownUserState.add(action.payload);
         return{
           ...state,
@@ -60,7 +60,7 @@ export const AppReducer = (state: ContextState, action: Action): ContextState =>
         }
       }
       case 'REMOVE_SHOWED_USER':{
-        const newShownUserState = new Set<number>(state.shownuserstate);
+        const newShownUserState = new Set<string>(state.shownuserstate);
         newShownUserState.delete(action.payload);
         return{
           ...state,
@@ -100,7 +100,7 @@ const initialState: ContextState = {
   clickedconnection:null,
   workspacepos:{posx:50, posy:50},
   menustate: null,
-  shownuserstate: new Set<number>(),
+  shownuserstate: new Set<string>(),
 };
 
 export const AppContext = createContext<AppContextValue>({} as AppContextValue);

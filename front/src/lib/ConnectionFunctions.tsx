@@ -1,5 +1,5 @@
 import {ConnectionData, Message, Closeness} from './Types'
-export async function getActivatedConnection(user_id: number, Token: string): Promise<ConnectionData[]> {
+export async function getActivatedConnection(user_id: string, Token: string): Promise<ConnectionData[]> {
   try {
     const response = await fetch('http://127.0.0.1:8000/api/connections/activated', {
       credentials: 'include',
@@ -21,7 +21,7 @@ export async function getActivatedConnection(user_id: number, Token: string): Pr
   }
 }
 
-export async function getPendingConnection(user_id: number, Token: string): Promise<ConnectionData[]> {
+export async function getPendingConnection(user_id: string, Token: string): Promise<ConnectionData[]> {
   try {
     const response = await fetch('http://127.0.0.1:8000/api/connections/pending', {
       credentials: 'include',
@@ -42,7 +42,7 @@ export async function getPendingConnection(user_id: number, Token: string): Prom
     throw error;
   }
 }
-export async function ConnectionCreate(Token: string, invitee_id: number): Promise<ConnectionData> {
+export async function ConnectionCreate(Token: string, invitee_id: string): Promise<ConnectionData> {
   try {
     const response = await fetch('http://127.0.0.1:8000/api/connections/add', {
       credentials: 'include',
@@ -64,7 +64,7 @@ export async function ConnectionCreate(Token: string, invitee_id: number): Promi
   }
 }
 
-export async function ConnectionGet(connection_id: number, Token: string): Promise<ConnectionData> {
+export async function ConnectionGet(connection_id: string, Token: string): Promise<ConnectionData> {
   try {
     const response = await fetch('http://127.0.0.1:8000/api/connections/self', {
       credentials: 'include',
@@ -86,7 +86,7 @@ export async function ConnectionGet(connection_id: number, Token: string): Promi
   }
 }
 
-export async function ConnectionDelete(connection_id: number, Token: string): Promise<Message> {
+export async function ConnectionDelete(connection_id: string, Token: string): Promise<Message> {
   try {
     const response = await fetch('http://127.0.0.1:8000/api/connections/self', {
       credentials: 'include',
@@ -108,12 +108,12 @@ export async function ConnectionDelete(connection_id: number, Token: string): Pr
   }
 }
 interface ConnectionBody{
-  connection_id: number,
+  connection_id: string,
   activated: 'True'|'False',
   closeness?: Closeness,
   nickname?: string
 }
-export async function ConnectionUpdate(connection_id: number,
+export async function ConnectionUpdate(connection_id: string,
                                        Token: string,
                                        closeness?: Closeness,
                                        nickname?: string): Promise<ConnectionData> {

@@ -42,7 +42,7 @@ const ConnectSearchFeature: React.FC<{setChild:Dispatch<boolean>}>  = ( {setChil
     .then((result) => setSearchQuery(result));
   }
 
-  const  submitConnectRequest = (invitee_id: number)=>{
+  const  submitConnectRequest = (invitee_id: string)=>{
     ConnectionCreate(jwt as string, invitee_id)
     .then(result=> console.log(result));
     //User Visual

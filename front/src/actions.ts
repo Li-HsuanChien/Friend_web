@@ -4,7 +4,7 @@ import { SuccessUserData, ConnectionData, Pos, Action } from './lib/Types'
 
 
 
-export const sendCurrentId = (id: number):Action  =>{
+export const sendCurrentId = (id: string):Action  =>{
   return({
     type: 'SET_USER_ID',
     payload: id
@@ -59,14 +59,14 @@ export const closeMenu = (): Action =>{
   })
 }
 
-export const addShowedUser = (User: number): Action =>{
+export const addShowedUser = (User: string): Action =>{
   return({
     type: 'ADD_SHOWED_USER',
     payload: User,
   })
 }
 
-export const removeShowedUser = (User: number): Action =>{
+export const removeShowedUser = (User: string): Action =>{
   return({
     type: 'REMOVE_SHOWED_USER',
     payload: User,

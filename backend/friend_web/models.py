@@ -95,6 +95,7 @@ class Userdata(models.Model):
         return '%s' % (self.username)
 
 class Connection(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
     #inviter user id
     inviter = models.ForeignKey(Userdata, related_name='inviter_connections', on_delete=models.CASCADE)
     #invitee user id

@@ -1,0 +1,127 @@
+/* eslint-disable node/no-unpublished-import */
+import React, { useState } from 'react';
+import { styled } from 'styled-components';
+import {useNavigate, Link, } from 'react-router-dom';
+import {ChangeEvent} from 'react';
+
+const ReportStyle = styled.div`
+
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #080710;
+
+  .background {
+    width: 430px;
+    height: 520px;
+    position: absolute;
+    transform: translate(-50%, -50%);
+    left: 50%;
+    top: 50%;
+  }
+
+  .background .shape {
+    height: 200px;
+    width: 200px;
+    position: absolute;
+    border-radius: 50%;
+  }
+
+  .shape:first-child {
+    background: linear-gradient(#dfe1e4, #b7b7b8);
+    left: -80px;
+    top: -80px;
+  }
+
+  .shape:last-child {
+    background: linear-gradient(to right, #dfe1e4, #b7b7b8);
+    right: -30px;
+    bottom: -80px;
+  }
+
+  div {
+    height: 400px;
+    width: 400px;
+    background-color: rgba(255, 255, 255, 0.13);
+    position: absolute;
+    transform: translate(-50%, -50%);
+    top: 50%;
+    left: 50%;
+    border-radius: 10px;
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 0 40px rgba(8, 7, 16, 0.6);
+    padding: 50px 35px;
+  }
+
+  div * {
+    font-family: 'Poppins', sans-serif;
+    color: #ffffff;
+    letter-spacing: 0.5px;
+    outline: none;
+    border: none;
+  }
+
+  div h3 {
+    font-size: 32px;
+    font-weight: 500;
+    line-height: 42px;
+    text-align: center;
+  }
+
+  div p {
+    text-align: center;
+    margin-top: 15px;
+    margin-bottom: 10px;
+    font-size: 13px;
+  }
+
+  button {
+    margin-top: 50px;
+    width: 100%;
+    background-color: #ffffff;
+    color: #080710;
+    padding: 15px 0;
+    font-size: 18px;
+    font-weight: 600;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+`
+
+const StyledLink = styled(Link)`
+  button {
+    margin-top: 50px;
+    width: 100%;
+    background-color: #ffffff;
+    color: #080710;
+    padding: 15px 0;
+    font-size: 18px;
+    font-weight: 600;
+    border-radius: 5px;
+    cursor: pointer;
+}
+`
+
+const EmailConfirmFail = () => {
+  return (
+    <>
+      <ReportStyle>
+        <div className="background">
+          <div className="shape"></div>
+          <div className="shape"></div>
+        </div>
+
+        <div>
+          <h3>Failed!</h3>
+          <h3>Click button to send another mail to your account!</h3>
+          <button>Back to Login</button>
+        </div>
+      </ReportStyle>
+    </>
+  );
+};
+
+export default EmailConfirmFail;

@@ -1,5 +1,5 @@
 /* eslint-disable node/no-unpublished-import */
-import React, {useState, useContext} from 'react';
+import React, { useState } from 'react';
 import { styled } from 'styled-components';
 import {useNavigate, Link, } from 'react-router-dom';
 import {ChangeEvent} from 'react';
@@ -129,10 +129,6 @@ const SignLink = styled(Link)`
   display: block;
   text-align: left;
 `
-interface Credentials {
-  username: string
-  password: string
-}
 interface successMessage {
   refresh: string,
   access: string
@@ -187,7 +183,7 @@ const Login = () => {
         setLoginState(response.detail);
       }
     } catch (error) {
-      setLoginState(`Something went Wrong! ${error}`);
+      setLoginState('Something went Wrong!\n' + error);
       console.error(error)
       return;
     }

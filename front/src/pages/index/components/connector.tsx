@@ -33,7 +33,7 @@ interface fullPosdata{
   width:  number
 }
 interface parent{
-  id: number,
+  id: string,
   username: string
 }
 interface Props {

@@ -22,7 +22,7 @@ class UserAdmin(admin.ModelAdmin):
             'fields': ('email', 'password1', 'password2'),
         }),
     )
-    list_display = ('username','email', 'first_name', 'last_name', 'is_staff')
+    list_display = ('username','email', 'first_name', 'last_name', 'is_staff', 'email_is_verified')
     list_filter = ('is_staff', 'is_superuser', 'is_active', 'groups')
     search_fields = ('email', 'first_name', 'last_name')
     ordering = ('email',)

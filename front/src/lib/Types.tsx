@@ -3,13 +3,13 @@ import { Url } from 'url';
 export type Closeness= 'friend' | 'closefriend' | 'bestfriend'
 
 export interface ConnectionData {
-  id: number,
+  id: string,
   date_established: string,
   closeness: Closeness,
   nicknamechildtoparent?: string,
   nicknameparenttochild?: string,
-  inviter: number,
-  invitee: number,
+  inviter: string,
+  invitee: string,
   activated: boolean,
 }
 
@@ -17,7 +17,7 @@ export type Gender = 'M' | 'F' | 'N' | 'NA';
 // Define the SuccessUserData interface
 export interface SuccessUserData {
   username: string;
-  username_id: number;
+  username_id: string;
   bio: string | null;
   headshot: Url | null;
   gender: Gender;
@@ -35,7 +35,7 @@ export interface Pos{
   posy:number,
 }
 export type Action =
-| { type: 'SET_USER_ID', payload: number }
+| { type: 'SET_USER_ID', payload: string }
 | { type: 'SET_JWT', payload: string }
 | { type: 'SET_USER_NAME', payload: string }
 | { type: 'SET_CLICKED_USER', payload: SuccessUserData}
@@ -44,13 +44,13 @@ export type Action =
 | { type: 'SET_WORKSPACE_POS', payload:Pos}
 | { type: 'OPEN_MENU'}
 | { type: 'CLOSE_MENU'}
-| { type: 'ADD_SHOWED_USER', payload: number}
-| { type: 'REMOVE_SHOWED_USER', payload: number}
+| { type: 'ADD_SHOWED_USER', payload: string}
+| { type: 'REMOVE_SHOWED_USER', payload: string}
 
 export interface SearchedUser{
   username: string,
   headshot: Url,
-  username_id: number
+  username_id: string
 }
 
 export interface Message{

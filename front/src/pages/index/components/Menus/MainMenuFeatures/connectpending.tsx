@@ -28,18 +28,18 @@ const QueryItems = styled.div`
 `
 
 interface ConnectionUserItem extends SuccessUserData{
-  connection_id: number;
+  connection_id: string;
 }
 
 const ConnectPendingFeature: React.FC<{setChild:Dispatch<boolean>}>  = ( {setChild} ) =>{
   const [jwt] = useToken();
   const user = useUser();
-  const current_user_id = user.user_id
+  const current_user_id = user ? user.user_id: null;
   const [userConnectionDatas, setUserConnectionDatas] = useState<ConnectionUserItem[]>([]);
   const [Connections, setConnections] = useState<ConnectionData[]>([]);
 
   useEffect(() =>{
-    getPendingConnection(current_user_id as number, jwt as string)
+    getPendingConnection(current_user_id as string, jwt as string)
     .then((result) => setConnections(result))
   }, [])
 
@@ -57,14 +57,14 @@ const ConnectPendingFeature: React.FC<{setChild:Dispatch<boolean>}>  = ( {setChi
     fetchUserData();
   }, [Connections]);
 
-  const  acceptConnectRequest = (connection_id: number)=>{
+  const  acceptConnectRequest = (connection_id: string)=>{
     ConnectionUpdate(connection_id, jwt as string)
     .then(result=> console.log(result));
     //User Visual
     //delete target
   }
 
-  const  rejectConnectRequest = (connection_id: number)=>{
+  const  rejectConnectRequest = (connection_id: string)=>{
     ConnectionDelete(connection_id, jwt as string)
     .then(result=> console.log(result));
     //User Visual

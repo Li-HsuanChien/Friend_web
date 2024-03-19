@@ -2,7 +2,7 @@ import { SuccessUserData } from './Types'
 
 
 // Define the getUserData function
-export async function getUserData(user_id: number, Token: string): Promise<SuccessUserData> {
+export async function getUserData(user_id: string, Token: string): Promise<SuccessUserData> {
   try {
     const response = await fetch('http://127.0.0.1:8000/api/userdata', {
       method: 'POST',

@@ -15,7 +15,7 @@ const RegisterStyle = styled.div`
   background-color: #080710;
 
   .background {
-    width: 430px;
+    width: 460px;
     height: 600px;
     position: absolute;
     transform: translate(-50%, -50%);
@@ -38,12 +38,12 @@ const RegisterStyle = styled.div`
 
   .shape:last-child {
     background: linear-gradient(to right, #dfe1e4, #b7b7b8);
-    right: -30px;
+    right: -60px;
     bottom: -80px;
   }
 
   form {
-    height: 500px;
+    height: 575px;
     width: 400px;
     background-color: rgba(255, 255, 255, 0.13);
     position: absolute;
@@ -65,7 +65,7 @@ const RegisterStyle = styled.div`
     border: none;
   }
 
-  form p {
+  form pre {
     font-family: 'Poppins', sans-serif;
     color: red;
     text-align: center;
@@ -77,6 +77,7 @@ const RegisterStyle = styled.div`
     font-weight: 500;
     line-height: 20px;
     text-align: center;
+    margin-top: 10px;
   }
 
   a {
@@ -120,9 +121,10 @@ const RegisterStyle = styled.div`
 `;
 
 interface RegisterInfo {
-  username: string | undefined;
-  password: string | undefined;
-  password2: string | undefined;
+  email: string|undefined;
+  username: string|undefined;
+  password: string|undefined;
+  password2: string|undefined;
 }
 
 interface ReturnMessage {
@@ -143,6 +145,7 @@ async function RegisterApi(credentials: RegisterInfo) {
 
 const Register = () => {
   const navigate = useNavigate();
+  const [email, setEmail] = useState<string>();
   const [username, setUserName] = useState<string>();
   const [password, setPassword] = useState<string>();
   const [password2, setPassword2] = useState<string>();
@@ -156,18 +159,19 @@ const Register = () => {
       if(password !== password2){
         setRegistrationState('password does not match!')
       } else {const response: ReturnMessage = await RegisterApi({
+        email: email,
         username: username,
         password: password,
         password2: password2,
       });
       if (response.username) {
-        setRegistrationState(`Welcome! ${response.username}, redirecting you to login page!`);
+        setRegistrationState(`Welcome! ${response.username}, redirecting you to verification page!`);
         setTimeout(() => {
           navigate('/login');
         }, 2000);
         return;
       } else {
-        setRegistrationState(`Something went wrong! ${response.message}`);
+        setRegistrationState('Something went wrong!\n'+ response.message);
         return;
       }
     }} catch (error) {
@@ -175,7 +179,9 @@ const Register = () => {
       return;}
   };
   useEffect(() => {
-    if(!username){
+    if(!email){
+      setRegistrationState('Email is empty!');
+    } else if(!username){
       setRegistrationState('Username is empty!');
     } else if (!password){
       setRegistrationState('Password is empty!');
@@ -183,6 +189,8 @@ const Register = () => {
       setRegistrationState('Comfirmation password is empty!');
     } else if (password !== password2){
       setRegistrationState('Passwords do not match!');
+    } else {
+      setRegistrationState('');
     }
 
   }, [password, password2, username])
@@ -197,6 +205,17 @@ const Register = () => {
 
         <form onSubmit={handleSubmit}>
           <h3>Register</h3>
+
+          <label htmlFor="email">Email</label>
+          <input
+            type="text"
+            placeholder="Email"
+            id="email"
+            required
+            onChange={(e: ChangeEvent<HTMLInputElement>) =>
+              setEmail(e.target.value)
+            }
+          />
 
           <label htmlFor="username">Username</label>
           <input
@@ -231,9 +250,10 @@ const Register = () => {
             }
           />
 
-          {registrationState !== null && <p>{registrationState}</p>}
+          {registrationState && <pre>{registrationState}</pre>}
 
           <button
+            style={{marginTop: registrationState ? '5px' : '55px'}}
             disabled={!password || !password2 || password !== password2}
             type="submit"
           >

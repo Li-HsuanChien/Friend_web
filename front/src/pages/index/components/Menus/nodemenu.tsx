@@ -33,7 +33,7 @@ const MenuStyle = styled.div`
 `
 const NodeMenu = () =>{
   const user = useUser();
-  const current_user_id = user.user_id
+  const current_user_id = user ? user.user_id: null;
   const { clickeduser } = useContext(AppContext);
 
   return(

@@ -38,7 +38,7 @@ interface WorkspaceConf {
 }
 const Workspace: React.FC = () => {
   const user = useUser();
-  const current_user_id = user.user_id;
+  const current_user_id = user ? user.user_id: null;
   const { dispatch, workspacepos } = useContext(AppContext);
   const [workspaceConf, setWorkspaceConf] = useState<WorkspaceConf>({
     movementX: 0,
@@ -95,7 +95,7 @@ const Workspace: React.FC = () => {
           }}
         >
           <UserNode
-            user_id = {current_user_id as number}
+            user_id = {current_user_id as string}
             posData={{posx: 50, posy:50, angle:((5 * Math.PI)/4)}}
             connectionState = {true}
             nodesize={80}

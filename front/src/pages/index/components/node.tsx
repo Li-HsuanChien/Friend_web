@@ -71,14 +71,14 @@ function calcpos(
 type Combinearr = ConnectionData & LinePos;
 
 const UserNode: React.FC<{
-  user_id: number, posData: LinePos,
+  user_id: string, posData: LinePos,
   connectionState: boolean, nodesize: number,
-  parent_id?: number, setchildName?: Dispatch<string>
+  parent_id?: string, setchildName?: Dispatch<string>
 }>
   = ({ user_id, posData, connectionState, nodesize, parent_id, setchildName }) => {
     const [jwt] = useToken();
     const user = useUser();
-    const current_user_id = user.user_id
+    const current_user_id = user ? user.user_id: null;
     const { dispatch, shownuserstate } = useContext(AppContext);
     const navigate = useNavigate();
     const [data, setData] = useState<SuccessUserData | null>(null);
