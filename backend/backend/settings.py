@@ -160,8 +160,9 @@ CORS_ALLOWED_ORIGINS = [ "http://127.0.0.1", "http://localhost",'http://127.0.0.
 
 CSRF_TRUSTED_ORIGINS = [ "http://127.0.0.1", "http://localhost",'http://127.0.0.1:3000','http://localhost:3000',]
 
-SIMPLE_JWT = {"ACCESS_TOKEN_LIFETIME": timedelta(minutes=30), \
-    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),}
+SIMPLE_JWT = {"ACCESS_TOKEN_LIFETIME": timedelta(minutes=45), \
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
+    "TOKEN_OBTAIN_SERIALIZER":"friend-web.serializers.CustomTokenObtainPairSerializer"}
 
 # Actual directory user files go to
 MEDIA_ROOT = os.path.join(os.path.dirname(BASE_DIR), 'mediafiles')

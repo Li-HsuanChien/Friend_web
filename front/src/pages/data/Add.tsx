@@ -5,6 +5,7 @@ import { AppContext } from '../../AppContext';
 import { useNavigate } from 'react-router-dom';
 import { UserCreate } from '../../lib/UserDataFunctions';
 import { useToken } from '../../lib/hooks/useToken';
+import { useRefreshToken } from '../../lib/hooks/useRefreshToken';
 
 const AddPageStyle = styled.div`
   position: fixed;
@@ -178,13 +179,16 @@ const Add = () => {
   const [date, setDate] = useState<string>('');
   const [gender, setGender] = useState<string>('');
   const [image, setImage] = useState<File>();
-  const [jwt] = useToken();
+  const [jwt, setToken] = useToken();
+  const [,setRefreshToken] = useRefreshToken();
 
   const handleSubmit = async(e: React.FormEvent<HTMLFormElement>) =>{
     e.preventDefault();
     try{
         if(gender && date && horoscopeState && jwt){
-          await UserCreate(gender, date, horoscopeState, jwt, image);
+          const token = await UserCreate(gender, date, horoscopeState, jwt, image);
+          setRefreshToken(token.refresh);
+          setToken(token.access);
           navigate('/');
         }
     } catch(error)  {

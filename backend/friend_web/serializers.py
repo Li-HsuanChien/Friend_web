@@ -89,6 +89,12 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         data["access"] = str(refresh.access_token)
 
         return data
+    @classmethod
+    def get_token(cls, user):
+        token = super().get_token(user)
+        token['email_is_verified'] = user.email_is_verified
+        token['has_data'] = Userdata.objects.filter(username=user).exists()
+        return token
 
 
 class RegisterSerializer(serializers.ModelSerializer):

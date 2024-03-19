@@ -23,8 +23,12 @@ export async function getUserData(user_id: string, Token: string): Promise<Succe
   }
 }
 
+interface jwt{
+  refresh: string,
+  access: string
+}
 
-export async function UserCreate(gender: string, date_of_birth: string, show_horoscope: boolean, Token: string, image?: File): Promise<void>{
+export async function UserCreate(gender: string, date_of_birth: string, show_horoscope: boolean, Token: string, image?: File): Promise<jwt>{
   try{
     const formData = new FormData();
     const pythonBoolean = show_horoscope ? 'True': 'False';
@@ -44,7 +48,8 @@ export async function UserCreate(gender: string, date_of_birth: string, show_hor
     if(!response.ok){
       console.log('user not added! something went wrong')
     }
-    return;
+    const jwt = await response.json();
+    return jwt;
   } catch (error) {
     console.error('Add User data error:', error);
     throw error;

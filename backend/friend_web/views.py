@@ -18,6 +18,15 @@ from .serializers import UserDataSerializer, UserSerializer, ConnectionSerialize
     CustomTokenObtainPairSerializer, RegisterSerializer, ChangePasswordSerializer, PublicUserDataSerializer
 from .utils import send_confirmation_email
 from django.contrib.auth import get_user_model
+from rest_framework_simplejwt.tokens import RefreshToken
+
+def get_tokens_for_user(user):
+    refresh = RefreshToken.for_user(user)
+
+    return {
+        'refresh': str(refresh),
+        'access': str(refresh.access_token),
+    }
 
 
 authentication_level = [IsAuthenticated, EmailVeridiedPermission]
@@ -566,6 +575,8 @@ class ConfirmEmailView(APIView):
             user = token.user
             user.email_is_verified = True
             user.save()
-            return Response({"message": "confirmation succeeded!"}, status=status.HTTP_202_ACCEPTED)
+            refresh = CustomTokenObtainPairSerializer.get_token(user)
+
+            return Response(data={'refresh': str(refresh), 'access': str(refresh.access_token)})
         except EmailComfirmationToken.DoesNotExist:
             return Response({"message": "confirmation failed"}, status=status.HTTP_400_BAD_REQUEST)

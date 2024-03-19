@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { styled } from 'styled-components';
 import { useToken } from '../../lib/hooks/useToken';
 import {useNavigate, Link, useParams } from 'react-router-dom';
-
+import { useRefreshToken } from '../../lib/hooks/useRefreshToken';
 
 const ReportStyle = styled.div`
 
@@ -116,14 +116,19 @@ async function VerifyEmailWithToken(JWTToken: string, token_id: string) {
 }
 
 const EmailConfirmLanding = () => {
-  const [token,] = useToken();
+  const [token, setToken] = useToken();
+  const [, setRefreshToken] = useRefreshToken();
   const [message, setMessage] = useState<string>();
   const nav = useNavigate();
   const {verificationToken} = useParams()
 
   useEffect(() => {
     VerifyEmailWithToken(token, verificationToken as string)
-    .then(()=>nav('/verify-success'))
+    .then((result) => {
+      setRefreshToken(result.refresh);
+      setToken(result.access);
+      nav('/verify-success')
+    })
     .catch(()=>nav('/verify-fail'))
   }, []);
 
