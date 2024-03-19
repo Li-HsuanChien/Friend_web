@@ -2,15 +2,17 @@ from django.core.mail import send_mail
 from django.template.loader import get_template
 
 def send_confirmation_email(email, token_id, user_id):
-    data ={
+
+	data ={
 		'token_id': str(token_id),
 		'user_id': str(user_id)
 	}
-    message = "whatsup"
-    send_mail(subject='Please confirm your email for Friend-Web!',
-              message=message,
-              from_email='friend-web@no-reply.com',
-              recipient_list=[email],
-              fail_silently=True)
+	message = get_template('friend_web/confirmation_email.txt').render(data)
+	print(message)
+	send_mail(subject='Please confirm your email for Friend-Web!',
+			message=message,
+			from_email='friend-web@no-reply.com',
+			recipient_list=[email],
+			fail_silently=True)
 
 # get_template('friend-web/confirmation_email.txt').render(data)

@@ -61,7 +61,7 @@ urlpatterns = [
     #get user's email confirmation status
     path('api/verify', friend_web.views.GetEmailConfirmationStatus.as_view(), name='get_email_confirmation_status'),
     #send user confirmation email
-    path('api/sendverifyemail', friend_web.views.SendEmailConfirmationToken.as_view(), name='send_email_confirmation_token'),
+    path('api/send-verify-email', friend_web.views.SendEmailConfirmationToken.as_view(), name='send_email_confirmation_token'),
 
     #path('api/user/<str:username>/connections', friend_web.views.ConnectionDataList.as_view())
 

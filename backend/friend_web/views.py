@@ -531,6 +531,6 @@ class SendEmailConfirmationToken(APIView):
             user = self.request.user
             token = EmailComfirmationToken.objects.create(user=user)
             send_confirmation_email(email=user.email, token_id=token.pk, user_id=user.pk)
-            return Response(data=None, status=status.HTTP_201_CREATED)
+            return Response({'message': 'email sent!'}, status=status.HTTP_201_CREATED)
         except:
             return Response({'message': 'send email confirmation error'}, status=status.HTTP_400_BAD_REQUEST)
