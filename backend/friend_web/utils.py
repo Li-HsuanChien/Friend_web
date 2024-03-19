@@ -5,7 +5,6 @@ def send_confirmation_email(email, token_id, user_id):
 
 	data ={
 		'token_id': str(token_id),
-		'user_id': str(user_id)
 	}
 	message = get_template('friend_web/confirmation_email.txt').render(data)
 	print(message)

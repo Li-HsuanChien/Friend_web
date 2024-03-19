@@ -515,7 +515,7 @@ class GetEmailConfirmationStatus(APIView):
 
     def get(self, request):
         try:
-            user = self.request.user
+            user = request.user
             email = user.email
             is_email_confirmed = user.is_email_confirmed
             payload = {'email': email, 'is_email_confirmed': is_email_confirmed}
@@ -528,9 +528,22 @@ class SendEmailConfirmationToken(APIView):
 
     def post(self, request):
         try:
-            user = self.request.user
+            user = request.user
             token = EmailComfirmationToken.objects.create(user=user)
             send_confirmation_email(email=user.email, token_id=token.pk, user_id=user.pk)
             return Response({'message': 'email sent!'}, status=status.HTTP_201_CREATED)
         except:
             return Response({'message': 'send email confirmation error'}, status=status.HTTP_400_BAD_REQUEST)
+
+class confirm_email_view(APIView):
+    def post(self, request):
+        token_id = request.data.get["token_id"]
+        user_id = request.data.get["user_id"]
+        try:
+            token = EmailComfirmationToken.objects.get(pk=token_id)
+            user = token.user
+            user.email_is_verified = True
+            user.save()
+            return Response({"message": "confirmation succeeded!"}, status=status.HTTP_202_ACCEPTED)
+        except EmailComfirmationToken.DoesNotExist:
+            return Response({"message": "confirmation failed"}, status=status.HTTP_400_BAD_REQUEST)
