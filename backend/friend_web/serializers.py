@@ -2,13 +2,14 @@ from django.contrib.auth.models import User
 from friend_web.models import Userdata, Connection, CustomUser #GenderType
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
-from rest_framework.validators import UniqueValidator
 from django.contrib.auth.password_validation import validate_password
+from django.contrib.auth import get_user_model
+from django.contrib.auth import authenticate
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
-        model = CustomUser
+        model = get_user_model()
         fields = ['username', 'id', 'email']
 
 class UserDataSerializer(serializers.HyperlinkedModelSerializer):
@@ -50,12 +51,43 @@ class ConnectionSerializer(serializers.ModelSerializer):
 
 #registration
 class TokenObtainPairSerializer(TokenObtainPairSerializer):
+    def validate(self, attrs):
+        # Check if either email or username is provided
+        username = attrs.get("username")
+        email = attrs.get("email")
+
+        if username:
+            credentials = {
+                "username": username,
+                "password": attrs.get("password")
+            }
+        elif email:
+            credentials = {
+                "email": email,
+                "password": attrs.get("password")
+            }
+        else:
+            raise serializers.ValidationError("Username or email is required for authentication.")
+
+        # Authenticate user
+        user = authenticate(**credentials)
+
+        if not user:
+            raise serializers.ValidationError("Unable to log in with provided credentials.")
+
+        if not user.is_active:
+            raise serializers.ValidationError("User account is disabled.")
+
+        # Set authenticated user to serializer context
+        self.context["user"] = user
+
+        return {}
 
     @classmethod
     def get_token(cls, user):
-        token = super(TokenObtainPairSerializer, cls).get_token(user)
-
+        token = super().get_token(user)
         token['username'] = user.username
+        token['email'] = user.email
         return token
 
 class RegisterSerializer(serializers.ModelSerializer):
@@ -73,7 +105,7 @@ class RegisterSerializer(serializers.ModelSerializer):
         return attrs
 
     def create(self, validated_data):
-        user = CustomUser.objects.create(
+        user = get_user_model().objects.create(
             email=validated_data['email'],
             username=validated_data['username'],
         )

@@ -1,23 +1,26 @@
+
 from django.contrib.auth import get_user_model
-from rest_framework.authentication import BaseAuthentication
-from rest_framework.exceptions import AuthenticationFailed
+from django.contrib.auth.backends import ModelBackend
 
-User = get_user_model()
 
-class CustomAuthentication(BaseAuthentication):
-    def authenticate(self, request):
-        username_or_email = request.data.get('username_or_email')
-        password = request.data.get('password')
+class CustomAuthentication(ModelBackend):
+    def authenticate_header(self, request):
+        """
+        Return a string to be used as the value of the WWW-Authenticate
+        header in a HTTP 401 Unauthorized response, or None if the backend
+        does not support this.
+        """
+        return 'Custom'
 
-        if not username_or_email or not password:
+    def authenticate(self, request, **kwargs):
+        UserModel = get_user_model()
+        try:
+            email = kwargs.get('email', None)
+            if email is None:
+                email = kwargs.get('username', None)
+            user = UserModel.objects.get(email=email)
+            if user.check_password(kwargs.get('password', None)):
+                return user
+        except UserModel.DoesNotExist:
             return None
-
-        # Attempt authentication with both email and username
-        user = User.objects.filter(email=username_or_email).first()
-        if not user:
-            user = User.objects.filter(username=username_or_email).first()
-
-        if user and user.check_password(password):
-            return (user, None)
-        else:
-            raise AuthenticationFailed('Invalid username/email or password')
+        return None

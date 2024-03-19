@@ -18,6 +18,7 @@ from friend_web.models import Userdata, Connection, CustomUser, EmailComfirmatio
 from .serializers import UserDataSerializer, UserSerializer, ConnectionSerializer, \
     TokenObtainPairSerializer, RegisterSerializer, ChangePasswordSerializer, PublicUserDataSerializer
 from .utils import send_confirmation_email
+from django.contrib.auth import get_user_model
 
 
 authentication_level = IsAuthenticated
@@ -473,19 +474,18 @@ class ObtainTokenPairView(TokenObtainPairView):
     permission_classes = (AllowAny,)
     serializer_class = TokenObtainPairSerializer
 
-class RegisterView(CreateAPIView):
-    queryset = CustomUser.objects.all()
-    permission_classes = (AllowAny,)
-    serializer_class = RegisterSerializer
-
-    def post(self, request, *args, **kwargs):
-        try:
-            return super().post(request, *args, **kwargs)
-        except:
-            return Response({'message': 'Action Failed!' }, status=status.HTTP_406_NOT_ACCEPTABLE)
+class RegisterView(APIView):
+    queryset = get_user_model().objects.all()
+    permission_classes=[AllowAny]
+    def post(self, *args, **kwargs):
+        serializer = UserSerializer(data=self.request.data)
+        if serializer.is_valid():
+            get_user_model().objects.create_user(**serializer.validated_data)
+            return Response(data=serializer.data, status=status.HTTP_201_CREATED)
+        return Response(status=status.HTTP_400_BAD_REQUEST, data={'errors': serializer.errors})
 
 class ChangePasswordView(UpdateAPIView):
-    queryset = CustomUser.objects.all()
+    queryset = get_user_model().objects.all()
     permission_classes = (IsAuthenticated,)
     serializer_class = ChangePasswordSerializer
 
