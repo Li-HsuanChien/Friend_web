@@ -15,6 +15,7 @@ import EmailConfirmFail from './pages/emailconfirmation/emailConfirmFail';
 import EmailConfirmSuccess from './pages/emailconfirmation/emailConfirmSuccess';
 import EmailConfirmSender from './pages/emailconfirmation/emailConfirmSender';
 import EmailConfirmLanding from './pages/emailconfirmation/emailConfirmationLanding';
+import ResetPasswordSender from './pages/resetpass/ResetPassSender';
 
 
 const root = ReactDOM.createRoot(
@@ -36,6 +37,7 @@ root.render(
           <Route path="/verify-fail" element={<EmailConfirmFail/>}/>
         </Route>
         <Route path="/verify/:verificationToken" element={<EmailConfirmLanding />} />
+        <Route path="/forgot-password" element={<ResetPasswordSender />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
       </Routes>

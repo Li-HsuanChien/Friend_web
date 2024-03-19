@@ -106,6 +106,7 @@ const StyledLink = styled(Link)`
 `
 
 const EmailConfirmFail = () => {
+  const nav = useNavigate();
   return (
     <>
       <ReportStyle>
@@ -117,7 +118,7 @@ const EmailConfirmFail = () => {
         <div>
           <h3>Failed!</h3>
           <h3>Click button to send another mail to your account!</h3>
-          <button>Back to Login</button>
+          <button onClick={() => nav('/login')}>Back to Login</button>
         </div>
       </ReportStyle>
     </>

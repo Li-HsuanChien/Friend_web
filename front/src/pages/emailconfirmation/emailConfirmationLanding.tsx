@@ -118,7 +118,6 @@ async function VerifyEmailWithToken(JWTToken: string, token_id: string) {
 const EmailConfirmLanding = () => {
   const [token, setToken] = useToken();
   const [, setRefreshToken] = useRefreshToken();
-  const [message, setMessage] = useState<string>();
   const nav = useNavigate();
   const {verificationToken} = useParams()
 
@@ -145,7 +144,6 @@ const EmailConfirmLanding = () => {
           <h3>Verifying your email</h3>
           <p>Thanks for signing up for friend-web!!</p>
           <p>Please wait a moment for us to verify you!!!</p>
-          {message && <p>{message}</p>}
         </main>
       </ReportStyle>
     </>

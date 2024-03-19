@@ -54,6 +54,8 @@ urlpatterns = [
     path('api/login/refresh', TokenRefreshView.as_view(), name='token_refresh'),
     #register takes username pass pass2
     path('api/register', friend_web.views.RegisterView.as_view(), name='auth_register'),
+    #send user password reset link takes data email
+    path('api/forgot-password', friend_web.views.SendPasswordResetEmail.as_view(), name='send_reset_link'),
     #change password consider email or two-auth
     path('api/change_password/<int:pk>/', friend_web.views.ChangePasswordView.as_view(), name='auth_change_password'),
     #black list jwt token
@@ -63,7 +65,7 @@ urlpatterns = [
     #send user confirmation email takes request.user
     path('api/send-verify-email', friend_web.views.SendEmailConfirmationToken.as_view(), name='send_email_confirmation_token'),
 	#verify account email takes token from body
-    path('api/confirm', friend_web.views.ConfirmEmailView.as_view(), name='send_email_confirmation_token'),
+    path('api/confirm', friend_web.views.ConfirmEmailView.as_view(), name='confirm_email_confirmation_token'),
 
     #path('api/user/<str:username>/connections', friend_web.views.ConnectionDataList.as_view())
 

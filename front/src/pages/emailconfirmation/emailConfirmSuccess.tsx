@@ -1,5 +1,5 @@
 /* eslint-disable node/no-unpublished-import */
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { styled } from 'styled-components';
 import {useNavigate, Link, } from 'react-router-dom';
 import {ChangeEvent} from 'react';
@@ -106,6 +106,23 @@ const StyledLink = styled(Link)`
 `
 
 const EmailConfirmSuccess = () => {
+  const [message, setMessage] = useState<string>();
+  const nav = useNavigate();
+  useEffect(() => {
+    let countdown = 3; // Adjust the countdown duration as needed
+    const timer = setInterval(() => {
+      if (countdown === 0) {
+        clearInterval(timer);
+        nav('/');
+      } else {
+        setMessage(`Navigating you to index in ${countdown} seconds...`);
+        countdown--;
+      }
+    }, 1000);
+
+    return () => clearInterval(timer); // Cleanup the timer on unmount
+  }, []);
+
   return (
     <>
       <ReportStyle>
@@ -115,10 +132,10 @@ const EmailConfirmSuccess = () => {
         </div>
 
         <div>
+          <h3>Success!!</h3>
           <h3>You verified your account!</h3>
-          <StyledLink to="/login">
-            <button>Back to Login</button>
-          </StyledLink>
+          <button onClick={() => nav('/')}>Let's get started!</button>
+          {message && <p>{message}</p>}
         </div>
       </ReportStyle>
     </>

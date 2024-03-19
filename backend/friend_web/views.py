@@ -13,12 +13,13 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from .permission import MaxAccessPermission, SelfConnectionPermission, EmailVeridiedPermission
 from django.db.models import Q
 from django.views.decorators.csrf import ensure_csrf_cookie
-from friend_web.models import Userdata, Connection , EmailComfirmationToken
+from friend_web.models import Userdata, Connection , EmailComfirmationToken, PasswordResetToken
 from .serializers import UserDataSerializer, UserSerializer, ConnectionSerializer, \
     CustomTokenObtainPairSerializer, RegisterSerializer, ChangePasswordSerializer, PublicUserDataSerializer
-from .utils import send_confirmation_email
+from .utils import send_confirmation_email, send_password_email
 from django.contrib.auth import get_user_model
 from rest_framework_simplejwt.tokens import RefreshToken
+from django.core.exceptions import ObjectDoesNotExist
 
 def get_tokens_for_user(user):
     refresh = RefreshToken.for_user(user)
@@ -282,8 +283,8 @@ class UserCreate(CreateAPIView):
         )
 
         # Now you can return the response
-        serializer = UserDataSerializer(userdata_instance)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        refresh = CustomTokenObtainPairSerializer.get_token(request.user)
+        return Response(data={'refresh': str(refresh), 'access': str(refresh.access_token)})
 
 class CurrentUserRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView):
     """_summary_
@@ -515,6 +516,19 @@ class RegisterView(CreateAPIView):
             return super().post(request, *args, **kwargs)
         except:
             return Response({'message': 'Action Failed!' }, status=status.HTTP_406_NOT_ACCEPTABLE)
+
+class SendPasswordResetEmail(APIView):
+    permission_classes = [AllowAny,]
+
+    def post(self, request):
+        try:
+            email = request.data.get("email")
+            user = get_user_model().objects.get(email=email)
+            token = PasswordResetToken.objects.create(user=user)
+            send_password_email(email=email, token_id=token.pk, user_id=user.pk)
+            return Response({'message': 'password reset link sent!'}, status=status.HTTP_201_CREATED)
+        except ObjectDoesNotExist:
+            return Response({'message': 'User not found with this email'}, status=status.HTTP_404_NOT_FOUND)
 
 class ChangePasswordView(UpdateAPIView):
     queryset = get_user_model().objects.all()
