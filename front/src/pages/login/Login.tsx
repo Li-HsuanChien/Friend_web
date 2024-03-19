@@ -142,14 +142,14 @@ interface errorMessage {
 }
 type ReturnMessage = successMessage | errorMessage;
 
-async function LoginApi(credentials: Credentials) {
+async function LoginApi(email_username: string, password: string) {
   try {
     const response = await fetch('http://127.0.0.1:8000/api/login', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(credentials),
+      body: JSON.stringify({email_username:email_username, password: password}),
     });
     if (!response.ok) {
       throw new Error('Failed to login');
@@ -174,10 +174,9 @@ const Login = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      const response: ReturnMessage = await LoginApi({
-        username: username,
-        password: password,
-      });
+      const response: ReturnMessage = await LoginApi(
+        username, password,
+      );
       if ('refresh' in response) {
         const {refresh , access} = response;
         setToken(access as string);
@@ -205,7 +204,7 @@ const Login = () => {
         <form onSubmit={handleSubmit}>
           <h3>Login</h3>
 
-          <label htmlFor="username">Username</label>
+          <label htmlFor="username">Username or Email</label>
           <input
             required
             type="text"

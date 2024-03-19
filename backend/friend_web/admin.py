@@ -9,7 +9,7 @@ from friend_web.models import *
 #     pass
 class UserAdmin(admin.ModelAdmin):
     fieldsets = (
-        (None, {'fields': ('email', 'password')}),
+        (None, {'fields': ('email', 'password', 'username')}),
         (('Personal info'), {'fields': ('first_name', 'last_name')}),
         (('Permissions'), {
             'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions'),
@@ -22,7 +22,7 @@ class UserAdmin(admin.ModelAdmin):
             'fields': ('email', 'password1', 'password2'),
         }),
     )
-    list_display = ('email', 'first_name', 'last_name', 'is_staff')
+    list_display = ('username','email', 'first_name', 'last_name', 'is_staff')
     list_filter = ('is_staff', 'is_superuser', 'is_active', 'groups')
     search_fields = ('email', 'first_name', 'last_name')
     ordering = ('email',)

@@ -10,7 +10,7 @@ from rest_framework.permissions import AllowAny
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework_simplejwt.tokens import RefreshToken
-from .permission import MaxAccessPermission, SelfConnectionPermission
+from .permission import MaxAccessPermission, SelfConnectionPermission, EmailVeridiedPermission
 from django.db.models import Q
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.contrib.auth.models import User
@@ -471,6 +471,12 @@ class ConnectionRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView, ):
 #User management
 
 class ObtainTokenPairView(TokenObtainPairView):
+    """login view
+
+    Args:
+        email_username: the account's email or username
+        password: the account's password
+    """
     permission_classes = (AllowAny,)
     serializer_class = CustomTokenObtainPairSerializer
 

@@ -5,6 +5,7 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from django.contrib.auth.password_validation import validate_password
 from django.contrib.auth import get_user_model
 from django.contrib.auth import authenticate
+from django.db.models import Q
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
 
@@ -51,40 +52,31 @@ class ConnectionSerializer(serializers.ModelSerializer):
 
 #registration
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
-    username = serializers.CharField(required=False)
+    email_username = serializers.CharField(required=True)
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # Make email field required
+        # TBD remove error messages
         self.fields["email"].required = False
+        self.fields["email_username"].required = True
 
     def validate(self, attrs):
-        email=attrs.get("email")
+
+        email_username = attrs.get("email_username")
         password = attrs.get("password")
-        credentials = {
-            "email": email,
-            "password": password
-        }
-
-        # Attempt to authenticate with username
-        user = authenticate(**credentials)
-
-        if user is None:
-            # If authentication with username fails, attempt with email
-            username = attrs.get("username")  # Use username field as email
-            if username:
-                user = get_user_model().objects.filter(username=username).first()
-                if user:
-                    if user.check_password(password):
-                        attrs["user"] = user
-                    else:
-                        msg = "Unable to log in with provided credentials. wrong cridentials"
-                        raise serializers.ValidationError(msg)
+        if email_username:
+            user = get_user_model().objects.filter(Q(email = email_username)|Q(username=email_username)).first()
+            if user:
+                if user.check_password(password):
+                    attrs["user"] = user
                 else:
-                    msg = "User with this email address does not exist."
+                    msg = "Unable to log in with provided credentials. wrong cridentials"
                     raise serializers.ValidationError(msg)
             else:
-                msg = "Unable to log in with provided credentials. no username caught"
+                msg = "User with this email address does not exist."
                 raise serializers.ValidationError(msg)
+        else:
+            msg = "Unable to log in with provided credentials. no username caught"
+            raise serializers.ValidationError(msg)
 
         if not user.is_active:
             msg = "User account is disabled."

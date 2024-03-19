@@ -233,10 +233,10 @@ const EditNodeMenu: React.FC<{setEditState: Dispatch<boolean>, editState: boolea
               value={instagram}
               onChange={(e) => setInstagram(e.target.value)} />
 
-            <button type="button" onClick={() => setConfirmState(!confirmState)} >comfirm</button>
+            <button type="button" onClick={() => setConfirmState(!confirmState)} >confirm</button>
           </form>
       </EditStyle>
-      {confirmState && <ComfirmationModal func={handleSubmit}setState={setConfirmState}></ComfirmationModal>}
+      {confirmState && <ComfirmationModal func={handleSubmit}setState={setConfirmState} details='Are you sure?'></ComfirmationModal>}
     </>
   )
 }
