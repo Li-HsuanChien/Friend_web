@@ -188,7 +188,7 @@ SIMPLE_JWT = {"ACCESS_TOKEN_LIFETIME": timedelta(minutes=45), \
     "TOKEN_OBTAIN_SERIALIZER":"friend-web.serializers.CustomTokenObtainPairSerializer"}
 
 # Actual directory user files go to
-MEDIA_ROOT = os.path.join(os.path.dirname(BASE_DIR), 'mediafiles')
+MEDIA_ROOT = os.path.join(os.path.dirname(BASE_DIR), 'backend','mediafiles')
 
 # URL used to access the media
 MEDIA_URL = '/media/'
