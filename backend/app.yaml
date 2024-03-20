@@ -1,0 +1,16 @@
+runtime: python39  # Specify the Python runtime version
+
+env_variables:
+  DJANGO_SETTINGS_MODULE: 'backend.settings'  # Set the Django settings module
+  APPENGINE_URL: https://lively-cumulus-417802.uc.r.appspot.com
+
+handlers:
+- url: /static
+  static_dir: backend/static  # Specify the directory where static files are collected
+
+- url: /media
+  static_dir: backend/media  # Specify the directory where media files are stored
+
+- url: /.*
+  script: auto  # Route all other requests to the Django application
+

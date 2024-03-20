@@ -156,9 +156,11 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
 
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
@@ -190,7 +192,7 @@ SIMPLE_JWT = {"ACCESS_TOKEN_LIFETIME": timedelta(minutes=45), \
     "TOKEN_OBTAIN_SERIALIZER":"friend-web.serializers.CustomTokenObtainPairSerializer"}
 
 # Actual directory user files go to
-MEDIA_ROOT = os.path.join(os.path.dirname(BASE_DIR), 'mediafiles')
+MEDIA_ROOT = os.path.join(os.path.dirname(BASE_DIR), 'media')
 
 # URL used to access the media
 MEDIA_URL = '/media/'
