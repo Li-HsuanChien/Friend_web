@@ -32,8 +32,6 @@ def get_tokens_for_user(user):
 
 
 authentication_level = [IsAuthenticated, EmailVeridiedPermission]
-#TBD serve front end, image redering, tests
-
 
 class UserDataList(ListAPIView):
     """_summary_
@@ -259,14 +257,10 @@ class UserCreate(CreateAPIView):
         user_id = request.user.id
         user_instance = get_user_model().objects.get(id=user_id)
 
-        # bio = request.data.get('bio')
         headshot = request.data.get('headshot')
         gender = request.data.get('gender')
         show_horoscope = request.data.get('show_horoscope')
-        # instagram_link = request.data.get('instagram_link')
         date_of_birth = request.data.get('date_of_birth')
-        # facebook_link = request.data.get('facebook_link')
-        # snapchat_link = request.data.get('snapchat_link')
         inviteurl = f"https://www.localhost:8000/inviteurl/{user_instance}"
 
         userdata_instance = Userdata.objects.create(
@@ -276,12 +270,7 @@ class UserCreate(CreateAPIView):
             show_horoscope=show_horoscope,
             date_of_birth=date_of_birth,
             inviteurl=inviteurl,
-            # instagram_link=instagram_link,
-            # bio=bio,
             headshot=headshot,
-            # facebook_link=facebook_link,
-            # snapchat_link=snapchat_link,
-            #created_time=created_time
         )
 
         # Now you can return the response
@@ -481,7 +470,6 @@ class ConnectionRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView, ):
         return Response({"message": "connection deleted!"}, status=status.HTTP_204_NO_CONTENT)
 
 
-#get_user_model() management
 
 class ObtainTokenPairView(TokenObtainPairView):
     """login view

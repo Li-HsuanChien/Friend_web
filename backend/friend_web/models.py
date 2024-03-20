@@ -120,15 +120,3 @@ class Connection(models.Model):
     def __str__(self):
         return f"{self.inviter} invited {self.invitee}"
 
-
-
-
-# class GenderType(models.Model):
-#     """
-#     example(cismale)
-#     """
-#     label = models.CharField(max_length=45)
-#     user = models.ForeignKey(Userdata, on_delete=models.CASCADE)
-
-#     def __str__(self):
-#         return '%s' % (self.label)

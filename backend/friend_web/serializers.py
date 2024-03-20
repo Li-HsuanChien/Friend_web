@@ -150,9 +150,3 @@ class ChangePasswordSerializer(serializers.ModelSerializer):
         return instance
 
 
-
-# class GenderTypeSerializer(serializers.HyperlinkedModelSerializer):
-#     class Meta:
-#         model = GenderType
-#         fields = ["label",]
-
