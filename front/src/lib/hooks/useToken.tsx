@@ -1,22 +1,22 @@
+/* eslint-disable node/no-unpublished-import */
 import { useState } from 'react';
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { useNavigate } from 'react-router-dom';
 
 async function PingServer(Token: string): Promise<void> {
   try {
-    const response = await fetch('http://127.0.0.1:8000/api/userdata', {
-      method: 'POST',
+    const response = await fetch('http://127.0.0.1:8000/api/currentuser', {
+      method: 'GET',
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${Token}`
       },
     });
     if (!response.ok) {
-      throw new Error('Failed to get user data');
+      throw new Error('Failed to Ping server');
     }
     return;
   } catch (error) {
-    console.error('Get User data error:', error);
+    console.error('Ping server error:', error);
     throw error;
   }
 }
@@ -30,7 +30,7 @@ export const useToken = (): [string | null, (newToken: string) => void] => {
     PingServer(jwt)
     .catch(() => {
       window.localStorage.removeItem('JWTToken');
-      nav('login');
+      nav('/login');
     })
     return jwt;
 });

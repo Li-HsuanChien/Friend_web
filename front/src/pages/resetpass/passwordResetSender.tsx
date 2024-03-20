@@ -36,7 +36,7 @@ const LoginStyle = styled.div`
 
   .shape:last-child {
     background: linear-gradient(to right, #dfe1e4, #b7b7b8);
-    right: -30px;
+    right: -80px;
     bottom: -80px;
   }
 
@@ -64,6 +64,7 @@ const LoginStyle = styled.div`
   }
 
   form h3 {
+    margin: 20px;
     font-size: 32px;
     font-weight: 500;
     line-height: 42px;
@@ -79,7 +80,7 @@ const LoginStyle = styled.div`
 
   label {
     display: block;
-    margin-top: 30px;
+    margin-top: 80px;
     font-size: 16px;
     font-weight: 500;
   }
@@ -87,7 +88,7 @@ const LoginStyle = styled.div`
   input {
     display: block;
     height: 50px;
-    width: 100%;
+    width: 95%;
     background-color: rgba(255, 255, 255, 0.07);
     border-radius: 3px;
     padding: 0 10px;
@@ -106,7 +107,7 @@ const LoginStyle = styled.div`
   }
 
   button {
-    margin-top: 50px;
+    margin-top: 100px;
     width: 100%;
     background-color: #ffffff;
     color: #080710;
@@ -115,6 +116,7 @@ const LoginStyle = styled.div`
     font-weight: 600;
     border-radius: 5px;
     cursor: pointer;
+    bottom: 10px;
   }
   main {
     height: 400px;
@@ -224,7 +226,7 @@ const PasswordResetSender = () => {
                       <p>{message}</p>
                     </main>
         :<form onSubmit={handleSubmit}>
-          <h3>Forget Password</h3>
+          <h3>Reset Password</h3>
 
           <label htmlFor="email">Email</label>
           <input

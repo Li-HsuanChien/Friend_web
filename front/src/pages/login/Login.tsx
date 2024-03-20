@@ -3,8 +3,6 @@ import React, { useState } from 'react';
 import { styled } from 'styled-components';
 import {useNavigate, Link, } from 'react-router-dom';
 import {ChangeEvent} from 'react';
-// import { AppContext } from '../../AppContext';
-// import { sendCurrentId, sendJWT, sendCurrentUsername } from '../../actions';
 import { useToken } from '../../lib/hooks/useToken';
 import { useRefreshToken } from '../../lib/hooks/useRefreshToken';
 const LoginStyle = styled.div`
@@ -40,7 +38,7 @@ const LoginStyle = styled.div`
 
   .shape:last-child {
     background: linear-gradient(to right, #dfe1e4, #b7b7b8);
-    right: -30px;
+    right: -80px;
     bottom: -80px;
   }
 
@@ -145,7 +143,7 @@ async function LoginApi(email_username: string, password: string) {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({email_username:email_username, password: password}),
+      body: JSON.stringify({ email_username:email_username, password: password }),
     });
     if (!response.ok) {
       throw new Error('Failed to login');
