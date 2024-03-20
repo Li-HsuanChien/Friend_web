@@ -149,10 +149,11 @@ class SearchUserName(ListAPIView):
     queryset = Userdata.objects.all()
     permission_classes = authentication_level
     def post(self, request, *args, **kwargs):
+        CurrentUser = request.user
         search = request.data.get("search")
         if search:
             output = []
-            users = get_user_model().objects.filter(username__icontains=search)
+            users = get_user_model().objects.filter(Q(username__icontains=search) & ~Q(email=CurrentUser))
             for user in users:
                 userdata = Userdata.objects.filter(username=user)
                 if userdata.exists():
