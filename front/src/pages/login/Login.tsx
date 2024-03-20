@@ -221,7 +221,7 @@ const Login = () => {
               setPassword(e.target.value);
             }}
           />
-          <ForgotLink to="/password">Forgot password</ForgotLink>
+          <ForgotLink to="/forgot-password">Forgot password</ForgotLink>
           {loginState && <p>{loginState}</p>}
           <button
             type="submit"

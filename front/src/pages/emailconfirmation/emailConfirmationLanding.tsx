@@ -2,8 +2,10 @@
 import React, { useEffect, useState } from 'react';
 import { styled } from 'styled-components';
 import { useToken } from '../../lib/hooks/useToken';
-import {useNavigate, Link, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { useRefreshToken } from '../../lib/hooks/useRefreshToken';
+import EmailConfirmSuccess from './emailConfirmSuccess';
+import EmailConfirmFail from './emailConfirmFail';
 
 const ReportStyle = styled.div`
 
@@ -116,9 +118,10 @@ async function VerifyEmailWithToken(JWTToken: string, token_id: string) {
 }
 
 const EmailConfirmLanding = () => {
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSuccess, setIsSuccess] = useState(false);
   const [token, setToken] = useToken();
   const [, setRefreshToken] = useRefreshToken();
-  const nav = useNavigate();
   const {verificationToken} = useParams()
 
   useEffect(() => {
@@ -126,13 +129,17 @@ const EmailConfirmLanding = () => {
     .then((result) => {
       setRefreshToken(result.refresh);
       setToken(result.access);
-      nav('/verify-success')
+      setIsSuccess(true);
+      setIsLoading(false);
     })
-    .catch(()=>nav('/verify-fail'))
+    .catch(()=>{
+      setIsSuccess(false);
+      setIsLoading(false);
+    })
   }, []);
 
 
-  return (
+  if (isLoading) return (
     <>
       <ReportStyle>
         <div className="background">
@@ -148,6 +155,8 @@ const EmailConfirmLanding = () => {
       </ReportStyle>
     </>
   );
+  if (!isSuccess) return <EmailConfirmFail />
+  return <EmailConfirmSuccess />
 };
 
 export default EmailConfirmLanding;

@@ -1,8 +1,11 @@
 /* eslint-disable node/no-unpublished-import */
 import React, { useState } from 'react';
 import { styled } from 'styled-components';
-import { Link } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import {ChangeEvent} from 'react';
+import PasswordResetFail from './passwordResetFail';
+import PasswordResetSuccess from './passwordResetSuccess';
+
 const LoginStyle = styled.div`
 
   position: fixed;
@@ -153,77 +156,84 @@ const LoginStyle = styled.div`
     font-size: 13px;
   }
 `
-const LinkLeft = styled(Link)`
-  display: block;
-  text-align: left;
-`
-async function SendResetLink(email: string) {
+
+async function SendResetPassword(password_token: string, password: string, password2: string) {
   try {
-    const response = await fetch('http://127.0.0.1:8000/api/forgot-password', {
+    const response = await fetch('http://127.0.0.1:8000/api/resetpassword', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({email:email}),
+      body: JSON.stringify({password: password, password2: password2, password_token:password_token}),
     });
     if (!response.ok) {
-      throw new Error('Failed to send reset link');
+      throw new Error('Failed to reset password');
     }
     return response.json();
   } catch (error) {
-    console.error('Failed to send reset link:', error);
+    console.error('Failed to reset password', error);
     throw error;
   }
 }
 
-const ResetPasswordSender = () => {
-  const [email, setEmail] = useState<string>('');
-  const [success, setSuccess] = useState<boolean>(false);
-  const [errorMessage, setErrorMessage] = useState<string>('');
+const PasswordResetSetter = () => {
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [isFailure, setIsFailure] = useState(false);
+  const [password, setPassword] = useState<string>('');
+  const [password2, setPassword2] = useState<string>('');
+  const { passwordResetCode } = useParams();
 
-  const handleSubmit = () =>{
-    SendResetLink(email)
+
+  const handleSubmit = (e: any) =>{
+    e.preventDefault();
+    SendResetPassword(passwordResetCode as string, password, password2)
     .then(() => {
-      setSuccess(true);
+      setIsSuccess(true);
     })
-    .catch((error) => setErrorMessage(error));
+    .catch(() => setIsFailure(true));
   }
 
+  if (isFailure) return <PasswordResetFail />;
+  if (isSuccess) return <PasswordResetSuccess />;
   return (
-    <>
-      <LoginStyle>
-
+    <LoginStyle>
         <div className="background">
           <div className="shape"></div>
           <div className="shape"></div>
         </div>
-        {success ? <main>
-                      <h3>success!</h3>
-                      <p>Check your email for reset link!</p>
-                    </main>:
+
         <form onSubmit={handleSubmit}>
           <h3>Forget Password</h3>
+          <p>Please enter your new password!</p>
 
-          <label htmlFor="email">Email</label>
+          <label htmlFor="password">Password</label>
           <input
+            type="password"
+            placeholder="Password"
+            id="password"
             required
-            type="text"
-            placeholder="Email"
-            id="email"
-            onChange={(e: ChangeEvent<HTMLInputElement>) => {
-              setEmail(e.target.value);
-            }}
+            onChange={(e: ChangeEvent<HTMLInputElement>) =>
+              setPassword(e.target.value)
+            }
+          />
+
+          <label htmlFor="password2">Confirm Password</label>
+          <input
+            type="password"
+            placeholder="Confirm Password"
+            id="password2"
+            required
+            onChange={(e: ChangeEvent<HTMLInputElement>) =>
+              setPassword2(e.target.value)
+            }
           />
           <button
+            disabled={!password || !password2 || password !== password2}
             type="submit"
-          >SUbmit</button>
-          {errorMessage && <p style={{color: 'red'}}>{errorMessage}</p>}
-          <LinkLeft to="/login">Back to Login</LinkLeft>
+          >Reset password</button>
         </form>
-      }
-      </LoginStyle>
-    </>
+    </LoginStyle>
   );
 };
 
-export default ResetPasswordSender;
+export default PasswordResetSetter;

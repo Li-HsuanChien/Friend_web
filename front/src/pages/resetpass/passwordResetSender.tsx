@@ -1,12 +1,8 @@
 /* eslint-disable node/no-unpublished-import */
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { styled } from 'styled-components';
-import {useNavigate, Link, } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import {ChangeEvent} from 'react';
-// import { AppContext } from '../../AppContext';
-// import { sendCurrentId, sendJWT, sendCurrentUsername } from '../../actions';
-import { useToken } from '../../lib/hooks/useToken';
-import { useRefreshToken } from '../../lib/hooks/useRefreshToken';
 const LoginStyle = styled.div`
 
   position: fixed;
@@ -157,14 +153,13 @@ const LoginStyle = styled.div`
     font-size: 13px;
   }
 `
-
 const LinkLeft = styled(Link)`
   display: block;
   text-align: left;
 `
 async function SendResetLink(email: string) {
   try {
-    const response = await fetch('http://127.0.0.1:8000/api/forgot-password', {
+    const response = await fetch('http://127.0.0.1:8000/api/forgotpassword', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -181,29 +176,52 @@ async function SendResetLink(email: string) {
   }
 }
 
-const ResetPasswordSender = () => {
+const PasswordResetSender = () => {
+  const nav = useNavigate();
   const [email, setEmail] = useState<string>('');
   const [success, setSuccess] = useState<boolean>(false);
+  const [message, setMessage] = useState<string>('');
   const [errorMessage, setErrorMessage] = useState<string>('');
 
-  const handleSubmit = () =>{
+  useEffect(() => {
+    if(success){
+      let countdown = 4; // Adjust the countdown duration as needed
+      const timer = setInterval(() => {
+        if (countdown === 0) {
+          clearInterval(timer);
+        } else {
+          setMessage(`Sending verification email in ${countdown - 2} seconds...`);
+          countdown--;
+        }
+      }, 1000);
+      return () => clearInterval(timer); // Cleanup the timer on unmount
+    }
+  }, [success]);
+
+  const handleSubmit = (e: any) =>{
+    e.preventDefault();
     SendResetLink(email)
     .then(() => {
       setSuccess(true);
+      setTimeout(() => {
+        nav('/login');
+    }, 3000);
     })
-    .catch((error) => setErrorMessage(error));
+    .catch((error) => setErrorMessage(error.message));
   }
 
   return (
-    <LoginStyle>
+    <>
+      <LoginStyle>
+
         <div className="background">
           <div className="shape"></div>
           <div className="shape"></div>
         </div>
-
         {success ? <main>
                       <h3>success!</h3>
                       <p>Check your email for reset link!</p>
+                      <p>{message}</p>
                     </main>
         :<form onSubmit={handleSubmit}>
           <h3>Forget Password</h3>
@@ -220,13 +238,14 @@ const ResetPasswordSender = () => {
           />
           <button
             type="submit"
-          >SUbmit</button>
+          >Submit</button>
           {errorMessage && <p>{errorMessage}</p>}
           <LinkLeft to="/login">Back to Login</LinkLeft>
         </form>
       }
-    </LoginStyle>
+      </LoginStyle>
+    </>
   );
 };
 
-export default ResetPasswordSender;
+export default PasswordResetSender;

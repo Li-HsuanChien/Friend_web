@@ -2,7 +2,6 @@
 import React, { useState, useEffect } from 'react';
 import { styled } from 'styled-components';
 import {useNavigate, Link, } from 'react-router-dom';
-import {ChangeEvent} from 'react';
 
 const ReportStyle = styled.div`
 
@@ -92,24 +91,9 @@ const ReportStyle = styled.div`
 `
 
 
-const EmailConfirmSuccess = () => {
-  const [message, setMessage] = useState<string>();
+
+const PasswordResetSuccess = () => {
   const nav = useNavigate();
-  useEffect(() => {
-    let countdown = 3; // Adjust the countdown duration as needed
-    const timer = setInterval(() => {
-      if (countdown === 0) {
-        clearInterval(timer);
-        nav('/');
-      } else {
-        setMessage(`Navigating you to index in ${countdown} seconds...`);
-        countdown--;
-      }
-    }, 1000);
-
-    return () => clearInterval(timer); // Cleanup the timer on unmount
-  }, []);
-
   return (
     <>
       <ReportStyle>
@@ -120,13 +104,13 @@ const EmailConfirmSuccess = () => {
 
         <main>
           <h3>Success!!</h3>
-          <h3>You verified your account!</h3>
-          <button onClick={() => nav('/')}>Let's get started!</button>
-          {message && <p>{message}</p>}
+          <p>You password has been successfully reset</p>
+          <p>Login with your new cridentials</p>
+          <button onClick={() => nav('/login')}>Back to Login</button>
         </main>
       </ReportStyle>
     </>
   );
 };
 
-export default EmailConfirmSuccess;
+export default PasswordResetSuccess;

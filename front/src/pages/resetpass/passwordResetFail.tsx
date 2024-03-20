@@ -1,5 +1,5 @@
 /* eslint-disable node/no-unpublished-import */
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { styled } from 'styled-components';
 import {useNavigate, Link, } from 'react-router-dom';
 import {ChangeEvent} from 'react';
@@ -41,7 +41,7 @@ const ReportStyle = styled.div`
     bottom: -80px;
   }
 
-  main {
+  div {
     height: 400px;
     width: 400px;
     background-color: rgba(255, 255, 255, 0.13);
@@ -56,7 +56,7 @@ const ReportStyle = styled.div`
     padding: 50px 35px;
   }
 
-  main * {
+  div * {
     font-family: 'Poppins', sans-serif;
     color: #ffffff;
     letter-spacing: 0.5px;
@@ -64,14 +64,14 @@ const ReportStyle = styled.div`
     border: none;
   }
 
-  main h3 {
+  div h3 {
     font-size: 32px;
     font-weight: 500;
     line-height: 42px;
     text-align: center;
   }
 
-  main p {
+  div p {
     text-align: center;
     margin-top: 15px;
     margin-bottom: 10px;
@@ -91,25 +91,8 @@ const ReportStyle = styled.div`
   }
 `
 
-
-const EmailConfirmSuccess = () => {
-  const [message, setMessage] = useState<string>();
+const PasswordResetFail = () => {
   const nav = useNavigate();
-  useEffect(() => {
-    let countdown = 3; // Adjust the countdown duration as needed
-    const timer = setInterval(() => {
-      if (countdown === 0) {
-        clearInterval(timer);
-        nav('/');
-      } else {
-        setMessage(`Navigating you to index in ${countdown} seconds...`);
-        countdown--;
-      }
-    }, 1000);
-
-    return () => clearInterval(timer); // Cleanup the timer on unmount
-  }, []);
-
   return (
     <>
       <ReportStyle>
@@ -118,15 +101,14 @@ const EmailConfirmSuccess = () => {
           <div className="shape"></div>
         </div>
 
-        <main>
-          <h3>Success!!</h3>
-          <h3>You verified your account!</h3>
-          <button onClick={() => nav('/')}>Let's get started!</button>
-          {message && <p>{message}</p>}
-        </main>
+        <div>
+          <h3>Failed!</h3>
+          <h3>{'reset password failed :('}</h3>
+          <button onClick={() => nav('/login')}>Back to Login</button>
+        </div>
       </ReportStyle>
     </>
   );
 };
 
-export default EmailConfirmSuccess;
+export default PasswordResetFail;

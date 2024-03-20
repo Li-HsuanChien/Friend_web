@@ -55,7 +55,9 @@ urlpatterns = [
     #register takes username pass pass2
     path('api/register', friend_web.views.RegisterView.as_view(), name='auth_register'),
     #send user password reset link takes data email
-    path('api/forgot-password', friend_web.views.SendPasswordResetEmail.as_view(), name='send_reset_link'),
+    path('api/forgotpassword', friend_web.views.SendPasswordResetEmail.as_view(), name='send_reset_link'),
+	#takes password, password1, passwordresettoken
+    path('api/resetpassword', friend_web.views.ResetPassword.as_view(), name='auth_change_password'),
     #change password consider email or two-auth
     path('api/change_password/<int:pk>/', friend_web.views.ChangePasswordView.as_view(), name='auth_change_password'),
     #black list jwt token

@@ -20,6 +20,7 @@ from .utils import send_confirmation_email, send_password_email
 from django.contrib.auth import get_user_model
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.core.exceptions import ObjectDoesNotExist
+from django.contrib.auth import authenticate
 
 def get_tokens_for_user(user):
     refresh = RefreshToken.for_user(user)
@@ -530,6 +531,23 @@ class SendPasswordResetEmail(APIView):
         except ObjectDoesNotExist:
             return Response({'message': 'User not found with this email'}, status=status.HTTP_404_NOT_FOUND)
 
+class ResetPassword(APIView):
+    permission_classes = [AllowAny,]
+
+    def post(self, request):
+        try:
+            password = request.data.get("password")
+            password2 = request.data.get("password2")
+            if(password != password2):
+                return Response({'message': 'password does not match'}, status=status.HTTP_400_BAD_REQUEST)
+            token = request.data.get("password_token")
+            user = PasswordResetToken.objects.get(id=token).user
+            user.set_password(password)
+            user.save()
+            return Response({'message': 'password successfully reset!'}, status=status.HTTP_202_ACCEPTED)
+        except:
+            return Response({'message': 'password reset failed!'}, status=status.HTTP_400_BAD_REQUEST)
+
 class ChangePasswordView(UpdateAPIView):
     queryset = get_user_model().objects.all()
     permission_classes = (IsAuthenticated,)
@@ -537,8 +555,19 @@ class ChangePasswordView(UpdateAPIView):
 
     def update(self, request, *args, **kwargs):
         try:
-            super().update(request, *args, **kwargs)
-            return Response({'message': 'Password updated!' })
+            c_password = request.POST['current_password']
+            new_password = request.POST['new_password']
+            r_new_password = request.POST['retype_new_password']
+            user = authenticate(username=request.user.username, password=c_password)
+            if user is not None:
+                if new_password == r_new_password:
+                    user.set_password(new_password)
+                    user.save()
+                    return Response({'message': 'Successfully saved' }, status=status.HTTP_202_ACCEPTED)
+                else:
+                    return Response({'message': 'PASSWORDS DO NOT MATCH' }, status=status.HTTP_400_BAD_REQUEST)
+            else:
+                    return Response({'message': 'PASSWORDS RESET FAILED' }, status=status.HTTP_400_BAD_REQUEST)
         except:
             return Response({'message': 'Action Failed!' })
 
