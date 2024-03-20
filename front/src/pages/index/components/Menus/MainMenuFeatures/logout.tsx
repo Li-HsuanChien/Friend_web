@@ -40,7 +40,7 @@ const Logout: React.FC<{setChild:Dispatch<boolean>}>  = ( {setChild} ) =>{
     e.preventDefault();
     window.localStorage.removeItem('JWTToken');
     window.localStorage.removeItem('JWTRefreshToken');
-    logout(jwt, refreshjwt)
+    logout(jwt as string, refreshjwt)
     .then(()=> navigate('/login'))
   }
 

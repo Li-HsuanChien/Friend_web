@@ -125,7 +125,7 @@ const EmailConfirmLanding = () => {
   const {verificationToken} = useParams()
 
   useEffect(() => {
-    VerifyEmailWithToken(token, verificationToken as string)
+    VerifyEmailWithToken(token as string, verificationToken as string)
     .then((result) => {
       setRefreshToken(result.refresh);
       setToken(result.access);

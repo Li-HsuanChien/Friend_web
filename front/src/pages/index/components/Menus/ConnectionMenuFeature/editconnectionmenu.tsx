@@ -15,7 +15,7 @@ const EditConnectionMenu: React.FC<{setEditState: Dispatch<boolean>, editState: 
     setEditState(!editState);
     try{
       if(closeness || nickname){
-        ConnectionUpdate(clickedconnection?.id as string, jwt, closeness, nickname)
+        ConnectionUpdate(clickedconnection?.id as string, jwt as string, closeness, nickname)
         .then((result) => console.log(result));
       }
       //TBD visuals

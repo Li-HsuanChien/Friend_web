@@ -91,7 +91,6 @@ const MainConnection: React.FC<Props> = (props) => {
     const startPosy = props.startposdata.posy;
     const endPosx = props.endposdata.posx;
     const endPosy = props.endposdata.posy;
-    //console.log(`line ${id} sx ${startPosx} sy${startPosy} ex${endPosx} ey${endPosy} `)
     SetFullPosData({
       top: Math.min(startPosy, endPosy),
       left: Math.min(startPosx, endPosx),

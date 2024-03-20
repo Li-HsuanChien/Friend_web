@@ -51,9 +51,6 @@ const MainMenu = () => {
     // case feature2State:
     //   componentToRender = <Feature2 />;
     //   break;
-    // case feature3State:
-    //   componentToRender = <Feature3 />;
-    //   break;
     default:
       componentToRender = (
         <>

@@ -92,7 +92,7 @@ const UserNode: React.FC<{
     }, []);
 
     useEffect(() =>{
-      getUserData(user_id, jwt)
+      getUserData(user_id, jwt as string)
           .then((result) => {
             setData(result);
             if (setchildName && data) {
@@ -104,7 +104,7 @@ const UserNode: React.FC<{
             // Handle error appropriately, e.g., show a toast message
             navigate('/add');
           });
-        getActivatedConnection(user_id, jwt)
+        getActivatedConnection(user_id, jwt as string)
           .then((result) => {
             shownuserstate;
             let connectionsArr = result.filter((connection) => {

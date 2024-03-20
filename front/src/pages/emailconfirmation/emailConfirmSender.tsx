@@ -2,8 +2,6 @@
 import React, { useEffect, useState } from 'react';
 import { styled } from 'styled-components';
 import { useToken } from '../../lib/hooks/useToken';
-import {useNavigate, Link, } from 'react-router-dom';
-
 
 const ReportStyle = styled.div`
 
@@ -123,7 +121,7 @@ const EmailConfirmSender = () => {
     const timer = setInterval(() => {
       if (countdown === 0) {
         clearInterval(timer);
-        SendVerificationEmail(token)
+        SendVerificationEmail(token as string)
           .then(result => setMessage(result['message']))
           .catch(err => setMessage(`Something went wrong! ${err}`));
       } else {
@@ -140,7 +138,7 @@ const EmailConfirmSender = () => {
     const timer = setInterval(() => {
       if (countdown === 0) {
         clearInterval(timer);
-        SendVerificationEmail(token)
+        SendVerificationEmail(token as string)
           .then(result => setMessage(result['message']))
           .catch(err => setMessage(`Something went wrong! ${err}`));
       } else {
