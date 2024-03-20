@@ -1,8 +1,7 @@
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import UserNode from './node';
-import { AppContext } from '../../../AppContext';
-import { clickedConnection } from '../../../actions';
+import { Pos, ConnectionData } from '../../../lib/Types';
 
 const LineBox = styled.svg<{ fullposdata?: fullPosdata }>`
   position: fixed;
@@ -22,20 +21,8 @@ const LineBox = styled.svg<{ fullposdata?: fullPosdata }>`
     stroke-width: 6px; 
   }
 `
-interface ConnectionProps {
-  id: number;
-  date_established: string;
-  closeness: string;
-  nicknamechildtoparent?: string;
-  nicknameparenttochild?: string;
-  inviter: number;
-  invitee: number;
-}
-interface Posdata {
-  posx: number;
-  posy: number;
-}
-interface LinePos extends Posdata{
+
+interface LinePos extends Pos{
   angle: number,
 }
 
@@ -46,14 +33,14 @@ interface fullPosdata{
   width:  number
 }
 interface parent{
-  id: number,
+  id: string,
   username: string
 }
 interface Props {
-  data: ConnectionProps;
+  data: ConnectionData;
   parent: parent,
   nodesize: number,
-  startposdata: Posdata;
+  startposdata: Pos;
   endposdata: LinePos;
 }
 interface LineData{
@@ -77,7 +64,6 @@ const MainConnection: React.FC<Props> = (props) => {
   const parent_username = props.parent.username;
   const inviterIsParent = inviter === parent_id;
   const child_id = inviterIsParent? invitee: inviter;
-  const { dispatch } = useContext(AppContext)
   const [childNodeSize, setChildNodeSize] = useState<number>(80);
   const [childName, setchildName] = useState<string>('');
   const [lineData, setLineData] = useState<LineData>({

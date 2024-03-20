@@ -1,15 +1,16 @@
 /* eslint-disable node/no-unpublished-import */
 import React, { useContext, useEffect } from 'react';
-import {useNavigate} from 'react-router-dom';
 import WorkspaceComponent from './components/workspace';
 import styled from 'styled-components';
 import { AppContext } from '../../AppContext';
-import { sendCurrentId, sendCurrentUsername } from '../../actions';
-import MenuIcon from './components/menuIcon';
-import MainMenu from './components/mainmenu';
-import NodeMenu from './components/nodemenu';
-import Connection from './components/mainconnector';
-import ConnectionMenu from './components/connectionmenu';
+import MenuIcon from './components/Menus/menuIcon';
+import MainMenu from './components/Menus/mainmenu';
+import NodeMenu from './components/Menus/nodemenu';
+import ConnectionMenu from './components/Menus/connectionmenu';
+import { getUserData } from '../../lib/UserDataFunctions';
+import { useToken } from '../../lib/hooks/useToken';
+import { useUser } from '../../lib/hooks/useUser';
+import {useNavigate} from 'react-router-dom'
 
 const Topright = styled.div`
   position: fixed;
@@ -36,62 +37,25 @@ const StyleDiv = styled.div`
     grid-template: 1fr / 3em 9em 1fr;
   }
 `
-interface pingSuccessResponse{
-  username:string,
-  id: number
-}
-
-async function PingServer(Token: string): Promise<pingSuccessResponse> {
-  try {
-    const response = await fetch('http://127.0.0.1:8000/api/currentuser', {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${Token}`
-      },
-    });
-    if (!response.ok) {
-      throw new Error('Failed to ping server');
-    }
-    return response.json();
-  } catch (error) {
-    // Handle error
-    console.error('Ping server error:', error);
-    throw error; // Rethrow the error to be caught by the caller
-  }
-}
-
 
 function Main() {
-  const { jwt, dispatch, menustate, clickedconnection, clickeduser } = useContext(AppContext);
+  const { menustate, clickedconnection, clickeduser } = useContext(AppContext);
   const navigate = useNavigate();
-  useEffect(()=>{
-    const JWTToken = window.localStorage.getItem('JWTToken');
-    if (JWTToken) {
-      PingServer(JWTToken)
-        .then((result) => {
-          const { username, id } = result;
-          dispatch(sendCurrentId(id));
-          dispatch(sendCurrentUsername(username));
+  const [jwt] = useToken();
+  const user = useUser();
+  useEffect(() => {
+    if(user){
+      getUserData(user.user_id as string, jwt as string)
+        .then(() => {
+          navigate('/');
         })
-        .catch((error) => {
-          console.error('Error occurred while pinging server:', error);
-          navigate('/login');
-        });
-    } else if (jwt){
-      PingServer(jwt)
-        .then((result) => {
-          const { username, id } = result;
-          dispatch(sendCurrentId(id));
-          dispatch(sendCurrentUsername(username));
+        .catch(() =>{
+          navigate('/add');
         })
-        .catch((error) => {
-          console.error('Error occurred while pinging server:', error);
-          navigate('/login');
-        });
+    } else {
+      navigate('login');
     }
   }, [])
-
   return (
     <>
       <StyleDiv>

@@ -5,11 +5,13 @@ import { AppContext } from '../../../AppContext';
 import { clickedUser, sendWorkSpacePos, addShowedUser, removeShowedUser } from '../../../actions';
 import Connection from './connector';
 import { useNavigate } from 'react-router-dom';
-import getUserData from '../../../lib/getUserData';
-import getConnection from '../../../lib/getConnection';
+import { getUserData } from '../../../lib/UserDataFunctions';
+import { getActivatedConnection } from '../../../lib/ConnectionFunctions';
 import { pxToVH, pxToVW } from '../../../lib/px_V_UnitConversion';
 import MainConnection from './mainconnector';
 import {SuccessUserData, ConnectionData, Pos} from '../../../lib/Types'
+import { useToken } from '../../../lib/hooks/useToken';
+import { useUser } from '../../../lib/hooks/useUser';
 // eslint-disable-next-line node/no-unsupported-features/node-builtins
 
 interface LinePos extends Pos {
@@ -63,17 +65,19 @@ function calcpos(
   }
   return res;
 }
-//TBD unit change function
 
 type Combinearr = ConnectionData & LinePos;
 
 const UserNode: React.FC<{
-  user_id: number, posData: LinePos,
+  user_id: string, posData: LinePos,
   connectionState: boolean, nodesize: number,
-  parent_id?: number, setchildName?: Dispatch<string>
+  parent_id?: string, setchildName?: Dispatch<string>
 }>
   = ({ user_id, posData, connectionState, nodesize, parent_id, setchildName }) => {
-    const { dispatch, jwt, current_user_id } = useContext(AppContext);
+    const [jwt] = useToken();
+    const user = useUser();
+    const current_user_id = user ? user.user_id: null;
+    const { dispatch, shownuserstate } = useContext(AppContext);
     const navigate = useNavigate();
     const [data, setData] = useState<SuccessUserData | null>(null);
     const [connections, setConnections] = useState<ConnectionData[]>();
@@ -81,8 +85,14 @@ const UserNode: React.FC<{
     const [combineArr, setCombineArr] = useState<Combinearr[]>([]);
     const [showConnection, setShowConnection] = useState<boolean>(connectionState);
     useEffect(() => {
-      if (user_id && jwt) {
-        getUserData(user_id, jwt)
+      dispatch(addShowedUser(user_id));
+      return () => {
+        dispatch(removeShowedUser(user_id));
+      };
+    }, []);
+
+    useEffect(() =>{
+      getUserData(user_id, jwt)
           .then((result) => {
             setData(result);
             if (setchildName && data) {
@@ -94,19 +104,34 @@ const UserNode: React.FC<{
             // Handle error appropriately, e.g., show a toast message
             navigate('/add');
           });
-        getConnection(user_id, jwt)
+        getActivatedConnection(user_id, jwt)
           .then((result) => {
-            setConnections(result);
+            shownuserstate;
+            let connectionsArr = result.filter((connection) => {
+              if(user_id === connection.inviter){
+                return !(shownuserstate?.has(connection.invitee));
+              } else {
+                return !(shownuserstate?.has(connection.inviter));
+              }
+            });
+            connectionsArr = connectionsArr.filter((connection) => connection.activated);
+            setConnections(connectionsArr);
           })
           .catch((error) => {
             console.error('Failed to get user connections:', error);
             // Handle error appropriately, e.g., show a toast message
           });
-      } else {
-        console.error('You have no credentials!');
-        navigate('/login');
-      }
-    }, [user_id]);
+    }, [showConnection])
+    useEffect(() =>{
+      const connectionsArr = connections?.filter((connection) => {
+        if(user_id === connection.inviter){
+          return !(shownuserstate?.has(connection.invitee));
+        } else {
+          return !(shownuserstate?.has(connection.inviter));
+        }
+      });
+      setConnections(connectionsArr);
+    }, [shownuserstate])
     useEffect(() => {
       if (setchildName) {
         if (data?.username) {
@@ -120,7 +145,7 @@ const UserNode: React.FC<{
         const calculatedPos = calcpos(
           posData.angle,
           connections.length,
-          140,
+          180,
           180,
           posData.posx,
           posData.posy,
@@ -140,12 +165,12 @@ const UserNode: React.FC<{
     }, [endposarr, window.innerHeight, window.innerWidth]);
 
     const handleNodeClick = (e: any) => {
-      e.stopPropagation();
+      e.stopPropagation()
       setShowConnection(!showConnection);
     };
 
     const handleNodeDBClick = (e: any) => {
-      e.stopPropagation();
+      e.stopPropagation()
       dispatch(clickedUser(data as SuccessUserData));
       dispatch(sendWorkSpacePos(posData));
     };
@@ -175,8 +200,8 @@ const UserNode: React.FC<{
           />)))}
           <img
             src={`http://127.0.0.1:8000/${data.headshot}`}
-            alt="Headshot"
-            title={`${data.username}`}/>
+            alt={`${data.username_id}`}
+            title={`${data.username} ${data.username_id}`}/>
         </NodeStyle>
         ) : ''}
       </>

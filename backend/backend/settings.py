@@ -29,7 +29,7 @@ SECRET_KEY = DJANGO_SECRET_KEY
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['http://localhost:8000', 'http://localhost:3000', 'http://localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['http://localhost:8000', 'http://localhost:3000', 'http://localhost', '127.0.0.1', 'localhost']
 
 # Application definition
 
@@ -60,10 +60,12 @@ MIDDLEWARE = [
 ]
 ROOT_URLCONF = 'backend.urls'
 
+
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'friend-web' ,'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -92,6 +94,8 @@ DATABASES = {
         'PORT': '',
     }
 }
+
+AUTH_USER_MODEL = 'friend_web.CustomUser'
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
@@ -144,6 +148,7 @@ REST_FRAMEWORK = {
     'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication',
+
     ]
 }
 
@@ -155,11 +160,15 @@ CORS_ALLOWED_ORIGINS = [ "http://127.0.0.1", "http://localhost",'http://127.0.0.
 
 CSRF_TRUSTED_ORIGINS = [ "http://127.0.0.1", "http://localhost",'http://127.0.0.1:3000','http://localhost:3000',]
 
-SIMPLE_JWT = {"ACCESS_TOKEN_LIFETIME": timedelta(minutes=30), \
-    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),}
+SIMPLE_JWT = {"ACCESS_TOKEN_LIFETIME": timedelta(minutes=45), \
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
+    "TOKEN_OBTAIN_SERIALIZER":"friend-web.serializers.CustomTokenObtainPairSerializer"}
 
 # Actual directory user files go to
 MEDIA_ROOT = os.path.join(os.path.dirname(BASE_DIR), 'mediafiles')
 
 # URL used to access the media
 MEDIA_URL = '/media/'
+
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'

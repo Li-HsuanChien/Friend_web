@@ -3,6 +3,9 @@ import React, {useState, useContext} from 'react';
 import {styled} from 'styled-components';
 import { AppContext } from '../../AppContext';
 import { useNavigate } from 'react-router-dom';
+import { UserCreate } from '../../lib/UserDataFunctions';
+import { useToken } from '../../lib/hooks/useToken';
+import { useRefreshToken } from '../../lib/hooks/useRefreshToken';
 
 const AddPageStyle = styled.div`
   position: fixed;
@@ -101,7 +104,7 @@ const AddPageStyle = styled.div`
   }
 
   input[type='checkbox'] {
-  display: inline-block;
+    display: inline-block;
     margin-right: 30px;
     width: 18px; 
     height: 18px; 
@@ -150,8 +153,6 @@ const AddPageStyle = styled.div`
     font-weight: 300;
   }
 
-
-
   ::placeholder {
     color: #e5e5e5;
   }
@@ -171,33 +172,6 @@ const AddPageStyle = styled.div`
 
 
 // TBD add ping in every page! to check user!
-async function postData(gender: string, date_of_birth: string, show_horoscope: boolean, Token: string, image: File): Promise<void>{
-  try{
-    const formData = new FormData();
-    const pythonBoolean = show_horoscope ? 'True': 'False';
-    formData.append('show_horoscope', pythonBoolean);
-    formData.append('gender', gender);
-    formData.append('date_of_birth', date_of_birth);
-    formData.append('headshot', image);
-
-    const response = await fetch('http://127.0.0.1:8000/api/userdatas/add', {
-      method: 'POST',
-      headers: {
-        // No need for Content-Type here, as it will be automatically set
-        'Authorization': `Bearer ${Token}`
-      },
-      body: formData,
-    });
-
-    if(!response.ok){
-      console.log('user not added! something went wrong')
-    } else console.log('probably added');
-    return;
-  } catch (error) {
-    console.error('Add User data error:', error);
-    throw error;
-  }
-}
 
 const Add = () => {
   const navigate = useNavigate();
@@ -205,13 +179,16 @@ const Add = () => {
   const [date, setDate] = useState<string>('');
   const [gender, setGender] = useState<string>('');
   const [image, setImage] = useState<File>();
-  const {jwt} = useContext(AppContext);
+  const [jwt, setToken] = useToken();
+  const [,setRefreshToken] = useRefreshToken();
 
   const handleSubmit = async(e: React.FormEvent<HTMLFormElement>) =>{
     e.preventDefault();
     try{
-        if(gender && date && horoscopeState && jwt && image){
-          await postData(gender, date, horoscopeState, jwt, image);
+        if(gender && date && horoscopeState && jwt){
+          const token = await UserCreate(gender, date, horoscopeState, jwt, image);
+          setRefreshToken(token.refresh);
+          setToken(token.access);
           navigate('/');
         }
     } catch(error)  {
@@ -275,7 +252,7 @@ const Add = () => {
             </label>
           </div>
 
-          <button type="submit">Comfirm</button>
+          <button type="submit">Confirm</button>
         </form>
       </AddPageStyle>
     </>

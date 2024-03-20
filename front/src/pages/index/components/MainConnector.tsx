@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import UserNode from './node';
 import { AppContext } from '../../../AppContext';
 import { clickedConnection } from '../../../actions';
+import { ConnectionData, Pos } from '../../../lib/Types';
 
 const LineBox = styled.svg<{ fullposdata?: fullPosdata }>`
   position: fixed;
@@ -22,23 +23,9 @@ const LineBox = styled.svg<{ fullposdata?: fullPosdata }>`
     stroke-width: 6px; 
   }
 `
-interface ConnectionProps {
-  id: number;
-  date_established: string;
-  closeness: string;
-  nicknamechildtoparent?: string;
-  nicknameparenttochild?: string;
-  inviter: number;
-  invitee: number;
-}
-interface Posdata {
-  posx: number;
-  posy: number;
-}
-interface LinePos extends Posdata{
+interface LinePos extends Pos{
   angle: number,
 }
-
 interface fullPosdata{
   top: number,
   left: number,
@@ -46,14 +33,14 @@ interface fullPosdata{
   width:  number
 }
 interface parent{
-  id: number,
+  id: string,
   username: string
 }
 interface Props {
-  data: ConnectionProps;
+  data: ConnectionData;
   parent: parent,
   nodesize: number,
-  startposdata: Posdata;
+  startposdata: Pos;
   endposdata: LinePos;
 }
 interface LineData{
@@ -63,7 +50,7 @@ interface LineData{
   y2: number,
 }
 
-const Connection: React.FC<Props> = (props) => {
+const MainConnection: React.FC<Props> = (props) => {
   const {
     id,
     date_established,
@@ -129,7 +116,10 @@ const Connection: React.FC<Props> = (props) => {
       })
     }
   }, [window.innerHeight, window.innerWidth, props])
-  const handleLineCLick = (e:any) =>{
+  const handleLineCLick = (e: any) =>{
+    e.stopPropagation();
+  }
+  const handledbLineCLick = (e:any) =>{
     e.stopPropagation();
     dispatch(clickedConnection(props.data));
   }
@@ -137,7 +127,12 @@ const Connection: React.FC<Props> = (props) => {
 
   return (
     <>
-      <LineBox fullposdata={fullPosdata} height={fullPosdata.height} width={fullPosdata.width} id={`connection ${id}`}>
+      <LineBox
+        fullposdata={fullPosdata}
+        height={fullPosdata.height}
+        width={fullPosdata.width}
+        id={`connection ${id}`}
+        onClick={handleLineCLick}>
         <g onMouseOver={(e) => e.stopPropagation()}>
           <line
             className="hover-effect"
@@ -146,6 +141,7 @@ const Connection: React.FC<Props> = (props) => {
             x2={`${lineData.x2}%`}
             y2={`${lineData.y2}%`}
             onClick={handleLineCLick}
+            onDoubleClick={handledbLineCLick}
           />
           <title>{`Connection ID: ${id}\nDate Established: ${date_established}\nCloseness: ${closeness}\n`}
                   {nicknameparenttochild && `${childName}'s Nick Name to ${parent_username}is ${nicknameparenttochild}\n`}
@@ -163,4 +159,4 @@ const Connection: React.FC<Props> = (props) => {
   );
 };
 
-export default Connection;
+export default MainConnection;

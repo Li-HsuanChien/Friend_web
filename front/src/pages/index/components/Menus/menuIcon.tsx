@@ -1,8 +1,8 @@
 import React, { useContext } from 'react';
 import { IconContext } from 'react-icons';
 import { TbMenu2 } from 'react-icons/tb';
-import { AppContext } from '../../../AppContext';
-import { openMenu } from '../../../actions';
+import { AppContext } from '../../../../AppContext';
+import { openMenu } from '../../../../actions';
 
 
 const MenuIcon = () => {

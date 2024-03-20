@@ -39,8 +39,10 @@ urlpatterns = [
     #update current user userdata
     path('api/userdatas/update', friend_web.views.CurrentUserRetrieveUpdateDestroy.as_view()),
 
-    #takes 'user_id' and get user's connections
-    path('api/connections', friend_web.views.ConnectionList.as_view()),
+    #takes 'user_id' and get user's activated connections
+    path('api/connections/activated', friend_web.views.ConnectionListActivated.as_view()),
+	#takes 'user_id' and get user's pending(activated False) connections
+    path('api/connections/pending', friend_web.views.ConnectionListPending.as_view()),
     #adds connection by getting "closeness, "inviter(id)", inviter is the current user
     path('api/connections/add', friend_web.views.ConnectionCreate.as_view()),
     #edits(takes nickname and closeness) single self connection or destroy
@@ -52,10 +54,20 @@ urlpatterns = [
     path('api/login/refresh', TokenRefreshView.as_view(), name='token_refresh'),
     #register takes username pass pass2
     path('api/register', friend_web.views.RegisterView.as_view(), name='auth_register'),
+    #send user password reset link takes data email
+    path('api/forgotpassword', friend_web.views.SendPasswordResetEmail.as_view(), name='send_reset_link'),
+	#takes password, password1, passwordresettoken
+    path('api/resetpassword', friend_web.views.ResetPassword.as_view(), name='auth_change_password'),
     #change password consider email or two-auth
     path('api/change_password/<int:pk>/', friend_web.views.ChangePasswordView.as_view(), name='auth_change_password'),
     #black list jwt token
     path('api/logout', friend_web.views.LogoutView.as_view(), name='auth_logout'),
+    #get user's email confirmation status takes request.user
+    path('api/verify-status', friend_web.views.GetEmailConfirmationStatus.as_view(), name='get_email_confirmation_status'),
+    #send user confirmation email takes request.user
+    path('api/send-verify-email', friend_web.views.SendEmailConfirmationToken.as_view(), name='send_email_confirmation_token'),
+	#verify account email takes token from body
+    path('api/confirm', friend_web.views.ConfirmEmailView.as_view(), name='confirm_email_confirmation_token'),
 
     #path('api/user/<str:username>/connections', friend_web.views.ConnectionDataList.as_view())
 

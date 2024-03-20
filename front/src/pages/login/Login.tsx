@@ -1,12 +1,12 @@
 /* eslint-disable node/no-unpublished-import */
-import React, {useState, useContext} from 'react';
+import React, { useState } from 'react';
 import { styled } from 'styled-components';
-import {useNavigate, Link} from 'react-router-dom';
+import {useNavigate, Link, } from 'react-router-dom';
 import {ChangeEvent} from 'react';
-import { AppContext } from '../../AppContext';
-import { sendCurrentId, sendJWT, sendCurrentUsername } from '../../actions';
-import getUserData from '../../lib/getUserData';
-
+// import { AppContext } from '../../AppContext';
+// import { sendCurrentId, sendJWT, sendCurrentUsername } from '../../actions';
+import { useToken } from '../../lib/hooks/useToken';
+import { useRefreshToken } from '../../lib/hooks/useRefreshToken';
 const LoginStyle = styled.div`
 
   position: fixed;
@@ -129,10 +129,6 @@ const SignLink = styled(Link)`
   display: block;
   text-align: left;
 `
-interface Credentials {
-  username: string
-  password: string
-}
 interface successMessage {
   refresh: string,
   access: string
@@ -142,14 +138,14 @@ interface errorMessage {
 }
 type ReturnMessage = successMessage | errorMessage;
 
-async function LoginApi(credentials: Credentials) {
+async function LoginApi(email_username: string, password: string) {
   try {
     const response = await fetch('http://127.0.0.1:8000/api/login', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(credentials),
+      body: JSON.stringify({email_username:email_username, password: password}),
     });
     if (!response.ok) {
       throw new Error('Failed to login');
@@ -162,33 +158,11 @@ async function LoginApi(credentials: Credentials) {
     throw error; // Rethrow the error to be caught by the caller
   }
 }
-interface pingSuccessResponse{
-  username:string,
-  id: number
-}
-async function PingServer(Token: string): Promise<pingSuccessResponse> {
-  try {
-    const response = await fetch('http://127.0.0.1:8000/api/currentuser', {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${Token}`
-      },
-    });
-    if (!response.ok) {
-      throw new Error('Failed to ping server');
-    }
-    return response.json();
-  } catch (error) {
-    // Handle error
-    console.error('Ping server error:', error);
-    throw error; // Rethrow the error to be caught by the caller
-  }
-}
 
 const Login = () => {
   const navigate = useNavigate();
-  const {dispatch} = useContext(AppContext);
+  const [, setToken] = useToken();
+  const [, setRefreshToken] = useRefreshToken();
   const [username, setUsername] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [loginState, setLoginState] = useState<string | null>(null);
@@ -196,38 +170,20 @@ const Login = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      const response: ReturnMessage = await LoginApi({
-        username: username,
-        password: password,
-      });
+      const response: ReturnMessage = await LoginApi(
+        username, password,
+      );
       if ('refresh' in response) {
         const {refresh , access} = response;
-        //debug
-        console.log(refresh);
-        console.log(access);
-        window.localStorage.setItem('JWTToken', access);
-        dispatch(sendJWT(access));
-        PingServer(response.access)
-          .then((result) => {
-            const { username, id } = result;
-            // console.log(`got id ${id}`);
-            // console.log(`got username ${username}`);
-            dispatch(sendCurrentId(id));
-            dispatch(sendCurrentUsername(username));
-            setLoginState('Welcome!');
-            getUserData(id, access as string)
-            .then(() => {
-              navigate('/');
-            })
-            .catch(() =>{
-              navigate('/add');
-            })
-          })
+        setToken(access as string);
+        setRefreshToken(refresh)
+        setLoginState('Welcome!');
+        navigate('/');
       } else {
         setLoginState(response.detail);
       }
     } catch (error) {
-      setLoginState(`Something went Wrong! ${error}`);
+      setLoginState('Something went Wrong!\n' + error);
       console.error(error)
       return;
     }
@@ -244,7 +200,7 @@ const Login = () => {
         <form onSubmit={handleSubmit}>
           <h3>Login</h3>
 
-          <label htmlFor="username">Username</label>
+          <label htmlFor="username">Username or Email</label>
           <input
             required
             type="text"
@@ -265,7 +221,7 @@ const Login = () => {
               setPassword(e.target.value);
             }}
           />
-          <ForgotLink to="/password">Forgot password</ForgotLink>
+          <ForgotLink to="/forgot-password">Forgot password</ForgotLink>
           {loginState && <p>{loginState}</p>}
           <button
             type="submit"
