@@ -152,7 +152,7 @@ const UserNode: React.FC<{
         );
         setEndPosArr(calculatedPos);
       }
-    }, [connections, window.innerHeight, window.innerWidth]);
+    }, [window.innerHeight, window.innerWidth]);
     useEffect(() => {
       if (connections) {
         let combinedData: Combinearr[] = connections.map((item, index) => ({
@@ -162,7 +162,7 @@ const UserNode: React.FC<{
         combinedData = combinedData.filter(connection => !(parent_id === (connection.invitee) || parent_id === (connection.inviter)));
         setCombineArr(combinedData);
       }
-    }, [endposarr, window.innerHeight, window.innerWidth]);
+    }, [endposarr]);
 
     const handleNodeClick = (e: any) => {
       e.stopPropagation()
