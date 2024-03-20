@@ -1,4 +1,3 @@
-from .secret_settings import DATABASENAME, DATABASEPASSWORD, DATABASEUSER, DJANGO_SECRET_KEY, DATABASE_HOST
 import os
 from datetime import timedelta
 import io
@@ -67,7 +66,6 @@ else:
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 # Application definition
-
 INSTALLED_APPS = [
     'corsheaders',
     'django.contrib.admin',
@@ -119,7 +117,7 @@ DATABASES = {"default": env.db()}
 if os.getenv("USE_CLOUD_SQL_AUTH_PROXY", None):
     DATABASES["default"]["HOST"] = "127.0.0.1"
     DATABASES["default"]["PORT"] = 5432
-    
+
 
 AUTH_USER_MODEL = 'friend_web.CustomUser'
 

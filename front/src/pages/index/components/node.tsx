@@ -8,7 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import { getUserData } from '../../../lib/UserDataFunctions';
 import { getActivatedConnection } from '../../../lib/ConnectionFunctions';
 import { pxToVH, pxToVW } from '../../../lib/px_V_UnitConversion';
-import MainConnection from './mainconnector';
+import MainConnection from './MainConnector';
 import {SuccessUserData, ConnectionData, Pos} from '../../../lib/Types'
 import { useToken } from '../../../lib/hooks/useToken';
 import { useUser } from '../../../lib/hooks/useUser';

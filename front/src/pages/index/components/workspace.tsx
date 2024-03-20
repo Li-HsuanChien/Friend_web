@@ -3,7 +3,7 @@ import { styled } from 'styled-components';
 import { AppContext } from '../../../AppContext';
 import UserNode from './node';
 import { vwToPx, vhToPx } from '../../../lib/px_V_UnitConversion';
-import { closeMenu } from '../../../actions';
+import { closeMenu, addShowedUser } from '../../../actions';
 import { useUser } from '../../../lib/hooks/useUser';
 
 const Wrapper = styled.div`
@@ -64,7 +64,7 @@ const Workspace: React.FC = () => {
   };
 
   useEffect(() => {
-    dispatch(addShowedUser([current_user_id as number]));
+    dispatch(addShowedUser(current_user_id as string));
   },[])
 
   useEffect(()=>{

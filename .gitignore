@@ -42,3 +42,4 @@ __pycache__/
 img
 
 *.bat
+backend/.env
