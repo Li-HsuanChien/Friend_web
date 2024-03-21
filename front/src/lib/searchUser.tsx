@@ -1,8 +1,9 @@
 import { SearchedUser } from './Types'
+import { backendurl } from './Backendpoint';
 
 export async function searchUser(search: string, Token: string): Promise<SearchedUser[]> {
   try {
-    const response = await fetch('http://127.0.0.1:8000/api/search', {
+    const response = await fetch(`${backendurl}api/search`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

@@ -5,6 +5,7 @@ import { useParams } from 'react-router-dom';
 import {ChangeEvent} from 'react';
 import PasswordResetFail from './passwordResetFail';
 import PasswordResetSuccess from './passwordResetSuccess';
+import { SendResetPassword } from '../../lib/PasswordResetApi';
 
 const LoginStyle = styled.div`
 
@@ -157,24 +158,7 @@ const LoginStyle = styled.div`
   }
 `
 
-async function SendResetPassword(password_token: string, password: string, password2: string) {
-  try {
-    const response = await fetch('http://127.0.0.1:8000/api/resetpassword', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({password: password, password2: password2, password_token:password_token}),
-    });
-    if (!response.ok) {
-      throw new Error('Failed to reset password');
-    }
-    return response.json();
-  } catch (error) {
-    console.error('Failed to reset password', error);
-    throw error;
-  }
-}
+
 
 const PasswordResetSetter = () => {
   const [isSuccess, setIsSuccess] = useState(false);

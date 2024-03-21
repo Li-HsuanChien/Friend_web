@@ -5,6 +5,7 @@ import {useNavigate, Link, } from 'react-router-dom';
 import {ChangeEvent} from 'react';
 import { useToken } from '../../lib/hooks/useToken';
 import { useRefreshToken } from '../../lib/hooks/useRefreshToken';
+import { LoginApi } from '../../lib/AuthApi';
 const LoginStyle = styled.div`
 
   position: fixed;
@@ -135,27 +136,6 @@ interface errorMessage {
   detail: string
 }
 type ReturnMessage = successMessage | errorMessage;
-
-async function LoginApi(email_username: string, password: string) {
-  try {
-    const response = await fetch('http://127.0.0.1:8000/api/login', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ email_username:email_username, password: password }),
-    });
-    if (!response.ok) {
-      throw new Error('Failed to login');
-    }
-
-    return response.json();
-  } catch (error) {
-    // Handle error
-    console.error('Login error:', error);
-    throw error; // Rethrow the error to be caught by the caller
-  }
-}
 
 const Login = () => {
   const navigate = useNavigate();

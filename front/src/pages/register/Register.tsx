@@ -3,7 +3,7 @@ import React, {useEffect, useState} from 'react';
 import {useNavigate, Link } from 'react-router-dom';
 import {ChangeEvent} from 'react';
 import {styled} from 'styled-components';
-
+import { RegisterApi } from '../../lib/AuthApi';
 
 const RegisterStyle = styled.div`
 
@@ -120,28 +120,6 @@ const RegisterStyle = styled.div`
   }
 `;
 
-interface RegisterInfo {
-  email: string|undefined;
-  username: string|undefined;
-  password: string|undefined;
-  password2: string|undefined;
-}
-
-interface ReturnMessage {
-  username?: string;
-  message?: string;
-}
-
-async function RegisterApi(credentials: RegisterInfo) {
-  return fetch('http://127.0.0.1:8000/api/register', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(credentials),
-  }).then(data => data.json());
-}
-
 
 const Register = () => {
   const navigate = useNavigate();
@@ -158,7 +136,7 @@ const Register = () => {
     try {
       if(password !== password2){
         setRegistrationState('password does not match!')
-      } else {const response: ReturnMessage = await RegisterApi({
+      } else {const response = await RegisterApi({
         email: email,
         username: username,
         password: password,

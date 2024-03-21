@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext } from 'react';
 import styled from 'styled-components';
 import { AppContext } from '../../../../AppContext';
 import DefaultNodeMenu from './NodeMenuComponents/defaultnodemenu';

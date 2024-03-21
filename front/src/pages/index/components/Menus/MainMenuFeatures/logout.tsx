@@ -1,4 +1,4 @@
-import React , { useState, Dispatch, useContext } from 'react';
+import React , { Dispatch } from 'react';
 import styled from 'styled-components';
 import { IoIosCloseCircleOutline } from 'react-icons/io';
 import { useToken } from '../../../../../lib/hooks/useToken';

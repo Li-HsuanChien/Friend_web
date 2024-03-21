@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { styled } from 'styled-components';
 import { useToken } from '../../lib/hooks/useToken';
+import { SendVerificationEmail } from '../../lib/EmailVeridicationApi';
 
 const ReportStyle = styled.div`
 
@@ -90,27 +91,6 @@ const ReportStyle = styled.div`
   }
 `
 
-async function SendVerificationEmail(Token: string) {
-  try {
-    const response = await fetch('http://127.0.0.1:8000/api/send-verify-email', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${Token}`
-      },
-
-    });
-    if (!response.ok) {
-      throw new Error('Failed to send verification email');
-    }
-
-    return response.json();
-  } catch (error) {
-    // Handle error
-    console.error('send verification email error:', error);
-    throw error; // Rethrow the error to be caught by the caller
-  }
-}
 
 const EmailConfirmSender = () => {
   const [token,] = useToken();

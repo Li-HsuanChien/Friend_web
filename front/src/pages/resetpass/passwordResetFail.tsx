@@ -1,8 +1,7 @@
 /* eslint-disable node/no-unpublished-import */
-import React, { useState } from 'react';
+import React from 'react';
 import { styled } from 'styled-components';
-import {useNavigate, Link, } from 'react-router-dom';
-import {ChangeEvent} from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const ReportStyle = styled.div`
 

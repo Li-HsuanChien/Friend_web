@@ -1,7 +1,8 @@
 import {ConnectionData, Message, Closeness} from './Types'
+import { backendurl } from './Backendpoint';
 export async function getActivatedConnection(user_id: string, Token: string): Promise<ConnectionData[]> {
   try {
-    const response = await fetch('http://127.0.0.1:8000/api/connections/activated', {
+    const response = await fetch(`${backendurl}api/connections/activated`, {
       credentials: 'include',
       method: 'POST',
       headers: {
@@ -23,7 +24,7 @@ export async function getActivatedConnection(user_id: string, Token: string): Pr
 
 export async function getPendingConnection(user_id: string, Token: string): Promise<ConnectionData[]> {
   try {
-    const response = await fetch('http://127.0.0.1:8000/api/connections/pending', {
+    const response = await fetch(`${backendurl}api/connections/pending`, {
       credentials: 'include',
       method: 'POST',
       headers: {
@@ -44,7 +45,7 @@ export async function getPendingConnection(user_id: string, Token: string): Prom
 }
 export async function ConnectionCreate(Token: string, invitee_id: string): Promise<ConnectionData> {
   try {
-    const response = await fetch('http://127.0.0.1:8000/api/connections/add', {
+    const response = await fetch(`${backendurl}api/connections/add`, {
       credentials: 'include',
       method: 'POST',
       headers: {
@@ -66,7 +67,7 @@ export async function ConnectionCreate(Token: string, invitee_id: string): Promi
 
 export async function ConnectionGet(connection_id: string, Token: string): Promise<ConnectionData> {
   try {
-    const response = await fetch('http://127.0.0.1:8000/api/connections/self', {
+    const response = await fetch(`${backendurl}api/connections/self`, {
       credentials: 'include',
       method: 'PUT',
       headers: {
@@ -88,7 +89,7 @@ export async function ConnectionGet(connection_id: string, Token: string): Promi
 
 export async function ConnectionDelete(connection_id: string, Token: string): Promise<Message> {
   try {
-    const response = await fetch('http://127.0.0.1:8000/api/connections/self', {
+    const response = await fetch(`${backendurl}api/connections/self`, {
       credentials: 'include',
       method: 'DELETE',
       headers: {
@@ -121,7 +122,7 @@ export async function ConnectionUpdate(connection_id: string,
     const body: ConnectionBody = {connection_id: connection_id, activated: 'True'};
     if(closeness) body.closeness = closeness;
     if(nickname) body.nickname = nickname;
-    const response = await fetch('http://127.0.0.1:8000/api/connections/self', {
+    const response = await fetch(`${backendurl}connections/self `, {
       credentials: 'include',
       method: 'PUT',
       headers: {

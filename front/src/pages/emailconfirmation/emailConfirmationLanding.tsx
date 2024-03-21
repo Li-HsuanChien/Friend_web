@@ -6,6 +6,7 @@ import { useParams } from 'react-router-dom';
 import { useRefreshToken } from '../../lib/hooks/useRefreshToken';
 import EmailConfirmSuccess from './emailConfirmSuccess';
 import EmailConfirmFail from './emailConfirmFail';
+import { VerifyEmailWithToken } from '../../lib/EmailVeridicationApi';
 
 const ReportStyle = styled.div`
 
@@ -93,29 +94,6 @@ const ReportStyle = styled.div`
     cursor: pointer;
   }
 `
-
-async function VerifyEmailWithToken(JWTToken: string, token_id: string) {
-  try {
-    const response = await fetch('http://127.0.0.1:8000/api/confirm', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${JWTToken}`
-      },
-      body: JSON.stringify({token_id: token_id})
-
-    });
-    if (!response.ok) {
-      throw new Error('Failed to send verification email');
-    }
-
-    return response.json();
-  } catch (error) {
-    // Handle error
-    console.error('send verification email error:', error);
-    throw error; // Rethrow the error to be caught by the caller
-  }
-}
 
 const EmailConfirmLanding = () => {
   const [isLoading, setIsLoading] = useState(true);

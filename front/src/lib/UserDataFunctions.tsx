@@ -1,10 +1,11 @@
 import { SuccessUserData } from './Types'
+import { backendurl } from './Backendpoint';
 
 
 // Define the getUserData function
 export async function getUserData(user_id: string, Token: string): Promise<SuccessUserData> {
   try {
-    const response = await fetch('http://127.0.0.1:8000/api/userdata', {
+    const response = await fetch(`${backendurl}api/userdata`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -36,7 +37,7 @@ export async function UserCreate(gender: string, date_of_birth: string, show_hor
     formData.append('gender', gender);
     formData.append('date_of_birth', date_of_birth);
     if(image)formData.append('headshot', image);
-    const response = await fetch('http://127.0.0.1:8000/api/userdatas/add', {
+    const response = await fetch(`${backendurl}api/userdatas/add`, {
       method: 'POST',
       headers: {
         // No need for Content-Type here, as it will be automatically set
@@ -79,7 +80,7 @@ export async function UserUpdate(Token: string,
     if(facebook_link) formData.append('facebook_link', facebook_link);
     if(snapchat_link) formData.append('snapchat_link', snapchat_link);
 
-    const response = await fetch('http://127.0.0.1:8000/api/userdatas/update', {
+    const response = await fetch(`${backendurl}api/userdatas/update`, {
       method: 'PUT',
       headers: {
         'Authorization': `Bearer ${Token}`

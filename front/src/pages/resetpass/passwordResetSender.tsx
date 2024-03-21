@@ -3,6 +3,8 @@ import React, { useState, useEffect } from 'react';
 import { styled } from 'styled-components';
 import { Link, useNavigate } from 'react-router-dom';
 import {ChangeEvent} from 'react';
+import { SendResetLink } from '../../lib/PasswordResetApi';
+
 const LoginStyle = styled.div`
 
   position: fixed;
@@ -159,24 +161,6 @@ const LinkLeft = styled(Link)`
   display: block;
   text-align: left;
 `
-async function SendResetLink(email: string) {
-  try {
-    const response = await fetch('http://127.0.0.1:8000/api/forgotpassword', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({email:email}),
-    });
-    if (!response.ok) {
-      throw new Error('Failed to send reset link');
-    }
-    return response.json();
-  } catch (error) {
-    console.error('Failed to send reset link:', error);
-    throw error;
-  }
-}
 
 const PasswordResetSender = () => {
   const nav = useNavigate();
