@@ -1,7 +1,7 @@
 runtime: python39  # Specify the Python runtime version
 
 env_variables:
-  DJANGO_SETTINGS_MODULE: 'backend.settings'  # Set the Django settings module
+  DJANGO_SETTINGS_MODULE: 'main.settings'  # Set the Django settings module
   APPENGINE_URL: https://lively-cumulus-417802.uc.r.appspot.com
 
 handlers:
