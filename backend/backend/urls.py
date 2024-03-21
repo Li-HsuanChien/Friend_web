@@ -67,11 +67,6 @@ urlpatterns = [
     path('api/send-verify-email', friend_web.views.SendEmailConfirmationToken.as_view(), name='send_email_confirmation_token'),
 	#verify account email takes token from body
     path('api/confirm', friend_web.views.ConfirmEmailView.as_view(), name='confirm_email_confirmation_token'),
-	#bypass favicon check
- 	path('favicon.ico', friend_web.views.ConfirmEmailView.favicon_view),
-
-    #path('api/user/<str:username>/connections', friend_web.views.ConnectionDataList.as_view())
-
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 #urlpatterns += router.urls

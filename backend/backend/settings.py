@@ -44,8 +44,7 @@ else:
 
 SECRET_KEY = env("SECRET_KEY")
 
-# SECURITY WARNING: don't run with debug turned on in production!
-# Change this to "False" when you are ready for production
+# DEBUG = True
 DEBUG = env("DEBUG")
 
 APPENGINE_URL = env("APPENGINE_URL", default=None)
@@ -54,7 +53,7 @@ if APPENGINE_URL:
     if not urlparse(APPENGINE_URL).scheme:
         APPENGINE_URL = f"https://{APPENGINE_URL}"
 
-    ALLOWED_HOSTS = [urlparse(APPENGINE_URL).netloc]
+    ALLOWED_HOSTS = [urlparse(APPENGINE_URL).netloc, "friend-web-100003.uk.r.appspot.com"]
     CSRF_TRUSTED_ORIGINS = [APPENGINE_URL]
     SECURE_SSL_REDIRECT = True
 else:
@@ -63,8 +62,7 @@ else:
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+
 # Application definition
 INSTALLED_APPS = [
     'corsheaders',
@@ -158,7 +156,8 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+STATIC_ROOT = os.path.join(BASE_DIR,'backend' ,'static')
+
 
 
 
@@ -183,16 +182,12 @@ CORS_ORIGIN_ALLOW_ALL = True
 
 CORS_ALLOW_CREDENTIALS = True
 
-CORS_ALLOWED_ORIGINS = [ "http://127.0.0.1", "http://localhost",'http://127.0.0.1:3000','http://localhost:3000',]
-
-CSRF_TRUSTED_ORIGINS = [ "http://127.0.0.1", "http://localhost",'http://127.0.0.1:3000','http://localhost:3000',]
-
 SIMPLE_JWT = {"ACCESS_TOKEN_LIFETIME": timedelta(minutes=45), \
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
     "TOKEN_OBTAIN_SERIALIZER":"friend-web.serializers.CustomTokenObtainPairSerializer"}
 
 # Actual directory user files go to
-MEDIA_ROOT = os.path.join(os.path.dirname(BASE_DIR), 'media')
+MEDIA_ROOT = os.path.join(os.path.dirname(BASE_DIR), 'backend','media')
 
 # URL used to access the media
 MEDIA_URL = '/media/'

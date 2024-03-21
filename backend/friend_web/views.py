@@ -614,8 +614,3 @@ class ConfirmEmailView(APIView):
         except EmailComfirmationToken.DoesNotExist:
             return Response({"message": "confirmation failed"}, status=status.HTTP_400_BAD_REQUEST)
 
-
-
-
-def favicon_view(request):
-    return HttpResponseNotFound()

@@ -6,10 +6,10 @@ env_variables:
 
 handlers:
 - url: /static
-  static_dir: static/  # Specify the directory where static files are collected
+  static_dir: backend/static  # Specify the directory where static files are collected
 
 - url: /media
-  static_dir: media/  # Specify the directory where media files are stored
+  static_dir: backend/media/  # Specify the directory where media files are stored
 
 - url: /.*
   script: apps.app  # Route all other requests to the Django application
