@@ -74,12 +74,12 @@ class Userdata(models.Model):
             'root1234'
             )
     """
-    Gender_CHOICES = {
-        "M": "Cis Gender Male",
-        "F": "Cis Gender Female",
-        "N": "Non Binary",
-        "NA": "Prefer Not To Say"
-    }
+    Gender_CHOICES = [
+        ("M", "Cis Gender Male"),
+        ("F", "Cis Gender Female"),
+        ("N", "Non Binary"),
+        ("NA", "Prefer Not To Say")
+    ]
     username = models.OneToOneField(CustomUser, on_delete = models.CASCADE, primary_key=True)
     bio = models.TextField(max_length=150, null=True, blank=True)
     headshot = models.ImageField(upload_to='img/headshots/', null=True, default='img/headshots/default.png')
