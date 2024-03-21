@@ -21,6 +21,7 @@ from django.contrib.auth import get_user_model
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth import authenticate
+from django.http import HttpResponseNotFound
 
 def get_tokens_for_user(user):
     refresh = RefreshToken.for_user(user)
@@ -612,3 +613,9 @@ class ConfirmEmailView(APIView):
             return Response(data={'refresh': str(refresh), 'access': str(refresh.access_token)})
         except EmailComfirmationToken.DoesNotExist:
             return Response({"message": "confirmation failed"}, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+
+def favicon_view(request):
+    return HttpResponseNotFound()
