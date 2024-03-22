@@ -1,1 +1,1 @@
-export const backendurl = 'http://127.0.0.1:8000/';
+export const backendurl = 'https://www.friend-web-100003.uk.r.appspot.com/';

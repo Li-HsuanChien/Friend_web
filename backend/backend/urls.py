@@ -62,11 +62,11 @@ urlpatterns = [
     #black list jwt token
     path('api/logout', friend_web.views.LogoutView.as_view(), name='auth_logout'),
     #get user's email confirmation status takes request.user
-    path('api/verify-status', friend_web.views.GetEmailConfirmationStatus.as_view(), name='get_email_confirmation_status'),
+    path('api/verifystatus', friend_web.views.GetEmailConfirmationStatus.as_view(), name='get_email_confirmation_status'),
     #send user confirmation email takes request.user
-    path('api/send-verify-email', friend_web.views.SendEmailConfirmationToken.as_view(), name='send_email_confirmation_token'),
+    path('api/sendverifyemail', friend_web.views.SendEmailConfirmationToken.as_view(), name='send_email_confirmation_token'),
 	#verify account email takes token from body
     path('api/confirm', friend_web.views.ConfirmEmailView.as_view(), name='confirm_email_confirmation_token'),
+
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
-#urlpatterns += router.urls

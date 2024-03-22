@@ -25,7 +25,7 @@ export async function VerifyEmailWithToken(JWTToken: string, token_id: string) {
 
 export async function SendVerificationEmail(Token: string) {
   try {
-    const response = await fetch(`${backendurl}api/send-verify-email`, {
+    const response = await fetch(`${backendurl}api/sendverifyemail`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

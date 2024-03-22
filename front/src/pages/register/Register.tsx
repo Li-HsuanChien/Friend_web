@@ -136,22 +136,21 @@ const Register = () => {
     try {
       if(password !== password2){
         setRegistrationState('password does not match!')
-      } else {const response = await RegisterApi({
-        email: email,
-        username: username,
-        password: password,
-        password2: password2,
-      });
-      if (response.username) {
-        setRegistrationState(`Welcome! ${response.username}, redirecting you to verification page!`);
-        setTimeout(() => {
-          navigate('/login');
-        }, 2000);
-        return;
       } else {
-        setRegistrationState('Something went wrong!\n'+ response.message);
-        return;
-      }
+        const response = await RegisterApi(email as string,
+                                           username as string,
+                                           password as string,
+                                           password2 as string);
+        if (response.username) {
+          setRegistrationState(`Welcome! ${response.username}, redirecting you to verification page!`);
+          setTimeout(() => {
+            navigate('/login');
+          }, 2000);
+          return;
+        } else {
+          setRegistrationState('Something went wrong!\n'+ response.message);
+          return;
+        }
     }} catch (error) {
       setRegistrationState(`Something went Wrong! Try again ${error}`);
       return;}

@@ -20,4 +20,3 @@ handlers:
   secure: always
 
 entrypoint: gunicorn -b :$PORT backend.wsgi
-

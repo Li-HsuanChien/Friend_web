@@ -42,10 +42,12 @@ else:
     raise Exception("No local .env or GOOGLE_CLOUD_PROJECT detected. No secrets found.")
 # [END gaestd_py_django_secret_config]
 
+MJ_APIKEY_PUBLIC = env("MJ_APIKEY_PUBLIC")
+MJ_APIKEY_PRIVATE = env("MJ_APIKEY_PRIVATE")
 SECRET_KEY = env("SECRET_KEY")
 
-# DEBUG = True
-DEBUG = env("DEBUG")
+DEBUG = True
+# DEBUG = env("DEBUG")
 
 APPENGINE_URL = env("APPENGINE_URL", default=None)
 if APPENGINE_URL:
@@ -53,7 +55,7 @@ if APPENGINE_URL:
     if not urlparse(APPENGINE_URL).scheme:
         APPENGINE_URL = f"https://{APPENGINE_URL}"
 
-    ALLOWED_HOSTS = [urlparse(APPENGINE_URL).netloc, "friend-web-100003.uk.r.appspot.com"]
+    ALLOWED_HOSTS = [urlparse(APPENGINE_URL).netloc, "friend-web-100003.uk.r.appspot.com", "www.friend-web-100003.uk.r.appspot.com"]
     CSRF_TRUSTED_ORIGINS = [APPENGINE_URL]
     SECURE_SSL_REDIRECT = True
 else:
@@ -94,7 +96,7 @@ ROOT_URLCONF = 'backend.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'friend-web' ,'templates')],
+        'DIRS': [os.path.join(BASE_DIR, 'backend', 'friend-web' ,'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -192,5 +194,3 @@ MEDIA_ROOT = os.path.join(os.path.dirname(BASE_DIR), 'backend','media')
 # URL used to access the media
 MEDIA_URL = '/media/'
 
-# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'

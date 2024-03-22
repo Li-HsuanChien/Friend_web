@@ -64,7 +64,7 @@ class CurrentUser(APIView):
                 }
     """
     serializer_class = UserSerializer
-    permission_classes = authentication_level
+    permission_classes = [IsAuthenticated,]
 
     def get(self, request):
         user_id = request.user.id
