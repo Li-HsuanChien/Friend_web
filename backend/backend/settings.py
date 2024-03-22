@@ -194,3 +194,7 @@ MEDIA_ROOT = os.path.join(os.path.dirname(BASE_DIR), 'backend','media')
 # URL used to access the media
 MEDIA_URL = '/media/'
 
+CORS_ALLOWED_ORIGINS = [
+    'http://localhost:3000',
+]
+
